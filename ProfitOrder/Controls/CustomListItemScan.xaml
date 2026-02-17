@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="TPSMobileApp.Controls.CustomListItemScan"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Color x:Key="BannerBackground">White</Color>
+            <Color x:Key="Accent">#96d1ff</Color>
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <ContentView.Content>
+        <VerticalStackLayout HorizontalOptions="Center">
+            <Label
+                Margin="10,5,0,0"
+                BackgroundColor="White"
+                FontAttributes="Bold"
+                FontSize="16"
+                HorizontalOptions="Center"
+                Text="{Binding Description}"
+                TextColor="RoyalBlue" />
+            <ffimageloading:CachedImage
+                Margin="15,15,15,15"
+                Aspect="AspectFit"
+                HeightRequest="110"
+                HorizontalOptions="Fill"
+                LoadingPlaceholder="missing_item.jpg"
+                Source="{Binding ImageURL}"
+                VerticalOptions="Fill"
+                WidthRequest="110" />
+            <VerticalStackLayout Margin="5" HorizontalOptions="Center">
+                <HorizontalStackLayout>
+                    <VerticalStackLayout>
+                        <Label
+                            BackgroundColor="White"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Text="{Binding ItemNoDisplay}"
+                            TextColor="Black" />
+                        <Label
+                            BackgroundColor="White"
+                            FontSize="12"
+                            Text="{Binding ItemNoDisplayUPC}"
+                            TextColor="Black" />
+                        <Label
+                            BackgroundColor="White"
+                            FontSize="14"
+                            Text="{Binding CategoryDesc}"
+                            TextColor="Black" />
+                        <HorizontalStackLayout IsVisible="{Binding IsStockRowVisible}">
+                            <Label
+                                BackgroundColor="White"
+                                FontSize="14"
+                                IsVisible="{Binding IsQOHVisible}"
+                                Text="QOH:"
+                                TextColor="Black" />
+                            <Label
+                                BackgroundColor="White"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                IsVisible="{Binding IsQOHRedVisible}"
+                                Text="{Binding QOH}"
+                                TextColor="Red" />
+                            <Label
+                                BackgroundColor="White"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                IsVisible="{Binding IsQOHBlackVisible}"
+                                Text="{Binding QOH}"
+                                TextColor="Black" />
+                            <Label
+                                BackgroundColor="White"
+                                FontSize="12"
+                                IsVisible="{Binding IsInStockVisible}"
+                                Text="In Stock"
+                                TextColor="Black" />
+                            <Label
+                                BackgroundColor="White"
+                                FontSize="12"
+                                IsVisible="{Binding IsOutOfStockVisible}"
+                                Text="Out Of Stock"
+                                TextColor="Red" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <VerticalStackLayout WidthRequest="200">
+                        <Label
+                            x:Name="PriceDisplay"
+                            BackgroundColor="White"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            IsVisible="{Binding IsPriceVisible}"
+                            MaxLines="1"
+                            Text="{Binding PriceDisplay}"
+                            TextColor="Black" />
+                    </VerticalStackLayout>
+                    <HorizontalStackLayout x:Name="SalespersonStack" IsVisible="{Binding IsSalesUser}">
+                        <controls:CreditButton
+                            Aspect="AspectFit"
+                            BackgroundColor="Transparent"
+                            Clicked="CreditButton_Clicked"
+                            HeightRequest="18"
+                            ItemNo="{Binding ItemNo}"
+                            Source="credit.png" />
+                        <controls:LabelButton
+                            Aspect="AspectFit"
+                            BackgroundColor="Transparent"
+                            Clicked="LabelButton_Clicked"
+                            HeightRequest="18"
+                            IsVisible="false"
+                            ItemNo="{Binding ItemNo}"
+                            Source="labels.png" />
+                    </HorizontalStackLayout>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+            <HorizontalStackLayout
+                x:Name="LastPurchStack"
+                HorizontalOptions="Center"
+                IsVisible="{Binding IsLastPurchStack}">
+                <Label
+                    BackgroundColor="White"
+                    FontSize="10"
+                    LineBreakMode="NoWrap"
+                    Text="Last Purch"
+                    TextColor="Gray"
+                    WidthRequest="50" />
+                <Label
+                    BackgroundColor="White"
+                    FontSize="10"
+                    Text="{Binding LastPurchDateDisplay}"
+                    TextColor="Black"
+                    WidthRequest="80" />
+                <Label
+                    BackgroundColor="White"
+                    FontSize="10"
+                    Text="Qty"
+                    TextColor="Gray"
+                    WidthRequest="20" />
+                <Label
+                    BackgroundColor="White"
+                    FontSize="10"
+                    Text="{Binding QtyLastOrder}"
+                    TextColor="Black"
+                    WidthRequest="30" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <HorizontalStackLayout
+                    x:Name="StepperStack"
+                    HeightRequest="35"
+                    IsVisible="{Binding IsStepperVisible}">
+                    <controls:PlusMinusButton
+                        AllocationQty="{Binding AllocationQty}"
+                        Aspect="AspectFit"
+                        BackgroundColor="Transparent"
+                        Clicked="MinusButton_Clicked"
+                        HeightRequest="30"
+                        ItemNo="{Binding ItemNo}"
+                        Source="blue_minus.png"
+                        WidthRequest="30" />
+                    <VerticalStackLayout>
+                        <controls:QtyEntry
+                            x:Name="QtyEntry"
+                            AllocationQty="{Binding AllocationQty}"
+                            Completed="OnQtyEntry_Completed"
+                            Focused="QtyEntry_Focused"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HorizontalTextAlignment="Center"
+                            ItemNo="{Binding ItemNo}"
+                            Text="{Binding QtyOrder}"
+                            TextChanged="OnEntryTextChanged"
+                            TextColor="Black"
+                            WidthRequest="50" />
+                    </VerticalStackLayout>
+                    <controls:PlusMinusButton
+                        AllocationQty="{Binding AllocationQty}"
+                        Aspect="AspectFit"
+                        BackgroundColor="Transparent"
+                        Clicked="PlusButton_Clicked"
+                        HeightRequest="30"
+                        ItemNo="{Binding ItemNo}"
+                        Source="blue_plus.png"
+                        WidthRequest="30" />
+                </HorizontalStackLayout>
+                <controls:AddToOrderButton
+                    x:Name="AddToOrderButton"
+                    BackgroundColor="LightGray"
+                    Clicked="AddToOrderButton_Clicked"
+                    CornerRadius="8"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    HeightRequest="35"
+                    IsVisible="{Binding IsAddToOrderVisible}"
+                    ItemNo="{Binding ItemNo}"
+                    Text="Add To Order"
+                    TextColor="RoyalBlue"
+                    WidthRequest="110" />
+            </HorizontalStackLayout>
+            <BoxView
+                BackgroundColor="gray"
+                HeightRequest="3"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding IsBoxViewVisible}"
+                VerticalOptions="Fill"
+                Color="lightgray" />
+        </VerticalStackLayout>
+    </ContentView.Content>
+</ContentView>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rounded square -->
+  <rect x="0" y="0" width="512" height="512" rx="80" fill="#3F4C7C"/>
+  
+  <!-- Left M -->
+  <text x="80" y="270" font-family="Arial, sans-serif" font-size="160" font-weight="900" fill="white">M</text>
+  
+  <!-- Right M -->
+  <text x="280" y="270" font-family="Arial, sans-serif" font-size="160" font-weight="900" fill="white">M</text>
+  
+  <!-- Ampersand background circle -->
+  <circle cx="256" cy="185" r="50" fill="#5386C4"/>
+  
+  <!-- Ampersand -->
+  <text x="256" y="220" font-family="Arial, sans-serif" font-size="100" font-weight="900" fill="white" text-anchor="middle">&amp;</text>
+  
+  <!-- Blue ribbon for CASH & CARRY -->
+  <rect x="160" y="195" width="192" height="45" fill="#4A8FD9" transform="rotate(-15 256 217)"/>
+  
+  <!-- CASH & CARRY text -->
+  <text x="256" y="225" font-family="Arial, sans-serif" font-size="22" font-weight="bold" fill="white" text-anchor="middle" transform="rotate(-15 256 225)">CASH &amp; CARRY</text>
+  
+  <!-- RAM DISTRIBUTORS text -->
+  <text x="256" y="380" font-family="Arial, sans-serif" font-size="42" font-weight="900" fill="white" letter-spacing="1" text-anchor="middle">RAM DISTRIBUTORS</text>
+</svg>

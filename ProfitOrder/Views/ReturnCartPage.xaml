@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="TPSMobileApp.Views.ReturnCartPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
+    xmlns:local="clr-namespace:TPSMobileApp.ViewModels"
+    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+    xmlns:view="clr-namespace:TPSMobileApp.Views"
+    x:Name="ReturnCart"
+    Title="Return Cart"
+    Shell.TabBarIsVisible="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <controls:StringToColorConverter x:Key="StringToColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <controls:CustomHeader Grid.Row="0" />
+
+            <VerticalStackLayout Grid.Row="1" Spacing="0">
+                <HorizontalStackLayout>
+                    <VerticalStackLayout WidthRequest="225">
+                        <HorizontalStackLayout Margin="15,15,0,0">
+                            <Label
+                                BackgroundColor="White"
+                                FontSize="14"
+                                Text="Items:"
+                                TextColor="Black"
+                                WidthRequest="55" />
+                            <Label
+                                BackgroundColor="White"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Text="{Binding CartItems}"
+                                TextColor="Black" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Margin="15,0,0,0">
+                            <Label
+                                BackgroundColor="White"
+                                FontSize="14"
+                                Text="Pieces:"
+                                TextColor="Black"
+                                WidthRequest="55" />
+                            <Label
+                                BackgroundColor="White"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Text="{Binding CartPieces}"
+                                TextColor="Black" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Margin="15,0,0,0">
+                            <Label
+                                BackgroundColor="White"
+                                FontSize="14"
+                                Text="Total:"
+                                TextColor="Black"
+                                WidthRequest="55" />
+                            <Label
+                                BackgroundColor="White"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Text="{Binding CartTotal}"
+                                TextColor="Black" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                    <HorizontalStackLayout Margin="0,15,0,0">
+                        <Button
+                            x:Name="btnCheckout"
+                            Margin="0"
+                            Padding="0"
+                            BackgroundColor="Blue"
+                            Clicked="btnCheckout_Clicked"
+                            Command="{Binding OpenCheckout}"
+                            CornerRadius="10"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            Text="Submit Return"
+                            TextColor="White"
+                            WidthRequest="130" />
+                    </HorizontalStackLayout>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Margin="0,15,0,0" HorizontalOptions="Center">
+                    <Label
+                        BackgroundColor="White"
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        Text="Items"
+                        TextColor="Blue"
+                        VerticalOptions="Center" />
+                    <ImageButton
+                        x:Name="btnClearCart"
+                        Margin="50,10,0,10"
+                        BackgroundColor="Transparent"
+                        Clicked="btnClearCart_Clicked"
+                        HeightRequest="30"
+                        Source="delete.png"
+                        VerticalOptions="Center"
+                        WidthRequest="30" />
+                </HorizontalStackLayout>
+                <BoxView
+                    BackgroundColor="gray"
+                    HeightRequest="3"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    Color="lightgray" />
+
+            </VerticalStackLayout>
+            <syncfusion:SfListView
+                x:Name="ItemsListCart"
+                Grid.Row="2"
+                AutoFitMode="DynamicHeight"
+                ItemsSourceChangeCachingStrategy="ClearItems"
+                SelectionMode="None">
+                <syncfusion:SfListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <controls:CustomListCreditItem x:Name="CustomListCreditItem" Grid.Row="0" />
+                        </ViewCell>
+                    </DataTemplate>
+                </syncfusion:SfListView.ItemTemplate>
+            </syncfusion:SfListView>
+            <controls:CustomToolbar Grid.Row="3" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
