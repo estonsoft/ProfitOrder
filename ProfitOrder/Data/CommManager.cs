@@ -4,89 +4,101 @@
 	{
 		ISoapService soapService;
 
-        public CommManager (ISoapService service)
-		{
-			soapService = service;
-		}
-
-		public Task<string> GetBanners()
-		{
-			return soapService.GetBannersAsync();
-		}
-
-		public Task<string> GetCategoriesAndSubcategories()
-		{
-			return soapService.GetCategoriesAndSubcategoriesAsync();
-		}
-
-		public Task<string> GetCategoriesAndSubcategoriesCust(string sCust)
-		{
-			return soapService.GetCategoriesAndSubcategoriesCustAsync(sCust);
-		}
-
-		public Task<string> GetItems(String sCustomer, String sDate)
-		{
-			return soapService.GetItemsAsync(sCustomer, sDate);
-		}
-
-		public Task<string> GetItemQOH(String sCustomer)
-		{
-			return soapService.GetItemQOHAsync(sCustomer);
-		}
-
-		public Task<string> GetItemQOH2(String sUser, String sCustomer)
-		{
-			return soapService.GetItemQOH2Async(sUser, sCustomer);
-		}
-
-        public Task<string> ValidateLogin(String sUser, String sPassword, String sDeviceId)
+        public CommManager(ISoapService service)
         {
-            return soapService.ValidateLoginAsync(sUser, sPassword, sDeviceId);
+            soapService = service;        }
+
+        public async Task GetBanners()
+        {
+            String banner = await soapService.GetBannersAsync();
+            XMLResponseParser.commService_GetBannersCompleted(banner);
         }
 
-        public Task<string> ValidateToken(String sCustNo, String sCCInfo)
+        public async Task GetCategoriesAndSubcategories()
         {
-            return soapService.ValidateTokenAsync(sCustNo, sCCInfo);
+            String response = await soapService.GetCategoriesAndSubcategoriesAsync();
+            XMLResponseParser.commService_GetCategoriesAndSubcategoriesCompleted(response);
         }
 
-        public Task<string> ValidateUserActive(String sUser)
+        public async Task GetCategoriesAndSubcategoriesCust(string sCust)
         {
-            return soapService.ValidateUserActiveAsync(sUser);
+            String response = await soapService.GetCategoriesAndSubcategoriesCustAsync(sCust);
+            XMLResponseParser.commService_GetCategoriesAndSubcategoriesCustCompleted(response);
         }
 
-        public Task<string> GetSettings()
+        public async Task GetItems(String sCustomer, String sDate)
         {
-            return soapService.GetSettingsAsync();
+            String response = await soapService.GetItemsAsync(sCustomer, sDate);
+            XMLResponseParser.commService_GetItemsCompletedAsync(response);
+        }
+        public async Task GetItemQOH(String sCustomer)
+        {
+            String response = await soapService.GetItemQOHAsync(sCustomer);
+            XMLResponseParser.commService_GetItemQOHCompletedAsync(response);
         }
 
-        public Task<string> SubmitOrder(string sCustNo, string sPO, string sPaymentMethod, string sCCInfo, string sOrderInfo, string sDeliveryPickup, string sUser, string sNotes, int iHoldForReview, string sOrderType)
+        public async Task GetItemQOH2(String sUser, String sCustomer)
         {
-            return soapService.SubmitOrderAsync(sCustNo, sPO, sPaymentMethod, sCCInfo, sOrderInfo, sDeliveryPickup, sUser, sNotes, iHoldForReview, sOrderType);
+            String response = await soapService.GetItemQOH2Async(sUser, sCustomer);
+            XMLResponseParser.commService_GetItemQOH2CompletedAsync(response);
         }
 
-        public Task<string> SaveBuildTo(string sCustNo, string sItemNo, string sBuildTo)
+        public async Task ValidateLogin(String sUser, String sPassword, String sDeviceId)
         {
-            return soapService.SaveBuildToAsync(sCustNo, sItemNo, sBuildTo);
+            String response = await soapService.ValidateLoginAsync(sUser, sPassword, sDeviceId);
+            XMLResponseParser.commService_ValidateLoginCompletedAsync(response);
         }
 
-        public Task<string> SubmitReturn(string sCustNo, string sOrderInfo, string sUser, string sNotes)
+        public async Task ValidateUserActive(String sUser)
         {
-            return soapService.SubmitReturnAsync(sCustNo, sOrderInfo, sUser, sNotes);
+            String response = await soapService.ValidateUserActiveAsync(sUser);
+            XMLResponseParser.commService_ValidateUserActiveCompletedAsync(response);
+        }
+        public async Task GetSettings()
+        {
+            String response = await soapService.GetSettingsAsync();
+            XMLResponseParser.commService_GetSettingsCompletedAsync(response);
+        }
+        public async Task SubmitOrder(string sCustNo, string sPO, string sPaymentMethod, string sCCInfo, string sOrderInfo, string sDeliveryPickup, string sUser, string sNotes, int iHoldForReview, string sOrderType)
+        {
+            String response = await soapService.SubmitOrderAsync(sCustNo, sPO, sPaymentMethod, sCCInfo, sOrderInfo, sDeliveryPickup, sUser, sNotes, iHoldForReview, sOrderType);
+            XMLResponseParser.commService_SubmitOrderCompletedAsync(response);
+        }
+        public async Task SubmitReturn(string sCustNo, string sOrderInfo, string sUser, string sNotes)
+        {
+            String response = await soapService.SubmitReturnAsync(sCustNo, sOrderInfo, sUser, sNotes);
+            XMLResponseParser.commService_SubmitReturnCompletedAsync(response);
         }
 
-        public Task<string> GetOrderHistory(string sCustNo)
+        public async Task GetOrderHistory(string sCustNo)
         {
-            return soapService.GetOrderHistoryAsync(sCustNo);
+            String response = await soapService.GetOrderHistoryAsync(sCustNo);
+            XMLResponseParser.commService_GetOrderHistoryCompletedAsync(response);
         }
 
-        public Task<string> GetSalespersonCustomers(string sUser)
+        public async Task GetSalespersonCustomers(string sUser)
         {
-            return soapService.GetSalespersonCustomersAsync(sUser);
+            String response = await soapService.GetSalespersonCustomersAsync(sUser);
+            XMLResponseParser.commService_GetSalespersonCustomersCompletedAsync(response);
         }
 
-        public Task<string> GetFlyerItemsPDF()
+        public async Task GetFlyerItemsPDF()
         {
-            return soapService.GetFlyerItemsPDFAsync();
+            String response = await soapService.GetFlyerItemsPDFAsync();
+            XMLResponseParser.commService_GetFlyerItemsPDFCompleted(response);
         }
+
+        public async Task ValidateToken(String sCustNo, String sCCInfo)
+        {
+            String response = await soapService.ValidateTokenAsync(sCustNo,sCCInfo);
+            XMLResponseParser.commService_ValidateTokenCompletedAsync(response);
+        }
+
+        public async Task SaveBuildTo(string custNo, string v1, string v2)
+        {
+            String response = soapService.SaveBuildToAsync(custNo, v1, v2).Result;
+        }
+
+
     }
 }

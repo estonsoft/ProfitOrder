@@ -121,7 +121,15 @@ namespace ProfitOrder.Data
 
         public Task<string> GetFlyerItemsPDFAsync()
             => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetFlyerItemsPDF",
-                SoapEnvelope("GetFlyerItemsPDF"));
+                SoapEnvelope("GetFlyerItemsPDF"));       
+
+        public Task<string> ValidateTokenAsync(string sCustNo, string sCCInfo)
+           => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetSalespersonCustomers",
+                SoapEnvelope("ValidateToken", $"<sCust>{sCustNo}</sCust><sCCInfo>{sCCInfo}</sCCInfo>"));
+
+
+        public Task<string> SaveBuildToAsync(string sCustNo, string sItemNo, string sBuildTo) => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetSalespersonCustomers",
+                SoapEnvelope("SaveBuildTo", $"<sCust>{sCustNo}</sCust><sItem>{sItemNo}</sItem><sBuildTo>{sBuildTo}</sBuildTo>"));
 
         private static string SoapEnvelope(string method, string parameters = "")
         {
@@ -135,16 +143,6 @@ namespace ProfitOrder.Data
                 </{method}>
               </soap:Body>
             </soap:Envelope>";
-        }
-
-        public Task<string> ValidateTokenAsync(string sCustNo, string sCCInfo)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<string> SaveBuildToAsync(string sCustNo, string sItemNo, string sBuildTo)
-        {
-            throw new NotImplementedException();
         }
     }
 }

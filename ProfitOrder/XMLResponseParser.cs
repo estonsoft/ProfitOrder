@@ -2035,7 +2035,7 @@ namespace ProfitOrder
             }
         }
 
-        private async void commService_ValidateTokenCompletedAsync(object sender, string response)
+        public static async void commService_ValidateTokenCompletedAsync(string response)
         {
             String sToken = response;
             string[] aToken = sToken.Split('|');
@@ -2046,14 +2046,14 @@ namespace ProfitOrder
                 {
                     // save token
 
-                    Device.BeginInvokeOnMainThread(async () =>
+                    MainThread.BeginInvokeOnMainThread(async () =>
                     {
                         App.g_PaymentMethodEdit.Token = aToken[2];
                         App.g_db.SavePaymentMethod(App.g_PaymentMethodEdit);
                         App.g_PaymentMethodPage.RefreshList();
 
-                        await App.Current.MainPage.DisplayAlert("Profit Order", "Card successfully verified.", "Ok");
-                        App.g_Shell.GoToPaymentMethod();
+                        await Shell.Current.DisplayAlertAsync("Profit Order", "Card successfully verified.", "Ok");
+                        await App.g_Shell.GoToPaymentMethod();
                     });
                 }
                 catch (Exception ex)
@@ -2062,8 +2062,8 @@ namespace ProfitOrder
             }
             else
             {
-                await App.Current.MainPage.DisplayAlert("Profit Order", aToken[1], "Ok");
-                App.g_Shell.GoToPaymentMethodEdit();
+                await Shell.Current.DisplayAlertAsync("Profit Order", aToken[1], "Ok");
+                await App.g_Shell.GoToPaymentMethodEdit();
             }
         }
     }
