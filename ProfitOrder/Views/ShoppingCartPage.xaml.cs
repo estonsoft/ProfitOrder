@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     public partial class ShoppingCartPage : ContentPage
     {

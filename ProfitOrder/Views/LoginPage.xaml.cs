@@ -1,8 +1,8 @@
-﻿using TPSMobileApp.ViewModels;
+﻿using ProfitOrder.ViewModels;
 
 
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class LoginPage : ContentPage
@@ -14,11 +14,6 @@ namespace TPSMobileApp.Views
 
             App.g_LoginPage = this;
         }
-
-        //private async void OnRegisterClicked(object obj)
-        //{
-        //    await App.g_Shell.GoToRegisterVerify();
-        //}
 
         protected override void OnDisappearing()
         {
@@ -48,17 +43,29 @@ namespace TPSMobileApp.Views
             if (App.g_Customer.RememberMe)
             {
                 User.Text = App.g_Customer.User;
-                //Password.Focus();
             }
-            else
-            {
-                //User.Focus();
-            }
+            HideAnimation();
+        }
+
+        public void ShowAnimation()
+        {
+            User.IsEnabled  = false;
+            Password.IsEnabled = false;
+            buttonLogin.IsEnabled = false;
+            RememberMe.IsEnabled = false;
+            buttonLogin.BackgroundColor = Colors.LightGray;
+            waitText.IsVisible = true;
         }
 
         public void HideAnimation()
         {
-            WaitImage.IsVisible = false;
+
+            User.IsEnabled = true;
+            Password.IsEnabled = true;
+            RememberMe.IsEnabled = true;
+            buttonLogin.IsEnabled = true;
+            buttonLogin.BackgroundColor = Colors.Blue;
+            waitText.IsVisible = false;
         }
 
         protected override bool OnBackButtonPressed()

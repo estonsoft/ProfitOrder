@@ -1,12 +1,17 @@
 ﻿using System.Text;
 using System.Xml.Linq;
 
-namespace TPSMobileApp.Data
+namespace ProfitOrder.Data
 {
     public class SoapService : ISoapService
     {
         private readonly HttpClient _httpClient;
-        private const string SoapUrl = "https://ramtest.qwikpoint.net/RemotePhoneApp.asmx";
+#if DEBUG
+        private string SoapUrl = "https://ctbdemo.qwikpoint.net";
+#else
+        private string SoapUrl = "https://ramdistributors.qwikpoint.net/RemotePhoneApp.asmx";
+
+#endif
 
         public SoapService(HttpClient httpClient)
         {
@@ -15,6 +20,7 @@ namespace TPSMobileApp.Data
 
         private async Task<string> SendSoapRequestAsync(string soapAction, string soapBody)
         {
+            SoapUrl = App.g_ServerURL + "/RemotePhoneApp.asmx";
             var content = new StringContent(soapBody, Encoding.UTF8, "text/xml");
 
             content.Headers.Clear();
@@ -24,7 +30,8 @@ namespace TPSMobileApp.Data
             var response = await _httpClient.PostAsync(SoapUrl, content);
             response.EnsureSuccessStatusCode();
             string responseValue = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Login Response" + responseValue);
+            Console.WriteLine("Request" + SoapUrl);
+            Console.WriteLine("Response" + responseValue);
             responseValue = ExtractSoapResult(responseValue);
             return responseValue;
         }
@@ -128,6 +135,16 @@ namespace TPSMobileApp.Data
                 </{method}>
               </soap:Body>
             </soap:Envelope>";
+        }
+
+        public Task<string> ValidateTokenAsync(string sCustNo, string sCCInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> SaveBuildToAsync(string sCustNo, string sItemNo, string sBuildTo)
+        {
+            throw new NotImplementedException();
         }
     }
 }

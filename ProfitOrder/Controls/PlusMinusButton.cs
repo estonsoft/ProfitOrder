@@ -1,34 +1,24 @@
-﻿namespace TPSMobileApp.Controls;
-
-public class PlusMinusButton : ImageButton
+﻿namespace ProfitOrder.Controls
 {
-    public static readonly BindableProperty ItemNoProperty =
-        BindableProperty.Create(
-            nameof(ItemNo),
-            typeof(int),
-            typeof(PlusMinusButton),
-            0);
-
-    public static readonly BindableProperty AllocationQtyProperty =
-        BindableProperty.Create(
-            nameof(AllocationQty),
-            typeof(int),
-            typeof(PlusMinusButton),
-            0);
-
-    public int ItemNo
+    public class PlusMinusButton : ImageButton
     {
-        get => (int)GetValue(ItemNoProperty);
-        set => SetValue(ItemNoProperty, value);
-    }
+        public static readonly BindableProperty ItemNoProperty = BindableProperty.Create("ItemNo", typeof(int), typeof(NumericEntryBehavior), 0);
+        public static readonly BindableProperty AllocationQtyProperty = BindableProperty.Create("AllocationQty", typeof(int), typeof(int));
 
-    public int AllocationQty
-    {
-        get => (int)GetValue(AllocationQtyProperty);
-        set => SetValue(AllocationQtyProperty, value);
-    }
+        public int ItemNo
+        {
+            get => (int)GetValue(ItemNoProperty);
+            set => SetValue(ItemNoProperty, value);
+        }
 
-    public PlusMinusButton()
-    {
+        public int AllocationQty
+        {
+            get => (int)GetValue(AllocationQtyProperty);
+            set => SetValue(AllocationQtyProperty, value);
+        }
+
+        public PlusMinusButton()
+        {
+        }
     }
 }

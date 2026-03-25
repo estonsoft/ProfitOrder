@@ -1,25 +1,23 @@
 ﻿using System.Globalization;
 
-namespace TPSMobileApp.Controls;
-
-class StringToColorConverter : IValueConverter
+namespace ProfitOrder.Controls
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    class StringToColorConverter : IValueConverter
     {
-        var valueAsString = value?.ToString() ?? string.Empty;
-
-        return valueAsString switch
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            "" => Colors.Transparent,
-            "Accent" => Application.Current?.Resources.TryGetValue("AccentColor", out var accent) == true
-                ? (Color)accent
-                : Colors.Blue,
-            _ => Color.FromArgb(valueAsString)
-        };
-    }
+            string valueAsString = value?.ToString() ?? string.Empty;
+            switch (valueAsString)
+            {
+                case (""): { return Color.FromRgb(0, 0, 0); } // Use black as a default color
+                case ("Accent"): { return Color.FromArgb("#0078D7"); }
+                default: { return Color.FromArgb(valueAsString); }
+            }
+        }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        return null;
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return null;
+        }
     }
 }

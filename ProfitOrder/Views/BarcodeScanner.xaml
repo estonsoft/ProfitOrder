@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="TPSMobileApp.Views.BarcodeScanner"
+    x:Class="ProfitOrder.Views.BarcodeScanner"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
-    xmlns:local="clr-namespace:TPSMobileApp.Views"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
+    xmlns:local="clr-namespace:ProfitOrder.Views"
     xmlns:pages="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls"
     Title="Scan Barcode">
 
     <ContentPage.Content>
-        <Grid>
+        <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition Height="*" />

@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     public class ReorderItem
     {
@@ -51,6 +51,11 @@ namespace TPSMobileApp
         public int IsPriceVisible { get; set; }
         public bool IsSalesUser { get; set; }
         public bool IsChainManager { get; set; }
+        public int BuildTo { get; set; }
+        public int Last4WeekSales { get; set; }
+        public int Last13WeekSales { get; set; }
+        public decimal AverageWeeklySales { get; set; }
+        public bool IsBuildTo { get; set; }
 
         public static void SetListItem(ReorderItem i)
         {

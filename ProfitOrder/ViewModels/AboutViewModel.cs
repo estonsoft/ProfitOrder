@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 
-namespace TPSMobileApp.ViewModels
+namespace ProfitOrder.ViewModels
 {
     public class AboutViewModel : BaseViewModel
     {

@@ -1,8 +1,8 @@
-﻿namespace TPSMobileApp
+﻿namespace ProfitOrder
 {
     public static class Constants
     {
-        public static string Version = "1.016";
+        public static string Version = "2.103";
 
         // URL of ASMX service
         public static string SoapUrl = "https://www.turningpointsystems.com/RemotePhoneApp.asmx";
@@ -17,7 +17,7 @@
         public static string UserName = "";
         public static string LastUserName = "";
         public static string CustomerNo = "";
-
+        
         public static string LastCategoryUpdate = "";
         public static string LastItemUpdate = "";
 

@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

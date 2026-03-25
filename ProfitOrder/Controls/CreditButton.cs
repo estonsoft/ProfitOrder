@@ -1,21 +1,17 @@
-﻿namespace TPSMobileApp.Controls;
-
-public class CreditButton : ImageButton
+﻿namespace ProfitOrder.Controls
 {
-    public static readonly BindableProperty ItemNoProperty =
-        BindableProperty.Create(
-            nameof(ItemNo),
-            typeof(int),
-            typeof(CreditButton),
-            default(int));
-
-    public int ItemNo
+    public class CreditButton : ImageButton
     {
-        get => (int)GetValue(ItemNoProperty);
-        set => SetValue(ItemNoProperty, value);
-    }
+        public static readonly BindableProperty ItemNoProperty = BindableProperty.Create("ItemNo", typeof(int), typeof(NumericEntryBehavior), 0);
 
-    public CreditButton()
-    {
+        public int ItemNo
+        {
+            get => (int)GetValue(ItemNoProperty);
+            set => SetValue(ItemNoProperty, value);
+        }
+
+        public CreditButton()
+        {
+        }
     }
 }

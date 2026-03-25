@@ -1,4 +1,9 @@
-﻿namespace TPSMobileApp
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SQLite;
+
+namespace ProfitOrder
 {
     public class OrderDetail
     {
@@ -48,9 +53,15 @@
         public int QtyLast90 { get; set; }
         public string QtyLast90Display { get; set; }
         public bool IsLastPurchStack { get; set; }
+        public bool IsLastPurchStack2 { get; set; }
         public int IsPriceVisible { get; set; }
         public bool IsSalesUser { get; set; }
         public bool IsChainManager { get; set; }
+        public int BuildTo { get; set; }
+        public int Last4WeekSales { get; set; }
+        public int Last13WeekSales { get; set; }
+        public decimal AverageWeeklySales { get; set; }
+        public bool IsBuildTo { get; set; }
 
         public static void SetListItem(OrderDetail i)
         {

@@ -1,8 +1,8 @@
 ﻿<ContentView
-    x:Class="TPSMobileApp.Controls.HomePageItems"
+    x:Class="ProfitOrder.Controls.HomePageItems"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
     xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui">

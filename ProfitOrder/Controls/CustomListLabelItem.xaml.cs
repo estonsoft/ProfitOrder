@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Controls
+﻿namespace ProfitOrder.Controls
 {
     public partial class CustomListLabelItem : ContentView
     {

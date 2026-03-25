@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.ViewModels
+﻿namespace ProfitOrder.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
@@ -23,11 +23,21 @@
 
         private void OnLoginClicked(object obj)
         {
+            App.g_LoginPage.ShowAnimation();
             if (User.ToLower() == "app_test")
             {
-                App.g_ServerURL = "https://ramtest.qwikpoint.net";
-                App.UpdateServerLinks();
+                App.g_ServerURL = "https://store.qwikpoint.net";
             }
+            else
+            {
+#if DEBUG
+                App.g_ServerURL = "https://ctbdemo.qwikpoint.net";
+#else
+                App.g_ServerURL = "https://ramdistributors.qwikpoint.net";
+#endif
+            }
+
+            App.UpdateServerLinks();
 
             App.g_IsLoggedIn = true;
             App.g_UserName = User;
@@ -37,6 +47,7 @@
 
             //Database db = new Database();
             App.g_db.SaveCustomer(App.g_Customer);
+
 
             App.CommManager.ValidateLogin(User, Password, App.g_Customer.UniqueId);
         }

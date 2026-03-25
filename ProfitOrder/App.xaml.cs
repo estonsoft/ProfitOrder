@@ -1,8 +1,8 @@
-﻿using TPSMobileApp.Data;
-using TPSMobileApp.ViewModels;
-using TPSMobileApp.Views;
+﻿using ProfitOrder.Data;
+using ProfitOrder.ViewModels;
+using ProfitOrder.Views;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     public partial class App : Application
     {
@@ -18,10 +18,14 @@ namespace TPSMobileApp
         public static ReturnCartPage g_ReturnCartPage;
         public static LabelCartPage g_LabelCartPage;
         public static CheckoutPage g_CheckoutPage;
+        public static PaymentMethodPage g_PaymentMethodPage;
+        public static PaymentMethodEditPage g_PaymentMethodEditPage;
         public static Customer g_Customer;
         public static Category g_Category;
         public static Subcategory g_Subcategory;
         public static Subsubcategory g_Subsubcategory;
+        public static PaymentMethod g_PaymentMethod;
+        public static PaymentMethod g_PaymentMethodEdit;
 
         //public static List<Category> g_CategoryList;
         public static List<Category> g_HomePageCategoryList;
@@ -49,6 +53,7 @@ namespace TPSMobileApp
         public static Boolean g_IsChainManager { get; set; }
         public static Boolean g_IsAutoAdd1 { get; set; }
         public static String g_QOHDisplay { get; set; }
+        public static String g_PaymentProvider { get; set; }
         public static String g_OrderNo { get; set; }
         public static String g_HeaderTitle { get; set; }
         public static int g_ShoppingCartItems { get; set; }
@@ -67,6 +72,9 @@ namespace TPSMobileApp
         public static int g_FlyerEndDate { get; set; }
         public static string g_Notes { get; set; }
         public static string g_ShoppingCartSort { get; set; }
+        public static Boolean g_IsShowSubcategories { get; set; }
+        public static Boolean g_IsBuildToEnabled { get; set; }
+        public static Boolean g_IsBuildToViewOnly { get; set; }
 
         public class MessageKeys
         {
@@ -78,7 +86,6 @@ namespace TPSMobileApp
         public App(CommManager _commManager)
         {
             InitializeComponent();
-            Application.Current.UserAppTheme = AppTheme.Light;
             CommManager = _commManager;
 
             // 19.2 version Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTAzNTg1QDMxMzkyZTMyMmUzMGMySndvR0x2aHJwSHJWcFpwSG93MVMxMFRub1pFRkhTbnRHakhEVTd3WlE9");
@@ -120,8 +127,6 @@ namespace TPSMobileApp
                 g_IsLoggedIn = false;
             }
 
-            g_ServerURL = "https://ramdistributors.qwikpoint.net";
-
             if (!g_IsLoggedIn)
             {
                 //Database db = new Database();
@@ -134,11 +139,17 @@ namespace TPSMobileApp
                     g_UserName = g_db.GetSetting("UserName");
                 }
 
-                if (g_UserName == "app_test")
+                g_ServerURL = g_db.GetSetting("ServerURL");
+                if (g_ServerURL != "")
                 {
-                    g_ServerURL = "https://ramtest.qwikpoint.net";
+                    Server server = new Server();
+                    server.ServerURL = g_ServerURL;
+                    g_db.SaveServer(server);
                 }
-
+                else
+                {
+                    g_ServerURL = "https://www.turningpointsystems.com";
+                }
                 UpdateServerLinks();
 
                 if (g_db.GetSetting("Credits") == "1")
@@ -150,7 +161,11 @@ namespace TPSMobileApp
                     g_IsCredits = false;
                 }
                 g_QOHDisplay = g_db.GetSetting("QOHDisplay");
+
                 g_IsScannerDisabled = g_db.GetSetting("ScannerDisabled");
+
+                g_PaymentProvider = g_db.GetSetting("PaymentProvider");
+
                 if (g_db.GetSetting("MonthlyFlyer") == "1")
                 {
                     g_IsMonthlyFlyer = true;
@@ -197,6 +212,14 @@ namespace TPSMobileApp
                 {
                     g_IsRefNoLookup = false;
                 }
+                if (g_db.GetSetting("ShowSubcateogries") == "0")
+                {
+                    g_IsShowSubcategories = false;
+                }
+                else
+                {
+                    g_IsShowSubcategories = true;
+                }
 
                 g_Company = "";
                 g_SearchText = "";
@@ -242,6 +265,22 @@ namespace TPSMobileApp
                 }
                 g_IsScandit = true;
                 g_ShoppingCartSort = g_db.GetSetting("ShoppingCartSort");
+                if (g_db.GetSetting("IsBuildToEnabled") == "1")
+                {
+                    g_IsBuildToEnabled = true;
+                }
+                else
+                {
+                    g_IsBuildToEnabled = false;
+                }
+                if (g_db.GetSetting("IsBuildToViewOnly") == "1")
+                {
+                    g_IsBuildToViewOnly = true;
+                }
+                else
+                {
+                    g_IsBuildToViewOnly = false;
+                }
 
                 g_IsScannerInit = false;
                 g_ScanditViewModel = null;
@@ -258,8 +297,6 @@ namespace TPSMobileApp
                 g_Subsubcategory.Code = "";
                 g_Subsubcategory.Description = "ALL SUB-SUBCATEGORIES";
 
-                //Plugin.Media.CrossMedia.Current.Initialize();
-
                 Constants.Load();
 
                 Location location = new Location();
@@ -268,20 +305,22 @@ namespace TPSMobileApp
                 g_Customer = new Customer();
                 g_ShoppingCartItems = App.g_db.GetCartPieces();
 
-
-                try
+                Task.Run(async () =>
                 {
-                    g_Customer = new Customer();
-                    g_Customer = App.g_db.GetCustomer();
-                    if (g_Customer == null)
+                    try
+                    {
+                        g_Customer = new Customer();
+                        g_Customer = App.g_db.GetCustomer();
+                        if (g_Customer == null)
+                        {
+                            g_Customer = new Customer();
+                        }
+                    }
+                    catch
                     {
                         g_Customer = new Customer();
                     }
-                }
-                catch
-                {
-                    g_Customer = new Customer();
-                }
+                });
 
                 //g_CategoryList = App.g_db.GetCategories();
                 g_HomePageCategoryList = App.g_db.GetHomePageCategories();
@@ -290,28 +329,28 @@ namespace TPSMobileApp
 
                 try
                 {
-
                     App.CommManager.GetSettings();
                 }
                 catch { }
 
+                InsertOnAccountPaymentMethod();
+                GetDefaultPaymentMethod();
+
                 RefreshAll();
+                InitializeAllTimer();
 
                 RefreshOrderHistory();
+                InitializeOrderHistoryTimer();
 
                 if (g_IsSalesUser || g_IsChainManager)
                 {
                     App.CommManager.GetSalespersonCustomers(g_UserName);
                 }
 
-                RefreshQOH();
+                InitializeQOHTimer();
             }
 
-            //MainPage = new AppShell();
-        }
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(new AppShell());
+            MainPage = new AppShell();
         }
 
         public static void UpdateServerLinks()
@@ -324,16 +363,46 @@ namespace TPSMobileApp
             Constants.ItemImageUrl = App.g_ServerURL + "/images/items/";
         }
 
-        public static void RefreshAll()
+        private void InitializeAllTimer()
+        {
+            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
+            {
+                Task.Run(async () =>
+                {
+                    _ = await RefreshAll();
+                    return true;
+                });
+
+                return true;
+            });
+        }
+
+        public static async Task<String> RefreshAll()
         {
             if (App.g_ServerURL != "")
             {
                 // start with banners  services will call next when one is done
                 App.CommManager.GetBanners();
             }
+
+            return "";
         }
 
-        public static void RefreshQOH()
+        private void InitializeQOHTimer()
+        {
+            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
+            {
+                Task.Run(async () =>
+                {
+                    _ = await RefreshQOH();
+                    return true;
+                });
+
+                return true;
+            });
+        }
+
+        public static async Task<String> RefreshQOH()
         {
             try
             {
@@ -343,9 +412,67 @@ namespace TPSMobileApp
                 }
             }
             catch { }
+
+            return "";
         }
 
-        public static void RefreshOrderHistory()
+        private void InitializeBannerTimer()
+        {
+            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
+            {
+                Task.Run(async () =>
+                {
+                    _ = await RefreshBanners();
+                    return true;
+                });
+
+                return true;
+            });
+        }
+
+        private async Task<String> RefreshBanners()
+        {
+            return "";
+        }
+
+        private void InitializeItemTimer()
+        {
+            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
+            {
+                Task.Run(async () =>
+                {
+                    _ = await RefreshItems();
+                    return true;
+                });
+
+                return true;
+            });
+        }
+
+        private async Task<String> RefreshItems()
+        {
+            //Database db = new Database();
+
+            //g_Customer = await db.GetCustomerAsync();
+
+            return "";
+        }
+
+        private void InitializeOrderHistoryTimer()
+        {
+            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
+            {
+                Task.Run(async () =>
+                {
+                    _ = await RefreshOrderHistory();
+                    return true;
+                });
+
+                return true;
+            });
+        }
+
+        public static async Task<String> RefreshOrderHistory()
         {
             try
             {
@@ -355,6 +482,8 @@ namespace TPSMobileApp
                 }
             }
             catch { }
+
+            return "";
         }
 
         protected override void OnStart()
@@ -380,13 +509,50 @@ namespace TPSMobileApp
             catch { }
         }
 
-        public static void ValidateUserActive()
+        public static async Task<String> ValidateUserActive()
         {
             try
             {
                 App.CommManager.ValidateUserActive(App.g_UserName);
             }
             catch { }
+
+            return "";
+        }
+
+        public void InsertOnAccountPaymentMethod()
+        {
+            //Database db = new Database();
+
+            PaymentMethod pm = App.g_db.FindPaymentMethod(1);
+
+            if (pm is null)
+            {
+                g_PaymentMethod = new PaymentMethod();
+                g_PaymentMethod.DisplayText = "On Account";
+                g_PaymentMethod.PaymentMethodId = 1;
+                g_PaymentMethod.IsDefault = 0;
+                g_PaymentMethod.IsDefaultChecked = false;
+                g_PaymentMethod.Type = "A";
+
+                App.g_db.SavePaymentMethod(g_PaymentMethod);
+            }
+        }
+
+        public void GetDefaultPaymentMethod()
+        {
+            //Database db = new Database();
+
+            List<PaymentMethod> paymentMethods = App.g_db.GetDefaultPaymentMethod();
+            if (paymentMethods.Count > 0)
+            {
+                g_PaymentMethod = paymentMethods[0];
+            }
+            else
+            {
+                // set to On Account
+                g_PaymentMethod = App.g_db.FindPaymentMethod(1);
+            }
         }
     }
 }

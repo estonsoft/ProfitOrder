@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="TPSMobileApp.Views.CheckoutPage"
+    x:Class="ProfitOrder.Views.CheckoutPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
     x:Name="Checkout"
     Title="Checkout"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
 
-    <Grid>
+    <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
@@ -125,8 +125,46 @@
                     </Border>
 
                 </HorizontalStackLayout>
+                <BoxView
+                    BackgroundColor="gray"
+                    HeightRequest="3"
+                    Color="lightgray" />
+                <StackLayout
+                    x:Name="PaymentStack"
+                    IsVisible="false"
+                    Orientation="Horizontal"
+                    VerticalOptions="Center">
+                    <Label
+                        Margin="25,15,0,0"
+                        BackgroundColor="White"
+                        FontSize="14"
+                        Text="Payment method:"
+                        TextColor="Black"
+                        WidthRequest="115" />
+                    <Label
+                        Margin="-5,15,0,0"
+                        BackgroundColor="White"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="{Binding PayMethod}"
+                        TextColor="Black" />
+                    <Label
+                        x:Name="lblPaymentMethod"
+                        Margin="5,15,0,0"
+                        BackgroundColor="White"
+                        FontSize="14"
+                        LineBreakMode="NoWrap"
+                        Text="Change"
+                        TextColor="RoyalBlue"
+                        TextDecorations="Underline" />
+                </StackLayout>
 
-                <BoxView HeightRequest="3" Color="LightGray" />
+                <BoxView
+                    x:Name="PaymentBoxView"
+                    BackgroundColor="gray"
+                    HeightRequest="3"
+                    IsVisible="false"
+                    Color="lightgray" />
 
                 <!--  SUMMARY  -->
                 <Grid>
@@ -238,7 +276,9 @@
                                     <ffimageloading:CachedImage
                                         Margin="5"
                                         Aspect="AspectFit"
+                                        ErrorPlaceholder="missing_item.jpg"
                                         HeightRequest="90"
+                                        LoadingPlaceholder="missing_item.jpg"
                                         Source="{Binding ImageURL}"
                                         WidthRequest="90" />
 
@@ -246,7 +286,39 @@
                                         <Label FontAttributes="Bold" Text="{Binding ItemNoDisplay}" />
                                         <Label Text="{Binding CategoryDesc}" />
                                         <Label Text="{Binding QtyOrder, StringFormat='Qty: {0}'}" />
+                                        <HorizontalStackLayout>
+                                            <Label
+                                                BackgroundColor="White"
+                                                FontAttributes="Bold"
+                                                FontSize="16"
+                                                IsVisible="{Binding IsLoggedIn}"
+                                                MaxLines="1"
+                                                Text="{Binding PriceDisplay}"
+                                                TextColor="Black" />
+                                            <Label
+                                                Margin="-5,4,0,0"
+                                                BackgroundColor="White"
+                                                FontSize="12"
+                                                IsVisible="{Binding IsLoggedIn}"
+                                                Text="{Binding SizeUOM}"
+                                                TextColor="Black" />
+                                        </HorizontalStackLayout>
                                     </VerticalStackLayout>
+                                    <Label
+                                        Margin="30,10,0,0"
+                                        BackgroundColor="White"
+                                        FontSize="14"
+                                        Text="Qty"
+                                        TextColor="Black"
+                                        WidthRequest="30" />
+                                    <Label
+                                        Margin="5,5,0,0"
+                                        BackgroundColor="White"
+                                        FontAttributes="Bold"
+                                        FontSize="20"
+                                        Text="{Binding QtyOrder}"
+                                        TextColor="Black"
+                                        WidthRequest="120" />
                                 </HorizontalStackLayout>
 
                                 <BoxView HeightRequest="1" Color="LightGray" />

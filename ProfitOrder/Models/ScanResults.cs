@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-namespace TPSMobileApp.Models
+namespace ProfitOrder.Models
 {
     public class ScanResult : IEquatable<ScanResult>
     {

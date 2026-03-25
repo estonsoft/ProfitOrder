@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp
+﻿namespace ProfitOrder
 {
     public partial class MainPage : ContentPage
     {

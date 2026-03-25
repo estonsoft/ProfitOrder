@@ -1,7 +1,7 @@
 ﻿using ObjCRuntime;
 using UIKit;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     public class Program
     {

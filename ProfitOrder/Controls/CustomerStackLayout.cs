@@ -1,21 +1,17 @@
-﻿namespace TPSMobileApp.Controls;
-
-public class CustomerStackLayout : StackLayout
+﻿namespace ProfitOrder.Controls
 {
-    public static readonly BindableProperty CustNoProperty =
-        BindableProperty.Create(
-            nameof(CustNo),
-            typeof(string),
-            typeof(CustomerStackLayout),
-            default(string));
-
-    public string CustNo
+    public class CustomerStackLayout : StackLayout
     {
-        get => (string)GetValue(CustNoProperty);
-        set => SetValue(CustNoProperty, value);
-    }
+        public static readonly BindableProperty CustNoProperty = BindableProperty.Create("CustNo", typeof(string), typeof(string));
 
-    public CustomerStackLayout()
-    {
+        public string CustNo
+        {
+            get => (string)GetValue(CustNoProperty);
+            set => SetValue(CustNoProperty, value);
+        }
+
+        public CustomerStackLayout()
+        {
+        }
     }
 }

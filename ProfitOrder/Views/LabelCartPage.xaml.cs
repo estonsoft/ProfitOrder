@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Views
+﻿namespace ProfitOrder.Views
 {
     public partial class LabelCartPage : ContentPage
     {

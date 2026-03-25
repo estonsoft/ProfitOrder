@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="TPSMobileApp.Views.ReturnCartPage"
+    x:Class="ProfitOrder.Views.ReturnCartPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
-    xmlns:local="clr-namespace:TPSMobileApp.ViewModels"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
+    xmlns:local="clr-namespace:ProfitOrder.ViewModels"
     xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
-    xmlns:view="clr-namespace:TPSMobileApp.Views"
+    xmlns:view="clr-namespace:ProfitOrder.Views"
     x:Name="ReturnCart"
     Title="Return Cart"
     Shell.TabBarIsVisible="False">
@@ -18,7 +18,7 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <Grid>
+        <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -77,14 +77,13 @@
                     <HorizontalStackLayout Margin="0,15,0,0">
                         <Button
                             x:Name="btnCheckout"
-                            Margin="0"
-                            Padding="0"
                             BackgroundColor="Blue"
                             Clicked="btnCheckout_Clicked"
                             Command="{Binding OpenCheckout}"
                             CornerRadius="10"
                             FontAttributes="Bold"
                             FontSize="14"
+                            HeightRequest="30"
                             Text="Submit Return"
                             TextColor="White"
                             WidthRequest="130" />
@@ -116,20 +115,16 @@
                     Color="lightgray" />
 
             </VerticalStackLayout>
-            <syncfusion:SfListView
+            <CollectionView
                 x:Name="ItemsListCart"
                 Grid.Row="2"
-                AutoFitMode="DynamicHeight"
-                ItemsSourceChangeCachingStrategy="ClearItems"
                 SelectionMode="None">
-                <syncfusion:SfListView.ItemTemplate>
+                <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell>
-                            <controls:CustomListCreditItem x:Name="CustomListCreditItem" Grid.Row="0" />
-                        </ViewCell>
+                        <controls:CustomListCreditItem x:Name="CustomListCreditItem" Grid.Row="0" />
                     </DataTemplate>
-                </syncfusion:SfListView.ItemTemplate>
-            </syncfusion:SfListView>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
             <controls:CustomToolbar Grid.Row="3" />
         </Grid>
     </ContentPage.Content>

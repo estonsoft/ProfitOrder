@@ -1,4 +1,9 @@
-﻿namespace TPSMobileApp.Data
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Zebra.Sdk.Printer.Discovery;
+
+namespace ProfitOrder.Data
 {
     public interface IPrinterDiscovery
     {

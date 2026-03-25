@@ -1,6 +1,9 @@
-﻿using SQLite;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using SQLite;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     public class Customer
     {
@@ -35,10 +38,9 @@ namespace TPSMobileApp
         public string TextMessageCode { get; set; }
         public int ShoppingCartItems { get; set; }
         public bool IsShoppingCart { get; set; }
-
-        public decimal MinOrderAmount { get; set; }
-        public decimal ShippingFee { get; set; }
-        public decimal MinOrderQty { get; set; }
+        public decimal MinOrderAmount { get; internal set; }
+        public decimal MinOrderQty { get; internal set; }
+        public decimal ShippingFee { get; internal set; }
 
         public Customer()
         {

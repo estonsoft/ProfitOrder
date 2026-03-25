@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Views
+﻿namespace ProfitOrder.Views
 {
     public partial class ReorderItemsPage : ContentPage
     {
@@ -19,7 +19,6 @@
 
         public async void RefreshList()
         {
-            ReorderItemsList.ItemsSource = null;
             ReorderItemsList.ItemsSource = App.g_ReorderItemList;
 
             List<Item> lstItem = App.g_db.GetItems();

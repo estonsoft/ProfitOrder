@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using Zebra.Sdk.Printer.Discovery;
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     public partial class LabelPrintPage : ContentPage
     {

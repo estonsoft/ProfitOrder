@@ -1,43 +1,44 @@
-﻿namespace TPSMobileApp.Controls;
-
-public class NumericEntryBehavior : Behavior<Entry>
+﻿namespace ProfitOrder.Controls
 {
-    protected override void OnAttachedTo(Entry entry)
+    public class NumericEntryBehavior : Behavior<Entry>
     {
-        entry.TextChanged += OnEntryTextChanged;
-        base.OnAttachedTo(entry);
-    }
-
-    protected override void OnDetachingFrom(Entry entry)
-    {
-        entry.TextChanged -= OnEntryTextChanged;
-        base.OnDetachingFrom(entry);
-    }
-
-    private static void OnEntryTextChanged(object sender, TextChangedEventArgs args)
-    {
-        if (sender is not Entry entry)
-            return;
-
-        var current = args.NewTextValue;
-
-        if (string.IsNullOrWhiteSpace(current))
+        protected override void OnAttachedTo(Entry entry)
         {
-            entry.Text = "0";
-            return;
+            entry.TextChanged += OnEntryTextChanged;
+            base.OnAttachedTo(entry);
         }
 
-        current = current.TrimStart('0');
-        if (current.Length == 0)
-            current = "0";
-
-        if (int.TryParse(current, out var value))
+        protected override void OnDetachingFrom(Entry entry)
         {
-            entry.Text = value.ToString();
+            entry.TextChanged -= OnEntryTextChanged;
+            base.OnDetachingFrom(entry);
         }
-        else
+
+        private static void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
-            entry.Text = args.OldTextValue;
+            var current = args.NewTextValue;
+            current = current.TrimStart('0');
+
+            if (current.Length == 0)
+            {
+                current = "0";
+            }
+
+            if (string.IsNullOrWhiteSpace(args.NewTextValue))
+            {
+                ((Entry)sender).Text = 0.ToString();
+                return;
+            }
+
+            int iValue = 0;
+            if (!int.TryParse(args.NewTextValue, out iValue))
+            {
+                ((Entry)sender).Text = args.OldTextValue;
+            }
+            else
+            {
+                ((Entry)sender).Text = iValue.ToString();
+            }
         }
     }
 }

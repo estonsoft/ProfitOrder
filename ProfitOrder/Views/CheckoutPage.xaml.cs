@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Views
+﻿namespace ProfitOrder.Views
 {
     public partial class CheckoutPage : ContentPage
     {
@@ -89,6 +89,16 @@
             set
             {
                 _IsPickupHighlighted = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string PayMethod
+        {
+            get { return App.g_PaymentMethod.DisplayText; }
+            set
+            {
+                App.g_PaymentMethod.DisplayText = value;
                 OnPropertyChanged();
             }
         }
@@ -203,11 +213,26 @@
                 IsDeliveryHighlighted = true;
                 IsPickupHighlighted = false;
             }
+            if (App.g_PaymentProvider == "sobonet")
+            {
+                PaymentStack.IsVisible = true;
+                PaymentBoxView.IsVisible = true;
+
+                lblPaymentMethod.GestureRecognizers.Add(new TapGestureRecognizer
+                {
+                    Command = new Command(() => OnPaymentMethodChangeClicked(null)),
+                });
+            }
         }
 
         private async void OnDeliveryOptionsClicked(object obj)
         {
             await Shell.Current.GoToAsync("DeliveryOptionsPage");
+        }
+
+        private async void OnPaymentMethodChangeClicked(object obj)
+        {
+            await App.g_Shell.GoToPaymentMethod();
         }
 
         private async void OnPaymentMethodClicked(object obj)
@@ -229,6 +254,31 @@
             RefreshList();
 
             App.g_CurrentPage = "CheckoutPage";
+        }
+
+        public void SetPaymentMethod()
+        {
+            PayMethod = App.g_PaymentMethod.DisplayText;
+        }
+
+        public decimal GetOrderTotal()
+        {
+            decimal dTotal = 0;
+
+            foreach (Item item in (List<Item>)ItemsListCart.ItemsSource)
+            {
+                try
+                {
+                    if (item.QtyOrder > 0)
+                    {
+                        item.PriceOrder = item.Price;
+                        dTotal += item.PriceOrder * item.QtyOrder;
+                    }
+                }
+                catch { }
+            }
+
+            return dTotal;
         }
 
         public void UpdateTotals()
@@ -280,21 +330,7 @@
         {
             if (App.g_IsSalesUser)
             {
-                if (dCartTotal >= App.g_Customer.MinOrderAmount)
-                {
-                    if (iCartPieces >= App.g_Customer.MinOrderQty)
-                    {
-                        await App.g_Shell.GoToSubmitOrderPage();
-                    }
-                    else
-                    {
-                        await Shell.Current.DisplayAlertAsync("Profit Order", "Order minimum of quantity min " + App.g_Customer.MinOrderQty + " not met, please add additional items/quantities to order", "Ok");
-                    }
-                }
-                else
-                {
-                    await Shell.Current.DisplayAlertAsync("Profit Order", "Order minimum of order min $" + App.g_Customer.MinOrderAmount + " not met, please add additional items/quantities to order", "Ok");
-                }
+                await App.g_Shell.GoToSubmitOrderPage();
             }
             else
             {
@@ -306,7 +342,7 @@
                     }
                     else
                     {
-                        await Shell.Current.DisplayAlertAsync("Profit Order", "Order minimum of quantity min "+App.g_Customer.MinOrderQty+" not met, please add additional items/quantities to order", "Ok");
+                        await Shell.Current.DisplayAlertAsync("Profit Order", "Order minimum of quantity min " + App.g_Customer.MinOrderQty + " not met, please add additional items/quantities to order", "Ok");
                     }
                 }
                 else

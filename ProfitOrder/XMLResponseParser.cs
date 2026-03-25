@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     internal class XMLResponseParser
     {
-        public static async void commService_GetBannersCompleted(String response)
+        public static void commService_GetBannersCompleted(String response)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace TPSMobileApp
         }
 
 
-        public static async void commService_GetCategoriesAndSubcategoriesCompleted(String response)
+        public static void commService_GetCategoriesAndSubcategoriesCompleted(String response)
         {
             Debug.WriteLine("Get Categories and Subcategories returned");
 
@@ -54,15 +54,10 @@ namespace TPSMobileApp
             {
                 String sCategories = response;
                 String[] aCategories = sCategories.Split('~');
+                List<Category> categories = new List<Category>();
+                List<Subcategory> subcategories = new List<Subcategory>();
                 if (aCategories.Length > 1)
                 {
-                    //Database db = new Database();
-
-                    App.g_db.BeginTransaction();
-
-                    App.g_db.DeleteCategories();
-                    App.g_db.DeleteSubcategories();
-
                     foreach (String s in aCategories)
                     {
                         String[] aCategory = s.Split("|");
@@ -80,15 +75,7 @@ namespace TPSMobileApp
                             cat.ImageURL = Constants.CategoryImageUrl + cat.Code + ".png";
                             cat.Rank = Convert.ToInt32(aCategory[3].Trim());
                             cat.HomePage = Convert.ToInt32(aCategory[4].Trim());
-
-                            try
-                            {
-                                //App.g_db.SaveCategory(cat);
-                            }
-                            catch (Exception ex)
-                            {
-                                String sMsg = ex.Message;
-                            }
+                            categories.Add(cat);
                         }
                         else
                         {
@@ -97,30 +84,19 @@ namespace TPSMobileApp
                             subcat.Code = aCategory[1];
                             subcat.Description = aCategory[2].Trim();
                             subcat.Rank = Convert.ToInt32(aCategory[3].Trim());
-
-                            try
-                            {
-                                //App.g_db.SaveSubcategory(subcat);
-                            }
-                            catch (Exception ex)
-                            {
-                                String sMsg = ex.Message;
-                            }
+                            subcategories.Add(subcat);
                         }
                     }
+                    App.g_db.BeginTransaction();
+
+                    App.g_db.DeleteCategories();
+                    App.g_db.DeleteSubcategories();
+                    App.g_db.SaveCategory(categories);
+                    App.g_db.SaveSubcategory(subcategories);
+
+                    App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
 
                     App.g_db.CommitTransaction();
-
-                    //App.g_CategoryList = App.g_db.GetCategories();
-                    App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
-                }
-
-                try
-                {
-                    App.g_HomePage.LoadCategories();
-                }
-                catch (Exception ex)
-                {
                 }
 
                 try
@@ -163,7 +139,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_GetCategoriesAndSubcategoriesCustCompleted(String response)
+        public static void commService_GetCategoriesAndSubcategoriesCustCompleted(String response)
         {
             Debug.WriteLine("Get Categories and Subcategories Cust returned");
 
@@ -228,13 +204,6 @@ namespace TPSMobileApp
                         }
                     }
                 }
-                try
-                {
-
-                }
-                catch (Exception ex)
-                {
-                }
 
                 try
                 {
@@ -288,7 +257,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_GetItemsCompletedAsync(String response)
+        public static void commService_GetItemsCompletedAsync(String response)
         {
             try
             {
@@ -489,6 +458,7 @@ namespace TPSMobileApp
                             }
                             catch
                             {
+
                             }
                         }
                         try
@@ -521,6 +491,69 @@ namespace TPSMobileApp
                         catch
                         {
                             item.SubsubcategoryDesc = "";
+                        }
+                        try
+                        {
+                            item.ItemRefNo = aItem[35];
+                        }
+                        catch
+                        {
+                            item.ItemRefNo = "";
+                        }
+                        try
+                        {
+                            item.LongDescription = aItem[36];
+                        }
+                        catch
+                        {
+                            item.LongDescription = "";
+                        }
+                        try
+                        {
+                            item.BuildTo = Convert.ToInt32(aItem[37]);
+                        }
+                        catch
+                        {
+                            item.BuildTo = 0;
+                        }
+                        try
+                        {
+                            item.Last4WeekSales = Convert.ToInt32(aItem[38]);
+                        }
+                        catch
+                        {
+                            item.Last4WeekSales = 0;
+                        }
+                        try
+                        {
+                            item.Last13WeekSales = Convert.ToInt32(aItem[39]);
+                            if (item.Last13WeekSales != 0)
+                            {
+                                item.AverageWeeklySales = item.Last13WeekSales / 13;
+                            }
+                            else
+                            {
+                                item.AverageWeeklySales = 0;
+                            }
+                        }
+                        catch
+                        {
+                            item.Last13WeekSales = 0;
+                            item.AverageWeeklySales = 0;
+                        }
+                        if (App.g_IsBuildToEnabled)
+                        {
+                            item.IsBuildTo = true;
+                        }
+                        if (App.g_IsBuildToViewOnly)
+                        {
+                            item.IsBuildToViewOnly = true;
+                            item.IsBuildToTextView = false;
+                        }
+                        else
+                        {
+                            item.IsBuildToViewOnly = false;
+                            item.IsBuildToTextView = true;
                         }
 
                         item.AddToOrderDisplay = "Add To Order";
@@ -575,7 +608,7 @@ namespace TPSMobileApp
         }
 
 
-        public static async void commService_GetItemQOHCompletedAsync(String response)
+        public static void commService_GetItemQOHCompletedAsync(String response)
         {
             try
             {
@@ -632,7 +665,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_GetItemQOH2CompletedAsync(String response)
+        public static void commService_GetItemQOH2CompletedAsync(String response)
         {
             Debug.WriteLine("Get Item QOH 2 returned");
 
@@ -691,9 +724,9 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_ValidateLoginCompletedAsync(String response)
+        public static void commService_ValidateLoginCompletedAsync(String response)
         {
-            Debug.WriteLine("ValidateLogin Complete");
+            Console.WriteLine("ValidateLogin Complete");
             try
             {
                 String sUser = response;
@@ -702,13 +735,14 @@ namespace TPSMobileApp
                 //await db.SaveCustomerAsync(App.g_Customer);
 
                 String[] aInfo = sUser.Split("~");
+
                 String[] aUser = aInfo[0].Split("|");
                 String[] aCust = aInfo[1].Split("|");
                 String OldCustNo = "0";
-                String userValue = aUser[0];
+
                 try
                 {
-                    if (userValue.Equals("V"))
+                    if (aUser[0] == "V")
                     {
                         try
                         {
@@ -908,9 +942,71 @@ namespace TPSMobileApp
                                 App.g_IsChainManager = false;
                                 App.g_db.SaveSetting("IsChainManager", "0");
                             }
+                            try
+                            {
+                                if (aUser[18] == "0")
+                                {
+                                    App.g_IsShowSubcategories = false;
+                                }
+                                else
+                                {
+                                    App.g_IsShowSubcategories = true;
+                                }
+                                App.g_db.SaveSetting("ShowSubcategories", aUser[18]);
+                            }
+                            catch
+                            {
+                                App.g_IsShowSubcategories = true;
+                                App.g_db.SaveSetting("ShowSubcategories", "1");
+                            }
+                            try
+                            {
+                                if (aUser[19] == "1")
+                                {
+                                    App.g_IsBuildToEnabled = true;
+                                }
+                                else
+                                {
+                                    App.g_IsBuildToEnabled = false;
+                                }
+                                App.g_db.SaveSetting("IsBuildToEnabled", aUser[19]);
+                            }
+                            catch
+                            {
+                                App.g_IsBuildToEnabled = false;
+                                App.g_db.SaveSetting("IsBuildToEnabled", "0");
+                            }
+                            try
+                            {
+                                if (aUser[20] == "1")
+                                {
+                                    App.g_IsBuildToViewOnly = true;
+                                }
+                                else
+                                {
+                                    App.g_IsBuildToViewOnly = false;
+                                }
+                                App.g_db.SaveSetting("IsBuildToViewOnly", aUser[19]);
+                            }
+                            catch
+                            {
+                                App.g_IsBuildToViewOnly = false;
+                                App.g_db.SaveSetting("IsBuildToViewOnly", "0");
+                            }
 
                             if (!App.g_IsSalesUser)
                             {
+                                try
+                                {
+                                    App.g_PaymentProvider = aUser[17];
+                                    App.g_db.SaveSetting("PaymentProvider", aUser[17]);
+                                }
+                                catch
+                                {
+                                    App.g_PaymentProvider = "";
+                                    App.g_db.SaveSetting("PaymentProvider", "");
+                                }
+
                                 App.g_Customer.Status = "9";
                                 App.g_Customer.CompanyName = aCust[1];
                                 App.g_Customer.Warehouse = Convert.ToInt32(aCust[3]);
@@ -925,11 +1021,6 @@ namespace TPSMobileApp
                                 App.g_Customer.Pickup = Convert.ToInt32(aCust[11]);
                                 App.g_Customer.CreditLimit = Convert.ToDecimal(aCust[12]);
                                 App.g_Customer.ARBalance = Convert.ToDecimal(aCust[13]);
-
-                                App.g_Customer.MinOrderAmount = Convert.ToDecimal(aCust[20]);
-                                App.g_Customer.ShippingFee = Convert.ToDecimal(aCust[21]);
-                                App.g_Customer.MinOrderQty = Convert.ToDecimal(aCust[22]);
-
 
                                 Location loc = new Location();
                                 loc.LocationId = 1;
@@ -956,6 +1047,9 @@ namespace TPSMobileApp
 
                         if ((App.g_IsSalesUser) || (App.g_IsChainManager))
                         {
+                            App.g_PaymentProvider = "";
+                            App.g_db.SaveSetting("PaymentProvider", "");
+
                             App.CommManager.GetSalespersonCustomers(App.g_UserName);
                         }
 
@@ -964,7 +1058,7 @@ namespace TPSMobileApp
                             //App.g_db.ClearCartItems();
                             //App.g_db.DeleteOrderHistory();
                             //App.g_db.DeleteReorderItems();
-                            //await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
+                            //App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
 
                             if (App.g_UserName.ToLower() == "app_test")
                             {
@@ -973,9 +1067,7 @@ namespace TPSMobileApp
                             }
                         }
 
-
-                        App.CommManager?.GetOrderHistory(App.g_Customer.CustNo);
-
+                        App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
                         App.RefreshAll();
 
                         App.g_db.SaveSetting("LoggedIn", "1");
@@ -985,14 +1077,14 @@ namespace TPSMobileApp
                         {
                             MainThread.BeginInvokeOnMainThread(async () =>
                             {
-                                _ = App.g_Shell.GoToHome();
+                                _ = await App.g_Shell.GoToHome();
                             });
                         }
                         catch
                         {
                         }
                     }
-                    else if (userValue == "P")
+                    else if (aUser[0] == "P")
                     {
                         try
                         {
@@ -1001,13 +1093,12 @@ namespace TPSMobileApp
                                 await Shell.Current.DisplayAlertAsync("Profit Order", "Invalid password.  Please try again.", "Ok");
                                 App.g_LoginPage.HideAnimation();
                             });
-                            return;
                         }
                         catch
                         {
                         }
                     }
-                    else if (userValue == "I")
+                    else if (aUser[0] == "I")
                     {
                         try
                         {
@@ -1016,13 +1107,12 @@ namespace TPSMobileApp
                                 await Shell.Current.DisplayAlertAsync("Profit Order", "Inactive account.  Please contact Customer Service.", "Ok");
                                 App.g_LoginPage.HideAnimation();
                             });
-                            return;
                         }
                         catch
                         {
                         }
                     }
-                    else if (userValue == "U")
+                    else if (aUser[0] == "U")
                     {
                         try
                         {
@@ -1031,13 +1121,12 @@ namespace TPSMobileApp
                                 await Shell.Current.DisplayAlertAsync("Profit Order", "Account does not exist.", "Ok");
                                 App.g_LoginPage.HideAnimation();
                             });
-                            return;
                         }
                         catch
                         {
                         }
                     }
-                    else if (userValue == "X")
+                    else if (aUser[0] == "X")
                     {
                         try
                         {
@@ -1046,7 +1135,6 @@ namespace TPSMobileApp
                                 await Shell.Current.DisplayAlertAsync("Profit Order", "Error attempting to login.", "Ok");
                                 App.g_LoginPage.HideAnimation();
                             });
-                            return;
                         }
                         catch
                         {
@@ -1062,16 +1150,11 @@ namespace TPSMobileApp
                             await Shell.Current.DisplayAlertAsync("Profit Order", "Error attempting to login.", "Ok");
                             App.g_LoginPage.HideAnimation();
                         });
-                        return;
                     }
                     catch
                     {
                     }
                 }
-                MainThread.BeginInvokeOnMainThread(async () =>
-                {
-                    await AppShell.Current.Navigation.PopAsync(true);
-                });
             }
             catch (Exception ex)
             {
@@ -1087,9 +1170,11 @@ namespace TPSMobileApp
                 {
                 }
             }
+
+            //await AppShell.Current.Navigation.PopAsync(true);
         }
 
-        public static async void commService_GetSettingsCompletedAsync(String response)
+        public static void commService_GetSettingsCompletedAsync(String response)
         {
             Debug.WriteLine("GetSettings Complete");
 
@@ -1244,7 +1329,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_SubmitOrderCompletedAsync(String response)
+        public static void commService_SubmitOrderCompletedAsync(String response)
         {
             try
             {
@@ -1325,7 +1410,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_SubmitReturnCompletedAsync(String response)
+        public static void commService_SubmitReturnCompletedAsync(String response)
         {
             try
             {
@@ -1385,7 +1470,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_GetOrderHistoryCompletedAsyncOld(String response)
+        public static void commService_GetOrderHistoryCompletedAsyncOld(String response)
         {
             try
             {
@@ -1394,6 +1479,8 @@ namespace TPSMobileApp
                 String sOrders = response;
                 String[] aOrders = sOrders.Split('~');
                 List<String> lstHeader = new List<String>();
+
+                App.g_db.DeleteReorderItems();
 
                 if (aOrders.Length > 1)
                 {
@@ -1593,7 +1680,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_GetOrderHistoryCompletedAsync(String response)
+        public static void commService_GetOrderHistoryCompletedAsync(String response)
         {
             Debug.WriteLine("Get Order History Complete");
 
@@ -1714,49 +1801,6 @@ namespace TPSMobileApp
                         }
                         od.ImageURL = Constants.ItemImageUrl + od.ItemNo.ToString() + ".jpg";
 
-                        //ReorderItem ri = new ReorderItem();
-                        //ri.ItemNo = Convert.ToInt32(aOrder[7]);
-                        //ri.ItemNoDisplay = aOrder[7];
-                        //ri.LastPurchDate = Convert.ToDateTime(aOrder[2]);
-                        //ri.LastPurchDateDisplay = aOrder[2];
-                        //ri.QtyLastOrder = Convert.ToInt32(aOrder[8]);
-                        //ri.QtyOrderDisplay = aOrder[8];
-                        //ri.Description = aOrder[11];
-                        //ri.Price = Convert.ToDecimal(aOrder[9]);
-                        //ri.PriceDisplay = string.Format("{0:C}", ri.Price);
-                        //ri.ImageURL = Constants.ItemImageUrl + ri.ItemNo.ToString() + ".jpg";
-                        //ri.UPC = aOrder[10];
-                        //if (ri.UPC.Length > 0)
-                        //{
-                        //    ri.ItemNoDisplayUPC = "(" + ri.UPC + ")";
-                        //}
-                        //else
-                        //{
-                        //    ri.ItemNoDisplayUPC = "";
-                        //}
-                        //ri.UOM = aOrder[12];
-                        //ri.SellUnitsInPurch = aOrder[13];
-                        //ri.SizeDisplay = ri.UOM + "/" + ri.SellUnitsInPurch;
-                        //ri.SizeUOM = "/" + ri.UOM;
-                        //ri.Size = aOrder[14];
-                        //ri.Form = aOrder[15];
-                        //ri.CategoryCode = aOrder[16];
-                        //ri.CategoryDesc = aOrder[17];
-                        //ri.SubcategoryCode = aOrder[18];
-                        //ri.SubcategoryDesc = aOrder[19];
-                        //ri.VendorId = aOrder[20];
-                        //ri.VendorName = aOrder[21];
-                        //ri.Status = aOrder[22];
-                        //try
-                        //{
-                        //    ri.QOH = Convert.ToInt32(aOrder[23].Trim());
-                        //}
-                        //catch
-                        //{
-                        //    ri.QOH = 0;
-                        //}
-                        //ri.ImageURL = Constants.ItemImageUrl + ri.ItemNo.ToString() + ".jpg";
-
                         try
                         {
                             App.g_db.SaveOrderDetail(od);
@@ -1780,7 +1824,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_GetSalespersonCustomersCompletedAsync(String response)
+        public static void commService_GetSalespersonCustomersCompletedAsync(String response)
         {
             try
             {
@@ -1792,9 +1836,8 @@ namespace TPSMobileApp
 
                 if (aCustomers.Length > 1)
                 {
-                    App.g_db.BeginTransaction();
-
-                    App.g_db.DeleteSalesCustomers();
+                    List<SalesCustomer> lstCustomers = new List<SalesCustomer>();
+                    // Process items in parallel using all available CPU cores
 
                     foreach (String s in aCustomers)
                     {
@@ -1803,7 +1846,6 @@ namespace TPSMobileApp
                         {
                             continue;
                         }
-
                         SalesCustomer c = new SalesCustomer();
                         c.CustNo = aCust[0];
                         c.CompanyName = aCust[1];
@@ -1873,26 +1915,22 @@ namespace TPSMobileApp
                             c.MinOrderQty = Decimal.Parse(aCust[17]);
                         }
                         catch { }
-
-                        try
-                        {
-                            App.g_db.SaveSalesCustomer(c);
-                        }
-                        catch (Exception ex)
-                        {
-                            String sMsg = ex.Message;
-                        }
+                        Debug.WriteLine("Added Items = " + s);
+                        lstCustomers.Add(c);
                     }
-
+                    App.g_db.BeginTransaction();
+                    App.g_db.DeleteSalesCustomers();
+                    App.g_db.SaveSalesCustomer(lstCustomers);
                     App.g_db.CommitTransaction();
                 }
             }
             catch (Exception ex)
             {
+                Debug.WriteLine("Exeception in parsing SalesPerson" + ex.Message);
             }
         }
 
-        public static async void commService_GetFlyerItemsPDFCompleted(String response)
+        public static void commService_GetFlyerItemsPDFCompleted(String response)
         {
             Debug.WriteLine("GetFlyerItemsPDFCompleted");
 
@@ -1970,7 +2008,7 @@ namespace TPSMobileApp
             }
         }
 
-        public static async void commService_ValidateUserActiveCompletedAsync(String response)
+        public static void commService_ValidateUserActiveCompletedAsync(String response)
         {
             String sUser = response;
             if (sUser == "0")
@@ -1994,6 +2032,38 @@ namespace TPSMobileApp
                 catch (Exception ex)
                 {
                 }
+            }
+        }
+
+        private async void commService_ValidateTokenCompletedAsync(object sender, string response)
+        {
+            String sToken = response;
+            string[] aToken = sToken.Split('|');
+
+            if (aToken[0] == "S")
+            {
+                try
+                {
+                    // save token
+
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        App.g_PaymentMethodEdit.Token = aToken[2];
+                        App.g_db.SavePaymentMethod(App.g_PaymentMethodEdit);
+                        App.g_PaymentMethodPage.RefreshList();
+
+                        await App.Current.MainPage.DisplayAlert("Profit Order", "Card successfully verified.", "Ok");
+                        App.g_Shell.GoToPaymentMethod();
+                    });
+                }
+                catch (Exception ex)
+                {
+                }
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Profit Order", aToken[1], "Ok");
+                App.g_Shell.GoToPaymentMethodEdit();
             }
         }
     }

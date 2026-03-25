@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="TPSMobileApp.Views.ReorderItemsPage"
+    x:Class="ProfitOrder.Views.ReorderItemsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
-    xmlns:local="clr-namespace:TPSMobileApp.ViewModels"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
+    xmlns:local="clr-namespace:ProfitOrder.ViewModels"
     xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     Title="Reorder Items">
 
@@ -31,7 +31,7 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <Grid>
+        <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
@@ -39,27 +39,16 @@
             </Grid.RowDefinitions>
 
             <controls:CustomHeader Grid.Row="0" />
-
-            <StackLayout Grid.Row="1">
-                <!--
-                <Label Text="Reorder Items" Margin="0,15,0,10" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center"  BackgroundColor="White" TextColor="Blue"/>
-                <BoxView BackgroundColor="gray" Color="lightgray" HeightRequest="3" HorizontalOptions="Fill" VerticalOptions="Fill" />
-                -->
-                <syncfusion:SfListView
-                    x:Name="ReorderItemsList"
-                    AutoFitMode="DynamicHeight"
-                    ItemAppearing="ReorderItemsList_ItemAppearing"
-                    ItemsSourceChangeCachingStrategy="ClearItems"
-                    SelectionMode="None">
-                    <syncfusion:SfListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <controls:CustomListItem x:Name="CustomListItem" Grid.Row="0" />
-                            </ViewCell>
-                        </DataTemplate>
-                    </syncfusion:SfListView.ItemTemplate>
-                </syncfusion:SfListView>
-            </StackLayout>
+            <CollectionView
+                x:Name="ReorderItemsList"
+                Grid.Row="1"
+                SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:CustomListItem x:Name="CustomListItem" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
             <controls:CustomToolbar Grid.Row="2" />
         </Grid>

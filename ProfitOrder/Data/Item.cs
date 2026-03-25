@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     public class Item
     {
@@ -74,6 +74,7 @@ namespace TPSMobileApp
         public int QtyLast90 { get; set; }
         public string QtyLast90Display { get; set; }
         public bool IsLastPurchStack { get; set; }
+        public bool IsLastPurchStack2 { get; set; }
         public int IsPriceVisible { get; set; }
         public bool IsSalesUser { get; set; }
         public bool IsChainManager { get; set; }
@@ -93,7 +94,15 @@ namespace TPSMobileApp
         public string SubsubcategoryCode { get; set; }
         public string SubsubcategoryDesc { get; set; }
         public string ItemRefNo { get; set; }
+        public string LongDescription { get; set; }
         public int LineNo { get; set; }
+        public int BuildTo { get; set; }
+        public int Last4WeekSales { get; set; }
+        public int Last13WeekSales { get; set; }
+        public decimal AverageWeeklySales { get; set; }
+        public bool IsBuildTo { get; set; }
+        public bool IsBuildToTextView { get; set; }
+        public bool IsBuildToViewOnly { get; set; }
 
         public static void SetListItem(Item i, string Type)
         {
@@ -101,7 +110,7 @@ namespace TPSMobileApp
 
             i.IsStepperVisible = false;
             i.IsAddToOrderVisible = true;
-            i.IsBoxViewVisible = true;
+            i.IsBoxViewVisible = true;            
 
             try
             {
@@ -196,10 +205,24 @@ namespace TPSMobileApp
             if (i.QtyLastOrder == 0)
             {
                 i.IsLastPurchStack = false;
+                i.IsLastPurchStack2 = false;
             }
             else
             {
                 i.IsLastPurchStack = true;
+                i.IsLastPurchStack2 = true;
+            }
+            // override for now
+            i.IsLastPurchStack = true;
+            i.IsLastPurchStack2 = true;
+
+            if (App.g_IsBuildToEnabled)
+            {
+                i.IsBuildTo = true;
+            }
+            else
+            {
+                i.IsBuildTo = false;
             }
 
             if (App.g_IsSalesUser)

@@ -1,6 +1,6 @@
-﻿using TPSMobileApp.ViewModels;
+﻿using ProfitOrder.ViewModels;
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     public partial class CategoryPage : ContentPage
     {
@@ -22,11 +22,18 @@ namespace TPSMobileApp.Views
             App.g_Category.Code = "";
             App.g_Category.Description = "ALL CATEGORIES";
 
-            App.g_Subcategory.Code = "";
-            App.g_Subcategory.Description = "ALL SUBCATEGORIES";
+            if (!App.g_IsShowSubcategories)
+            {
+                App.g_Subcategory.Code = "";
+                App.g_Subcategory.Description = "";
 
-            App.g_Subsubcategory.Code = "";
-            App.g_Subsubcategory.Description = "ALL SUB-SUBCATEGORIES";
+                App.g_Subsubcategory.Code = "";
+                App.g_Subsubcategory.Description = "";
+            }
+            else
+            {
+
+            }
 
             App.g_SearchText = "";
 
@@ -41,14 +48,18 @@ namespace TPSMobileApp.Views
             //App.g_Shell.GoToItemSearch();
         }
 
-        private async void CategoriesListSearch_ItemTapped(object sender, Syncfusion.Maui.ListView.ItemTappedEventArgs e)
-        {
-            App.g_Category = (Category)e.DataItem;
+        private async void CategoriesListSearch_ItemTapped(object sender, SelectionChangedEventArgs e)
+        {   
+            var selectedCategory = e.CurrentSelection?.FirstOrDefault() as Category;
+            if (selectedCategory == null)
+                return;
+
+            App.g_Category = selectedCategory;
             App.g_ScanBarcode = "";
 
             int iSubcategories = App.g_db.GetSubcategoryCount(App.g_Category.Code);
 
-            if (iSubcategories > 0)
+            if ((iSubcategories > 0) && App.g_IsShowSubcategories)
             {
                 await App.g_Shell.GoToSubcategories();
             }

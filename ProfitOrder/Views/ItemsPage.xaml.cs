@@ -1,6 +1,6 @@
-﻿using TPSMobileApp.ViewModels;
+﻿using ProfitOrder.ViewModels;
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     public partial class ItemsPage : ContentPage
     {

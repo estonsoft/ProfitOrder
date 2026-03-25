@@ -1,6 +1,6 @@
-﻿using TPSMobileApp.Views;
+﻿using ProfitOrder.Views;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     public partial class AppShell : Shell
     {
@@ -10,7 +10,6 @@ namespace TPSMobileApp
         //MenuItem labelMenu;
         MenuItem myAccountMenu;
         MenuItem flyerMenu;
-
         Boolean bIsCustMenuVisible = false;
         Boolean bIsMyAccountMenuVisible = false;
         Boolean bIsMonthlyFlyerMenuVisible = false;
@@ -18,6 +17,7 @@ namespace TPSMobileApp
         public AppShell()
         {
             InitializeComponent();
+
             App.g_Shell = this;
 
             //LogoURL = Constants.LogoUrl;
@@ -38,6 +38,7 @@ namespace TPSMobileApp
             Routing.RegisterRoute(nameof(SubmitOrderPage), typeof(SubmitOrderPage));
             Routing.RegisterRoute(nameof(SubmitReturnPage), typeof(SubmitReturnPage));
             Routing.RegisterRoute(nameof(PaymentMethodPage), typeof(PaymentMethodPage));
+            Routing.RegisterRoute(nameof(PaymentMethodEditPage), typeof(PaymentMethodEditPage));
             Routing.RegisterRoute(nameof(PurchaseHistoryPage), typeof(PurchaseHistoryPage));
             Routing.RegisterRoute(nameof(PurchaseHistoryDetailPage), typeof(PurchaseHistoryDetailPage));
             Routing.RegisterRoute(nameof(ReorderItemsPage), typeof(ReorderItemsPage));
@@ -74,11 +75,11 @@ namespace TPSMobileApp
             }
         }
 
-        public async void Logout()
+        public void Logout()
         {
             App.g_db.SaveSetting("LoggedIn", "0");
             App.g_IsLoggedIn = false;
-            await App.g_Shell.GoToLogin();
+            App.g_Shell.GoToLogin();
         }
 
         public async Task<int> GoToHome()
@@ -98,7 +99,7 @@ namespace TPSMobileApp
         {
             if (App.g_db.GetOrderCartItems().Count == 0)
             {
-                await Shell.Current.DisplayAlertAsync("Profit Order", "Your shopping cart is empty", "Ok");
+                await App.Current.MainPage.DisplayAlert("Profit Order", "Your shopping cart is empty", "Ok");
                 return 0;
             }
 
@@ -110,7 +111,7 @@ namespace TPSMobileApp
         {
             if (App.g_db.GetReturnCartItems().Count == 0)
             {
-                await Shell.Current.DisplayAlertAsync("Profit Order", "Your return cart is empty", "Ok");
+                await App.Current.MainPage.DisplayAlert("Profit Order", "Your return cart is empty", "Ok");
                 return 0;
             }
 
@@ -122,7 +123,7 @@ namespace TPSMobileApp
         {
             if (App.g_db.GetLabelCartItems().Count == 0)
             {
-                await Shell.Current.DisplayAlertAsync("Profit Order", "Your label print cart is empty", "Ok");
+                await App.Current.MainPage.DisplayAlert("Profit Order", "Your label print cart is empty", "Ok");
                 return 0;
             }
 
@@ -207,6 +208,18 @@ namespace TPSMobileApp
             await Current.GoToAsync("//HomePage/ShoppingCartPage/CheckoutPage");
             return 0;
         }
+        public async Task<int> GoToPaymentMethod()
+        {
+            App.g_HeaderTitle = "Payment Methods";
+            await Current.GoToAsync("//HomePage/ShoppingCartPage/CheckoutPage/PaymentMethodPage");
+            return 0;
+        }
+        public async Task<int> GoToPaymentMethodEdit()
+        {
+            App.g_HeaderTitle = "Payment Method Edit";
+            await Current.GoToAsync("//HomePage/ShoppingCartPage/CheckoutPage/PaymentMethodPage/PaymentMethodEditPage");
+            return 0;
+        }
         public async Task<int> GoToSubmitOrderPage()
         {
             App.g_HeaderTitle = "Submit Order";
@@ -223,20 +236,20 @@ namespace TPSMobileApp
         {
             if (!App.g_IsMonthlyFlyer)
             {
-                await Shell.Current.DisplayAlertAsync("Profit Order", "No active monthly ads at this time", "Ok");
+                await App.Current.MainPage.DisplayAlert("Profit Order", "No active monthly ads at this time", "Ok");
                 return 0;
             }
 
             int iNow = Convert.ToInt32(DateTime.Now.ToString("1yyMMdd"));
             if ((iNow < App.g_FlyerStartDate) || (iNow > App.g_FlyerEndDate))
             {
-                await Shell.Current.DisplayAlertAsync("Profit Order", "No active monthly ads at this time", "Ok");
+                await App.Current.MainPage.DisplayAlert("Profit Order", "No active monthly ads at this time", "Ok");
                 return 0;
             }
 
             if (!File.Exists(App.g_FlyerFilename))
             {
-                await Shell.Current.DisplayAlertAsync("Profit Order", "No monthly ad PDF at this time", "Ok");
+                await App.Current.MainPage.DisplayAlert("Profit Order", "No monthly ad PDF at this time", "Ok");
                 return 0;
             }
 
@@ -314,71 +327,71 @@ namespace TPSMobileApp
             base.OnNavigating(args);
         }
 
-        private async void MenuShoppingCart_Clicked(object sender, EventArgs e)
+        private void MenuShoppingCart_Clicked(object sender, EventArgs e)
         {
-            await GoToShoppingCart();
+            GoToShoppingCart();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuCreditCart_Clicked(object sender, EventArgs e)
+        private void MenuCreditCart_Clicked(object sender, EventArgs e)
         {
-            await GoToReturnCart();
+            GoToReturnCart();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuLabels_Clicked(object sender, EventArgs e)
+        private void MenuLabels_Clicked(object sender, EventArgs e)
         {
-            await GoToLabelCart();
+            GoToLabelCart();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuScanBarcode_Clicked(object sender, EventArgs e)
+        private void MenuScanBarcode_Clicked(object sender, EventArgs e)
         {
-            await GoToScanBarcode();
+            GoToScanBarcode();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuCustomers_Clicked(object sender, EventArgs e)
+        private void MenuCustomers_Clicked(object sender, EventArgs e)
         {
-            await GoToCustomerList();
+            GoToCustomerList();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuQuickEntry_Clicked(object sender, EventArgs e)
+        private void MenuQuickEntry_Clicked(object sender, EventArgs e)
         {
-            await GoToQuickEntry();
+            GoToQuickEntry();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuMyPurchases_Clicked(object sender, EventArgs e)
+        private void MenuMyPurchases_Clicked(object sender, EventArgs e)
         {
-            await GoToMyPurchases();
+            GoToMyPurchases();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuCategories_Clicked(object sender, EventArgs e)
+        private void MenuCategories_Clicked(object sender, EventArgs e)
         {
-            await GoToCategories();
+            GoToCategories();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuLocations_Clicked(object sender, EventArgs e)
+        private void MenuLocations_Clicked(object sender, EventArgs e)
         {
-            await GoToLocations();
+            GoToLocations();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuLogout_Clicked(object sender, EventArgs e)
+        private void MenuLogout_Clicked(object sender, EventArgs e)
         {
             Shell.Current.FlyoutIsPresented = false;
             if (!App.g_IsLoggedIn)
             {
-                await GoToLogin();
+                GoToLogin();
             }
             else
             {
                 App.g_HomePage.ConfirmLogout();
             }
         }
-        private async void MenuMyAccount_Clicked(object sender, EventArgs e)
+        private void MenuMyAccount_Clicked(object sender, EventArgs e)
         {
-            await GoToMyAccount();
+            GoToMyAccount();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private async void MenuFlyerPDF_Clicked(object sender, EventArgs e)
+        private void MenuFlyerPDF_Clicked(object sender, EventArgs e)
         {
-            await GoToFlyerPDF();
+            GoToFlyerPDF();
             Shell.Current.FlyoutIsPresented = false;
         }
         public void SetMenu()

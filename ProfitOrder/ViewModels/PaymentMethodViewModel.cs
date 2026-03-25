@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.ViewModels
+﻿namespace ProfitOrder.ViewModels
 {
     public class PaymentMethodViewModel : BaseViewModel
     {

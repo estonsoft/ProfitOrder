@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Controls
+﻿namespace ProfitOrder.Controls
 {
     public partial class CustomListItem : ContentView
     {
@@ -78,6 +78,7 @@
 
         private void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
+            QtyEntry qtyEntry = (QtyEntry)sender;
             var current = args.NewTextValue;
             if (current != null)
             {
@@ -104,10 +105,8 @@
                 {
                     ((Entry)sender).Text = iValue.ToString();
                 }
+                App.g_db.UpdateItemQtySet(qtyEntry.ItemNo, iValue);
             }
-
-
-            //OnQtyEntry_Completed(sender, args);
         }
 
         private async void OnQtyEntry_Completed(object sender, EventArgs e)
@@ -149,6 +148,61 @@
             }
         }
 
+        private void OnBuildToEntryTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is not Entry entry) return;
+
+            string newText = e.NewTextValue;
+
+            // 1. Handle empty or null input
+            if (string.IsNullOrWhiteSpace(newText))
+            {
+                entry.Text = "0";
+                return;
+            }
+
+            // 2. Remove leading zeros and ensure it's a valid integer
+            // We use TryParse to prevent crashes on non-numeric input
+            if (int.TryParse(newText, out int iValue))
+            {
+                string cleaned = iValue.ToString();
+
+                // Only update if the text actually changed (avoids infinite loops)
+                if (newText != cleaned)
+                {
+                    entry.Text = cleaned;
+                }
+            }
+            else
+            {
+                // Revert to old value if user typed a non-numeric character
+                entry.Text = e.OldTextValue ?? "0";
+            }
+        }
+
+        private async void OnBuildToEntry_Completed(object sender, EventArgs e)
+        {
+            if (sender is not BuildToEntry buildToEntry) return;
+
+            // Parse the final value
+            if (int.TryParse(buildToEntry.Text, out int iTextQty))
+            {
+                if (buildToEntry.ItemNo > 0)
+                {
+                    // 1. Update Local DB
+                    App.g_db.UpdateItemBuildTo(buildToEntry.ItemNo, iTextQty);
+
+                    // 2. Sync with Server (using Task.Run to keep UI smooth)
+                    await Task.Run(() =>
+                        App.CommManager.SaveBuildTo(
+                            App.g_Customer.CustNo,
+                            buildToEntry.ItemNo.ToString(),
+                            iTextQty.ToString())
+                    );
+                }
+            }
+        }
+
         private async void CreditButton_Clicked(object sender, EventArgs e)
         {
             CreditButton button = (CreditButton)sender;
@@ -179,6 +233,15 @@
             {
                 QtyEntry.CursorPosition = 0;
                 QtyEntry.SelectionLength = QtyEntry.Text?.Length ?? 0;
+            });
+        }
+
+        private void BuildToEntry_Focused(object sender, FocusEventArgs e)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                BuildToEntry.CursorPosition = 0;
+                BuildToEntry.SelectionLength = BuildToEntry.Text != null ? BuildToEntry.Text.Length : 0;
             });
         }
     }

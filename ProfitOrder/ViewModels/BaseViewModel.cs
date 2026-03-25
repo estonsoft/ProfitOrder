@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace TPSMobileApp.ViewModels;
+namespace ProfitOrder.ViewModels;
 
 public class BaseViewModel : INotifyPropertyChanged
 {

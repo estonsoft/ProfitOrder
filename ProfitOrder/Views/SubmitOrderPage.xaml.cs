@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Views
+﻿namespace ProfitOrder.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SubmitOrderPage : ContentPage

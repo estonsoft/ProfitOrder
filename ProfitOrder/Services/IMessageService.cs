@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-namespace Profit_Order.Services
+namespace ProfitOrder.Services
 {
     public interface IMessageService
     {

@@ -1,12 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="TPSMobileApp.Views.ItemSearchPage"
+    x:Class="ProfitOrder.Views.ItemSearchPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
     xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui"
-    xmlns:local="clr-namespace:TPSMobileApp.ViewModels"
+    xmlns:local="clr-namespace:ProfitOrder.ViewModels"
+    xmlns:modal="clr-namespace:ProfitOrder"
     xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     Title="Search Products"
     Shell.NavBarIsVisible="False"
@@ -45,7 +46,7 @@
     </ContentPage.Resources>
 
     <ContentPage.Content>
-        <Grid>
+        <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <!--  Header  -->
@@ -267,14 +268,51 @@
             <CollectionView
                 x:Name="ItemsListSearch"
                 Grid.Row="4"
+                SelectionChanged="ItemsListSearch_SelectionChanged"
+                SelectionMode="Single"
                 VerticalOptions="Fill">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <controls:CustomListItem />
+                    <DataTemplate x:DataType="modal:Item">
+
+                        <controls:CustomListItem>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <!--  Normal State  -->
+                                        <VisualState Name="Normal" />
+
+                                        <!--  Selected State  -->
+                                        <VisualState Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="White" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </VisualStateManager.VisualStateGroups>
+                        </controls:CustomListItem>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-
+            <VerticalStackLayout
+                x:Name="ImageOverlay"
+                Grid.Row="0"
+                Grid.RowSpan="5"
+                Grid.Column="0"
+                Padding="20"
+                BackgroundColor="#80000000"
+                IsVisible="False">
+                <ffimageloading:CachedImage
+                    x:Name="FullImage"
+                    ErrorPlaceholder="missing_item.jpg"
+                    HeightRequest="500"
+                    LoadingPlaceholder="missing_item.jpg"
+                    WidthRequest="300" />
+                <Button
+                    Clicked="Button_Clicked"
+                    HorizontalOptions="Center"
+                    Text="Close" />
+            </VerticalStackLayout>
             <controls:CustomToolbar Grid.Row="5" />
         </Grid>
     </ContentPage.Content>

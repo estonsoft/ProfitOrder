@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Input;
 
-namespace TPSMobileApp.ViewModels
+namespace ProfitOrder.ViewModels
 {
     public class QualityViewModel : INotifyPropertyChanged
     {

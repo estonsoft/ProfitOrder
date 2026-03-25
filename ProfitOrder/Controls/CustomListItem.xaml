@@ -1,184 +1,259 @@
 ﻿<ContentView
-    x:Class="TPSMobileApp.Controls.CustomListItem"
+    x:Class="ProfitOrder.Controls.CustomListItem"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui">
 
-    <Grid
-        Padding="10"
-        ColumnDefinitions="*,*,*"
-        RowDefinitions="*,*,*,*,*">
+    <VerticalStackLayout>
 
-        <!--  TITLE  -->
-        <Label
-            Grid.Row="0"
-            Grid.ColumnSpan="3"
-            FontAttributes="Bold"
-            FontSize="16"
-            Text="{Binding Description}"
-            TextColor="RoyalBlue" />
+        <Grid
+            Padding="10"
+            ColumnDefinitions="*,*,*"
+            RowDefinitions="*,*,*,*,*,*">
 
-        <!--  IMAGE  -->
-        <ff:CachedImage
-            Grid.Row="1"
-            Grid.Column="0"
-            Margin="10"
-            Aspect="AspectFit"
-            ErrorPlaceholder="missing_item.jpg"
-            HeightRequest="90"
-            LoadingPlaceholder="missing_item.jpg"
-            Source="{Binding ImageURL}"
-            WidthRequest="90" />
-
-        <!--  DETAILS  -->
-        <VerticalStackLayout
-            Grid.Row="1"
-            Grid.Column="1"
-            Spacing="2">
-
+            <!--  TITLE  -->
             <Label
-                FontAttributes="Bold"
-                FontSize="14"
-                Text="{Binding ItemNoDisplay}"
-                TextColor="Black" />
-            <Label FontSize="12" Text="{Binding ItemNoDisplayUPC}" />
-            <Label FontSize="14" Text="{Binding CategoryDesc}" />
-
-            <!--  STOCK  -->
-            <HorizontalStackLayout IsVisible="{Binding IsStockRowVisible}" Spacing="4">
-                <Label
-                    FontSize="14"
-                    IsVisible="{Binding IsQOHVisible}"
-                    Text="QOH:" />
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="14"
-                    IsVisible="{Binding IsQOHRedVisible}"
-                    Text="{Binding QOH}"
-                    TextColor="Red" />
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="14"
-                    IsVisible="{Binding IsQOHBlackVisible}"
-                    Text="{Binding QOH}" />
-                <Label
-                    FontSize="12"
-                    IsVisible="{Binding IsInStockVisible}"
-                    Text="In Stock" />
-                <Label
-                    FontSize="12"
-                    IsVisible="{Binding IsOutOfStockVisible}"
-                    Text="Out Of Stock"
-                    TextColor="Red" />
-            </HorizontalStackLayout>
-            <!--  PRICE  -->
-            <Label
-                Grid.Row="2"
+                Grid.Row="0"
+                Grid.Column="0"
                 Grid.ColumnSpan="3"
                 FontAttributes="Bold"
                 FontSize="16"
-                IsVisible="{Binding IsPriceVisible}"
-                Text="{Binding PriceDisplay}" />
-        </VerticalStackLayout>
-
-        <!--  ACTIONS  -->
-        <VerticalStackLayout
-            Grid.Row="1"
-            Grid.Column="2"
-            HorizontalOptions="End"
-            VerticalOptions="Center">
-
-            <!--  STEPPER  -->
-            <HorizontalStackLayout
-                x:Name="StepperStack"
-                Margin="7"
-                IsVisible="{Binding IsStepperVisible}">
-
-                <controls:PlusMinusButton
-                    AllocationQty="{Binding AllocationQty}"
-                    Clicked="MinusButton_Clicked"
-                    HeightRequest="30"
-                    HorizontalOptions="Center"
-                    ItemNo="{Binding ItemNo}"
-                    Source="blue_minus.png"
-                    WidthRequest="30" />
-
-                <controls:QtyEntry
-                    x:Name="QtyEntry"
-                    AllocationQty="{Binding AllocationQty}"
-                    Completed="OnQtyEntry_Completed"
-                    Focused="QtyEntry_Focused"
-                    FontAttributes="Bold"
-                    FontSize="16"
-                    HorizontalTextAlignment="Center"
-                    ItemNo="{Binding ItemNo}"
-                    Text="{Binding QtyOrder}"
-                    TextChanged="OnEntryTextChanged"
-                    TextColor="Black"
-                    WidthRequest="50" />
-
-                <controls:PlusMinusButton
-                    AllocationQty="{Binding AllocationQty}"
-                    Clicked="PlusButton_Clicked"
-                    HeightRequest="30"
-                    ItemNo="{Binding ItemNo}"
-                    Source="blue_plus.png"
-                    WidthRequest="30" />
-            </HorizontalStackLayout>
-
-            <!--  ADD TO ORDER  -->
-            <controls:AddToOrderButton
-                x:Name="AddToOrderButton"
-                BackgroundColor="LightGray"
-                Clicked="AddToOrderButton_Clicked"
-                CornerRadius="8"
-                FontAttributes="Bold"
-                FontSize="14"
-                HeightRequest="35"
-                IsVisible="{Binding IsAddToOrderVisible}"
-                ItemNo="{Binding ItemNo}"
-                Text="Add To Order"
+                Text="{Binding Description}"
                 TextColor="RoyalBlue" />
 
-            <!--  SALESPERSON  -->
+            <!--  IMAGE  -->
+            <ff:CachedImage
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="10"
+                Aspect="AspectFit"
+                ErrorPlaceholder="missing_item.jpg"
+                HeightRequest="90"
+                LoadingPlaceholder="missing_item.jpg"
+                Source="{Binding ImageURL}"
+                WidthRequest="90" />
 
-            <controls:CreditButton
-                Margin="5"
-                Clicked="CreditButton_Clicked"
-                HeightRequest="18"
-                IsVisible="{Binding IsSalesUser}"
-                ItemNo="{Binding ItemNo}"
-                Source="credit.png" />
+            <!--  DETAILS  -->
+            <VerticalStackLayout
+                Grid.Row="1"
+                Grid.Column="1"
+                Spacing="2">
 
-        </VerticalStackLayout>
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    Text="{Binding ItemNoDisplay}"
+                    TextColor="Black" />
+                <Label FontSize="12" Text="{Binding ItemNoDisplayUPC}" />
+                <Label FontSize="14" Text="{Binding CategoryDesc}" />
 
-        <!--  LAST PURCHASE  -->
-        <HorizontalStackLayout
-            Grid.Row="3"
-            Grid.ColumnSpan="3"
-            IsVisible="{Binding IsLastPurchStack}"
-            Spacing="5">
+                <!--  STOCK  -->
+                <HorizontalStackLayout IsVisible="{Binding IsStockRowVisible}" Spacing="4">
+                    <Label
+                        FontSize="14"
+                        IsVisible="{Binding IsQOHVisible}"
+                        Text="QOH:" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        IsVisible="{Binding IsQOHRedVisible}"
+                        Text="{Binding QOH}"
+                        TextColor="Red" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        IsVisible="{Binding IsQOHBlackVisible}"
+                        Text="{Binding QOH}" />
+                    <Label
+                        FontSize="12"
+                        IsVisible="{Binding IsInStockVisible}"
+                        Text="In Stock" />
+                    <Label
+                        FontSize="12"
+                        IsVisible="{Binding IsOutOfStockVisible}"
+                        Text="Out Of Stock"
+                        TextColor="Red" />
+                </HorizontalStackLayout>
+                <!--  PRICE  -->
+                <Label
+                    Grid.Row="2"
+                    Grid.ColumnSpan="3"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    IsVisible="{Binding IsPriceVisible}"
+                    Text="{Binding PriceDisplay}" />
+            </VerticalStackLayout>
 
-            <Label
-                FontSize="10"
-                Text="Last Purch"
-                TextColor="Gray" />
-            <Label FontSize="10" Text="{Binding LastPurchDateDisplay}" />
-            <Label
-                FontSize="10"
-                Text="Qty"
-                TextColor="Gray" />
-            <Label FontSize="10" Text="{Binding QtyLastOrder}" />
-        </HorizontalStackLayout>
+            <!--  ACTIONS  -->
+            <VerticalStackLayout
+                Grid.Row="1"
+                Grid.Column="2"
+                HorizontalOptions="End"
+                VerticalOptions="Center">
 
+                <!--  STEPPER  -->
+                <HorizontalStackLayout
+                    x:Name="StepperStack"
+                    Margin="7"
+                    IsVisible="{Binding IsStepperVisible}">
+
+                    <controls:PlusMinusButton
+                        AllocationQty="{Binding AllocationQty}"
+                        Clicked="MinusButton_Clicked"
+                        HeightRequest="30"
+                        HorizontalOptions="Center"
+                        ItemNo="{Binding ItemNo}"
+                        Source="blue_minus.png"
+                        WidthRequest="30" />
+
+                    <controls:QtyEntry
+                        x:Name="QtyEntry"
+                        AllocationQty="{Binding AllocationQty}"
+                        Completed="OnQtyEntry_Completed"
+                        Focused="QtyEntry_Focused"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        HorizontalTextAlignment="Center"
+                        ItemNo="{Binding ItemNo}"
+                        Text="{Binding QtyOrder}"
+                        TextChanged="OnEntryTextChanged"
+                        TextColor="Black"
+                        WidthRequest="50" />
+
+                    <controls:PlusMinusButton
+                        AllocationQty="{Binding AllocationQty}"
+                        Clicked="PlusButton_Clicked"
+                        HeightRequest="30"
+                        ItemNo="{Binding ItemNo}"
+                        Source="blue_plus.png"
+                        WidthRequest="30" />
+                </HorizontalStackLayout>
+
+                <!--  ADD TO ORDER  -->
+                <controls:AddToOrderButton
+                    x:Name="AddToOrderButton"
+                    BackgroundColor="LightGray"
+                    Clicked="AddToOrderButton_Clicked"
+                    CornerRadius="8"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    HeightRequest="35"
+                    IsVisible="{Binding IsAddToOrderVisible}"
+                    ItemNo="{Binding ItemNo}"
+                    Text="Add To Order"
+                    TextColor="RoyalBlue" />
+
+                <!--  SALESPERSON  -->
+
+                <controls:CreditButton
+                    Margin="5"
+                    Clicked="CreditButton_Clicked"
+                    HeightRequest="18"
+                    IsVisible="{Binding IsSalesUser}"
+                    ItemNo="{Binding ItemNo}"
+                    Source="credit.png" />
+
+            </VerticalStackLayout>
+
+            <!--  LAST PURCHASE  -->
+            <Grid Grid.Row="3" Grid.ColumnSpan="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <HorizontalStackLayout
+                    Grid.Column="0"
+                    HorizontalOptions="Start"
+                    IsVisible="{Binding IsLastPurchStack}"
+                    Spacing="5">
+                    <Label
+                        FontSize="11"
+                        Text="Last Purchased"
+                        TextColor="Black" />
+                    <Label FontSize="11" Text="{Binding LastPurchDateDisplay}" />
+                    <Label
+                        FontSize="11"
+                        Text="Qty"
+                        TextColor="Black" />
+                    <Label FontSize="11" Text="{Binding QtyLastOrder}" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout
+                    x:Name="BuildToStack"
+                    Grid.Column="1"
+                    HorizontalOptions="Start"
+                    IsVisible="{Binding IsBuildTo}">
+                    <Label
+                        BackgroundColor="White"
+                        FontSize="11"
+                        Text="Build To"
+                        TextColor="Black"
+                        WidthRequest="60" />
+                    <Label
+                        BackgroundColor="White"
+                        FontSize="11"
+                        IsVisible="{Binding IsBuildToViewOnly}"
+                        Text="{Binding BuildTo}"
+                        TextColor="Black"
+                        WidthRequest="60" />
+                    <controls:BuildToEntry
+                        x:Name="BuildToEntry"
+                        BuildTo="{Binding BuildTo}"
+                        Completed="OnBuildToEntry_Completed"
+                        Focused="BuildToEntry_Focused"
+                        FontAttributes="Bold"
+                        FontSize="11"
+                        HorizontalTextAlignment="Center"
+                        IsVisible="{Binding IsBuildToTextView}"
+                        ItemNo="{Binding ItemNo}"
+                        Keyboard="Numeric"
+                        Text="{Binding BuildTo}"
+                        TextChanged="OnBuildToEntryTextChanged"
+                        TextColor="Black"
+                        WidthRequest="30" />
+                </HorizontalStackLayout>
+            </Grid>
+            <HorizontalStackLayout
+                x:Name="LastPurchStack2"
+                Grid.Row="4"
+                Grid.ColumnSpan="3"
+                IsVisible="{Binding IsLastPurchStack2}">
+                <Label
+                    BackgroundColor="White"
+                    FontSize="11"
+                    LineBreakMode="NoWrap"
+                    Text="Avg Wk Sales Last 90"
+                    TextColor="Black"
+                    WidthRequest="120" />
+                <Label
+                    Margin="-10,0,0,0"
+                    BackgroundColor="White"
+                    FontSize="11"
+                    Text="{Binding AverageWeeklySales}"
+                    TextColor="Black"
+                    WidthRequest="60" />
+                <Label
+                    Margin="-20,0,0,5"
+                    BackgroundColor="White"
+                    FontSize="11"
+                    Text="Qty Last 90"
+                    TextColor="Black"
+                    WidthRequest="65" />
+                <Label
+                    Margin="-5,0,0,5"
+                    BackgroundColor="White"
+                    FontSize="11"
+                    Text="{Binding QtyLast90}"
+                    TextColor="Black"
+                    WidthRequest="30" />
+            </HorizontalStackLayout>
+        </Grid>
         <!--  DIVIDER  -->
         <BoxView
-            Grid.Row="4"
-            Grid.ColumnSpan="3"
-            BackgroundColor="LightGray"
+            BackgroundColor="gray"
             HeightRequest="1"
-            IsVisible="{Binding IsBoxViewVisible}" />
+            IsVisible="{Binding IsBoxViewVisible}"
+            Color="LightGray" />
+    </VerticalStackLayout>
 
-    </Grid>
 </ContentView>

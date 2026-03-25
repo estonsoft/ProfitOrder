@@ -1,180 +1,187 @@
-﻿namespace TPSMobileApp.Controls;
-
-public class CustomToolbar : StackLayout
+﻿namespace ProfitOrder.Controls
 {
-    public static readonly BindableProperty CartItemsProperty =
-        BindableProperty.Create(nameof(CartItems), typeof(int), typeof(CustomToolbar), 0);
-
-    public int CartItems
+    public class CustomToolbar : StackLayout
     {
-        get => (int)GetValue(CartItemsProperty);
-        set => SetValue(CartItemsProperty, value);
-    }
+        public static readonly BindableProperty CartItemsProperty =
+            BindableProperty.Create(nameof(CartItems), typeof(int), typeof(CustomToolbar), 0);
 
-    //static int ColumnWidth = 70;
-
-    Grid gridContainer;
-
-    VerticalStackLayout StackHome;
-    VerticalStackLayout StackShoppingCart;
-    VerticalStackLayout StackPurchaseHistory;
-    VerticalStackLayout StackShopNow;
-    VerticalStackLayout StackScanBarcode;
-
-    Image LabelHomeIcon;
-    Label LabelHomeText;
-    Image LabelShoppingCartIcon;
-    Label LabelShoppingCartText;
-    Label LabelShoppingCartItems;
-    Image LabelPurchaseHistoryIcon;
-    Label LabelPurchaseHistoryText;
-    Image LabelShopNowIcon;
-    Label LabelShopNowText;
-    Image LabelScanBarcodeIcon;
-    Label LabelScanBarcodeText;
-
-    TapGestureRecognizer TapHome;
-    TapGestureRecognizer TapShoppingCart;
-    TapGestureRecognizer TapPurchaseHistory;
-    TapGestureRecognizer TapShopNow;
-    TapGestureRecognizer TapScanBarcode;
-
-    public CustomToolbar()
-    {
-        HeightRequest = 80;
-        BackgroundColor = Colors.Blue;
-
-        gridContainer = new Grid
+        public int CartItems
         {
-            ColumnSpacing = 10,
-            Padding = 10,
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Start,
-            BackgroundColor = Colors.Blue,
-            HeightRequest = 80,
-        };
-        gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-        gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-        gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-        gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-        gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            get => (int)GetValue(CartItemsProperty);
+            set => SetValue(CartItemsProperty, value);
+        }
 
-        Children.Add(gridContainer);
+        int height = 65;
 
-        StackHome = CreateStack(out LabelHomeIcon, out LabelHomeText, "\uF015", "Home");
-        TapHome = new TapGestureRecognizer();
-        TapHome.Tapped += OnHomeTapped;
-        AddTap(StackHome, TapHome);
+        Grid gridContainer;
 
-        StackShoppingCart = CreateStack(out LabelShoppingCartIcon, out LabelShoppingCartText, "\uF07A", "Shopping\nCart");
-        TapShoppingCart = new TapGestureRecognizer();
-        TapShoppingCart.Tapped += OnShoppingCartTapped;
-        AddTap(StackShoppingCart, TapShoppingCart);
+        VerticalStackLayout StackHome;
+        VerticalStackLayout StackShoppingCart;
+        VerticalStackLayout StackPurchaseHistory;
+        VerticalStackLayout StackShopNow;
+        VerticalStackLayout StackScanBarcode;
 
-        LabelShoppingCartItems = new Label
+        Image LabelHomeIcon;
+        Label LabelHomeText;
+        Image LabelShoppingCartIcon;
+        Label LabelShoppingCartText;
+        Label LabelShoppingCartItems;
+        Image LabelPurchaseHistoryIcon;
+        Label LabelPurchaseHistoryText;
+        Image LabelShopNowIcon;
+        Label LabelShopNowText;
+        Image LabelScanBarcodeIcon;
+        Label LabelScanBarcodeText;
+
+        TapGestureRecognizer TapHome;
+        TapGestureRecognizer TapShoppingCart;
+        TapGestureRecognizer TapPurchaseHistory;
+        TapGestureRecognizer TapShopNow;
+        TapGestureRecognizer TapScanBarcode;
+
+        public CustomToolbar()
         {
-            TextColor = Colors.Black,
-            FontSize = 10,
-            HorizontalTextAlignment = TextAlignment.Center
-        };
-        LabelShoppingCartItems.SetBinding(Label.TextProperty, new Binding(nameof(CartItems), source: this));
-        StackShoppingCart.Children.Add(LabelShoppingCartItems);
-
-        StackPurchaseHistory = CreateStack(out LabelPurchaseHistoryIcon, out LabelPurchaseHistoryText, "\uF571", "Order\nHistory");
-        TapPurchaseHistory = new TapGestureRecognizer();
-        TapPurchaseHistory.Tapped += OnPurchaseHistoryTapped;
-        AddTap(StackPurchaseHistory, TapPurchaseHistory);
-
-        StackShopNow = CreateStack(out LabelShopNowIcon, out LabelShopNowText, "\uF0CA", "Shop Now");
-        TapShopNow = new TapGestureRecognizer();
-        TapShopNow.Tapped += OnShopNowTapped;
-        AddTap(StackShopNow, TapShopNow);
-
-        StackScanBarcode = CreateStack(out LabelScanBarcodeIcon, out LabelScanBarcodeText, "\uF464", "Scan\nBarcode", "FontAwesomePro6Regular");
-        TapScanBarcode = new TapGestureRecognizer();
-        TapScanBarcode.Tapped += OnScanBarcodeTapped;
-        AddTap(StackScanBarcode, TapScanBarcode);
-
-        CartItems = App.g_ShoppingCartItems;
-    }
-
-    VerticalStackLayout CreateStack(out Image icon, out Label text, string glyph, string label, string font = "FontAwesomeFreeSolid")
-    {
-        var stack = new VerticalStackLayout
-        {
-            BackgroundColor = Colors.Blue,
-            //WidthRequest = ColumnWidth,            
-            HeightRequest = 80,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center
-        };
-        if (DeviceInfo.Platform == DevicePlatform.iOS)
-            stack.Margin = new Thickness(0, 10, 0, 0);
-
-        glyph = glyph.Replace("/u", "0x");
-        icon = new Image
-        {
-            Margin = new Thickness(0, 8, 0, 0),
-            Source = new FontImageSource
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
-                Glyph = glyph,
-                FontFamily = font,
-                Size = 24,
-                Color = Colors.White
+                height = 80;
             }
-        };
+            gridContainer = new Grid
+            {
+                ColumnSpacing = 10,
+                Padding = 10,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Start,
+                BackgroundColor = Colors.Blue,
+                HeightRequest = height,
+            };
+            HeightRequest = height;
+            BackgroundColor = Colors.Blue;
 
-        text = new Label
+            gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+            gridContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+
+            Children.Add(gridContainer);
+
+            StackHome = CreateStack(out LabelHomeIcon, out LabelHomeText, "\uF015", "Home");
+            TapHome = new TapGestureRecognizer();
+            TapHome.Tapped += OnHomeTapped;
+            AddTap(StackHome, TapHome);
+
+            StackShoppingCart = CreateStack(out LabelShoppingCartIcon, out LabelShoppingCartText, "\uF07A", "Shopping\nCart");
+            TapShoppingCart = new TapGestureRecognizer();
+            TapShoppingCart.Tapped += OnShoppingCartTapped;
+            AddTap(StackShoppingCart, TapShoppingCart);
+
+            //LabelShoppingCartItems = new Label
+            //{
+            //    TextColor = Colors.Black,
+            //    FontSize = 10,
+            //    HorizontalTextAlignment = TextAlignment.Center
+            //};
+            //LabelShoppingCartItems.SetBinding(Label.TextProperty, new Binding(nameof(CartItems), source: this));
+            StackShoppingCart.Children.Add(LabelShoppingCartItems);
+
+            StackPurchaseHistory = CreateStack(out LabelPurchaseHistoryIcon, out LabelPurchaseHistoryText, "\uF571", "Order\nHistory");
+            TapPurchaseHistory = new TapGestureRecognizer();
+            TapPurchaseHistory.Tapped += OnPurchaseHistoryTapped;
+            AddTap(StackPurchaseHistory, TapPurchaseHistory);
+
+            StackShopNow = CreateStack(out LabelShopNowIcon, out LabelShopNowText, "\uF0CA", "Shop Now");
+            TapShopNow = new TapGestureRecognizer();
+            TapShopNow.Tapped += OnShopNowTapped;
+            AddTap(StackShopNow, TapShopNow);
+
+            StackScanBarcode = CreateStack(out LabelScanBarcodeIcon, out LabelScanBarcodeText, "\uF464", "Scan\nBarcode", "FontAwesomePro6Regular");
+            TapScanBarcode = new TapGestureRecognizer();
+            TapScanBarcode.Tapped += OnScanBarcodeTapped;
+            AddTap(StackScanBarcode, TapScanBarcode);
+
+            CartItems = App.g_ShoppingCartItems;
+        }
+
+        VerticalStackLayout CreateStack(out Image icon, out Label text, string glyph, string label, string font = "FontAwesomeFreeSolid")
         {
-            Text = label,
-            Margin = new Thickness(5, 5, 5, 5),
-            TextColor = Colors.White,
-            FontSize = 10,
-            HorizontalTextAlignment = TextAlignment.Center
-        };
+            var stack = new VerticalStackLayout
+            {
+                BackgroundColor = Colors.Blue,
+                HeightRequest = height,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
 
-        stack.Children.Add(icon);
-        stack.Children.Add(text);
-        Grid.SetColumn(stack, gridContainer.Children.Count);
-        gridContainer.Children.Add(stack);
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
+            {
+                stack.Margin = new Thickness(0, 40, 0, 0);
+            }
 
-        return stack;
-    }
+            icon = new Image
+            {
+                HeightRequest = 30,
+                WidthRequest = 30,
+                Margin = new Thickness(0, 8, 0, 0),
+                Source = new FontImageSource
+                {
+                    Glyph = glyph,
+                    FontFamily = font,
+                    Size = 24,
+                    Color = Colors.White
+                }
+            };
 
-    void AddTap(VerticalStackLayout stack, TapGestureRecognizer tap)
-    {
-        stack.GestureRecognizers.Add(tap);
-    }
+            text = new Label
+            {
+                Text = label,
+                TextColor = Colors.White,
+                FontSize = 10,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
 
-    async void OnHomeTapped(object sender, EventArgs e)
-    {
-        App.g_Shell.bStopNavigating = false;
-        await App.g_Shell.GoToHome();
-        App.g_Shell.bStopNavigating = true;
-    }
+            stack.Children.Add(icon);
+            stack.Children.Add(text);
+            Grid.SetColumn(stack, gridContainer.Children.Count);
+            gridContainer.Children.Add(stack);
 
-    async void OnShoppingCartTapped(object sender, EventArgs e)
-    {
-        List<Item> items = App.g_db.GetOrderCartItems();
+            return stack;
+        }
 
-        if (items.Count == 0)
-            await Shell.Current.DisplayAlertAsync("Profit Order", "Your shopping cart is empty", "Ok");
-        else
-            await App.g_Shell.GoToShoppingCart();
-    }
+        void AddTap(VerticalStackLayout stack, TapGestureRecognizer tap)
+        {
+            stack.GestureRecognizers.Add(tap);
+        }
 
-    async void OnShopNowTapped(object sender, EventArgs e)
-    {
-        await App.g_Shell.GoToCategories();
-    }
+        async void OnHomeTapped(object sender, EventArgs e)
+        {
+            App.g_Shell.bStopNavigating = false;
+            await App.g_Shell.GoToHome();
+            App.g_Shell.bStopNavigating = true;
+        }
 
-    async void OnScanBarcodeTapped(object sender, EventArgs e)
-    {
-        await App.g_Shell.GoToScanBarcode();
-    }
+        async void OnShoppingCartTapped(object sender, EventArgs e)
+        {
+            List<Item> items = App.g_db.GetOrderCartItems();
 
-    async void OnPurchaseHistoryTapped(object sender, EventArgs e)
-    {
-        await App.g_Shell.GoToMyPurchases();
+            if (items.Count == 0)
+                await Shell.Current.DisplayAlertAsync("Profit Order", "Your shopping cart is empty", "Ok");
+            else
+                await App.g_Shell.GoToShoppingCart();
+        }
+
+        async void OnShopNowTapped(object sender, EventArgs e)
+        {
+            await App.g_Shell.GoToCategories();
+        }
+
+        async void OnScanBarcodeTapped(object sender, EventArgs e)
+        {
+            await App.g_Shell.GoToScanBarcode();
+        }
+
+        async void OnPurchaseHistoryTapped(object sender, EventArgs e)
+        {
+            await App.g_Shell.GoToMyPurchases();
+        }
     }
 }

@@ -1,4 +1,10 @@
-﻿namespace TPSMobileApp
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
+using SQLite;
+
+namespace ProfitOrder
 {
     public class SuspendItem
     {

@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     [Application]
     public class MainApplication : MauiApplication

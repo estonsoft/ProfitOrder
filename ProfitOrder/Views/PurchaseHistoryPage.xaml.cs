@@ -1,6 +1,6 @@
-﻿using TPSMobileApp.Controls;
+﻿using ProfitOrder.Controls;
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     public partial class PurchaseHistoryPage : ContentPage
     {

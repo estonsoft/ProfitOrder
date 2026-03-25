@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="TPSMobileApp.Views.ItemsPage"
+    x:Class="ProfitOrder.Views.ItemsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     
-    xmlns:local="clr-namespace:TPSMobileApp.ViewModels"
+    xmlns:local="clr-namespace:ProfitOrder.ViewModels"
     x:Name="BrowseItemsPage"
     Title="{Binding Title}"
     >
@@ -26,9 +26,9 @@
             SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Padding="10" x:DataType="TPSMobileApp.Data.Item" />
+                    <StackLayout Padding="10" x:DataType="ProfitOrder.Data.Item" />
                     <!--
-                    <StackLayout Padding="10" x:DataType="TPSMobileApp.Data.Item">
+                    <StackLayout Padding="10" x:DataType="ProfitOrder.Data.Item">
                             <Label Text="{Binding ItemNo}"
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemTextStyle}"

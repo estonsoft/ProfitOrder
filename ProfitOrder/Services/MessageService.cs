@@ -14,9 +14,9 @@
 
 
 
-using TPSMobileApp;
+using ProfitOrder;
 
-namespace Profit_Order.Services
+namespace ProfitOrder.Services
 {
     public class MessageService : IMessageService
     {

@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ProfitOrder.Views.PaymentMethodEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+    xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui"
+    xmlns:ios="http://schemas.microsoft.com/dotnet/2021/maui/ios"
+    xmlns:modal="clr-namespace:ProfitOrder"
+    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
+    x:Name="CategoriesPage"
+    Title="Product Categories">
+
+    <ContentPage.Content>
+        <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="60" />
+            </Grid.RowDefinitions>
+
+            <controls:CustomHeader x:Name="CustomHeader" Grid.Row="0" />
+            <StackLayout Grid.Row="1" BackgroundColor="White">
+                <ScrollView>
+                    <StackLayout Orientation="Vertical" VerticalOptions="Fill">
+                        <StackLayout
+                            x:Name="SelectPaymentMethod"
+                            HorizontalOptions="Center"
+                            Orientation="Horizontal">
+                            <StackLayout x:Name="CreditCardSelect">
+                                <Frame
+                                    x:Name="NewCard"
+                                    Margin="0,15,0,5"
+                                    Padding="0"
+                                    BackgroundColor="LightGray"
+                                    BorderColor="white"
+                                    CornerRadius="10"
+                                    HasShadow="false"
+                                    HeightRequest="48"
+                                    HorizontalOptions="Center"
+                                    IsClippedToBounds="True"
+                                    VerticalOptions="Start">
+                                    <StackLayout
+                                        Margin="0,0,0,10"
+                                        Padding="0,0,0,0"
+                                        HeightRequest="60"
+                                        HorizontalOptions="Center"
+                                        Orientation="Horizontal"
+                                        VerticalOptions="Center"
+                                        WidthRequest="180">
+                                        <StackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnNewCreditCard" />
+                                        </StackLayout.GestureRecognizers>
+                                        <Label
+                                            Padding="15,13,0,0"
+                                            FontAttributes="Bold"
+                                            FontFamily="FontAwesomeFreeSolid"
+                                            FontSize="18"
+                                            HeightRequest="45"
+                                            HorizontalOptions="Center"
+                                            Text="&#xF09D;"
+                                            TextColor="RoyalBlue"
+                                            VerticalOptions="Center"
+                                            WidthRequest="45" />
+                                        <Label
+                                            Margin="0,7,0,0"
+                                            FontSize="16"
+                                            HorizontalOptions="Fill"
+                                            Text="Credit Card"
+                                            TextColor="RoyalBlue"
+                                            VerticalOptions="Center" />
+                                    </StackLayout>
+                                </Frame>
+                                <BoxView
+                                    Margin="0,-10,0,0"
+                                    BackgroundColor="RoyalBlue"
+                                    HeightRequest="3"
+                                    HorizontalOptions="Fill"
+                                    IsVisible="{Binding IsCreditCardHighlighted}"
+                                    VerticalOptions="Fill"
+                                    Color="Blue" />
+                            </StackLayout>
+                            <StackLayout x:Name="BankAccountSelect">
+                                <Frame
+                                    x:Name="BankAccount"
+                                    Margin="0,15,0,5"
+                                    Padding="0"
+                                    BackgroundColor="LightGray"
+                                    BorderColor="white"
+                                    CornerRadius="10"
+                                    HasShadow="false"
+                                    HeightRequest="48"
+                                    HorizontalOptions="Center"
+                                    IsClippedToBounds="True"
+                                    IsVisible="false"
+                                    VerticalOptions="Start">
+                                    <StackLayout
+                                        Margin="0,0,0,10"
+                                        Padding="0,0,0,0"
+                                        HeightRequest="60"
+                                        HorizontalOptions="Center"
+                                        Orientation="Horizontal"
+                                        VerticalOptions="Center"
+                                        WidthRequest="180">
+                                        <StackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnNewBankAccount" />
+                                        </StackLayout.GestureRecognizers>
+                                        <Label
+                                            Padding="15,13,0,0"
+                                            FontAttributes="Bold"
+                                            FontFamily="FontAwesomeFreeSolid"
+                                            FontSize="18"
+                                            HeightRequest="45"
+                                            HorizontalOptions="Center"
+                                            Text="&#xF53C;"
+                                            TextColor="RoyalBlue"
+                                            VerticalOptions="Center"
+                                            WidthRequest="45" />
+                                        <Label
+                                            Margin="0,7,0,0"
+                                            FontSize="16"
+                                            HorizontalOptions="Fill"
+                                            Text="Bank Account"
+                                            TextColor="RoyalBlue"
+                                            VerticalOptions="Center" />
+                                    </StackLayout>
+                                </Frame>
+                                <BoxView
+                                    Margin="0,-10,0,0"
+                                    BackgroundColor="RoyalBlue"
+                                    HeightRequest="3"
+                                    HorizontalOptions="Fill"
+                                    IsVisible="{Binding IsBankAccountHighlighted}"
+                                    VerticalOptions="Fill"
+                                    Color="Blue" />
+                            </StackLayout>
+                        </StackLayout>
+                        <StackLayout x:Name="NewCreditCardLayout" Margin="0,20,0,0">
+                            <Entry
+                                x:Name="CardholderName"
+                                Margin="20,0,0,0"
+                                FontSize="16"
+                                HorizontalOptions="Fill"
+                                Placeholder="Cardholder Name"
+                                VerticalOptions="Center"
+                                WidthRequest="300" />
+                            <Entry
+                                x:Name="CardNumber"
+                                Margin="20,0,0,0"
+                                FontSize="16"
+                                HorizontalOptions="Fill"
+                                Keyboard="Numeric"
+                                Placeholder="Card #"
+                                VerticalOptions="Center"
+                                WidthRequest="300" />
+                            <StackLayout
+                                Margin="0,0,0,0"
+                                HorizontalOptions="Fill"
+                                Orientation="Horizontal"
+                                Spacing="0"
+                                VerticalOptions="Center">
+                                <Label
+                                    Padding="23,0,0,0"
+                                    BackgroundColor="White"
+                                    FontSize="16"
+                                    HorizontalOptions="Center"
+                                    Text="Exp Date"
+                                    TextColor="black"
+                                    VerticalOptions="Center" />
+                                <Entry
+                                    x:Name="ExpMonth"
+                                    Margin="20,0,0,0"
+                                    FontSize="16"
+                                    Keyboard="Numeric"
+                                    Placeholder="MM"
+                                    VerticalOptions="Center"
+                                    WidthRequest="40" />
+                                <Entry
+                                    x:Name="ExpYear"
+                                    Margin="10,0,0,0"
+                                    FontSize="16"
+                                    Keyboard="Numeric"
+                                    Placeholder="YY"
+                                    VerticalOptions="Center"
+                                    WidthRequest="40" />
+                            </StackLayout>
+                            <StackLayout
+                                Margin="0,0,0,0"
+                                HorizontalOptions="Fill"
+                                Orientation="Horizontal"
+                                Spacing="0"
+                                VerticalOptions="Center">
+                                <Label
+                                    Padding="23,0,0,0"
+                                    BackgroundColor="White"
+                                    FontSize="16"
+                                    HorizontalOptions="Center"
+                                    Text="Security"
+                                    TextColor="black"
+                                    VerticalOptions="Center" />
+                                <Entry
+                                    x:Name="CVV"
+                                    Margin="10,0,0,0"
+                                    FontSize="16"
+                                    Keyboard="Numeric"
+                                    Placeholder="CVV"
+                                    VerticalOptions="Center"
+                                    WidthRequest="60" />
+                            </StackLayout>
+                            <Entry
+                                x:Name="Zip"
+                                Margin="20,0,0,0"
+                                FontSize="16"
+                                HorizontalOptions="Fill"
+                                Keyboard="Numeric"
+                                MaxLength="5"
+                                Placeholder="Billing Zip"
+                                VerticalOptions="Center"
+                                WidthRequest="120" />
+                            <StackLayout
+                                Margin="20,0,0,7"
+                                HorizontalOptions="Fill"
+                                Orientation="Horizontal"
+                                VerticalOptions="Center">
+                                <CheckBox
+                                    x:Name="CreditCardIsDefault"
+                                    VerticalOptions="Center"
+                                    Color="Blue" />
+                                <Label
+                                    Margin="-5,2,0,0"
+                                    FontSize="12"
+                                    Text="Set As Default Payment Method"
+                                    TextColor="black"
+                                    VerticalOptions="Center" />
+                                <ImageButton
+                                    x:Name="DeleteCreditCardButton"
+                                    Margin="40,0,0,0"
+                                    BackgroundColor="Transparent"
+                                    Clicked="DeleteButton_Clicked"
+                                    Source="delete.png"
+                                    VerticalOptions="Center"
+                                    WidthRequest="30" />
+                            </StackLayout>
+                            <StackLayout>
+                                <StackLayout
+                                    Margin="20,20,0,0"
+                                    HorizontalOptions="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="0"
+                                    VerticalOptions="Center">
+                                    <Button
+                                        x:Name="SaveCardButton"
+                                        Margin="0,10,0,0"
+                                        Padding="0"
+                                        BackgroundColor="RoyalBlue"
+                                        Clicked="OnSaveCreditCardClicked"
+                                        CornerRadius="10"
+                                        HeightRequest="40"
+                                        HorizontalOptions="Center"
+                                        Text="Save Credit Card"
+                                        TextColor="White"
+                                        WidthRequest="160" />
+                                    <Image
+                                        x:Name="WaitImage"
+                                        Margin="0,15,0,0"
+                                        Aspect="AspectFill"
+                                        HeightRequest="40"
+                                        HorizontalOptions="Center"
+                                        IsAnimationPlaying="True"
+                                        IsVisible="false"
+                                        Source="loading_blue"
+                                        VerticalOptions="Center" />
+                                </StackLayout>
+                            </StackLayout>
+                        </StackLayout>
+                        <StackLayout
+                            x:Name="NewBankAccountLayout"
+                            Margin="0,20,0,0"
+                            IsVisible="false">
+                            <Frame
+                                Padding="20,2,0,0"
+                                BackgroundColor="White"
+                                BorderColor="Transparent"
+                                WidthRequest="300">
+                                <StackLayout
+                                    Margin="0,0,0,0"
+                                    HorizontalOptions="Fill"
+                                    Orientation="Horizontal"
+                                    Spacing="0"
+                                    VerticalOptions="Center">
+                                    <Entry
+                                        x:Name="BankAccountName"
+                                        Margin="0,0,0,0"
+                                        FontSize="16"
+                                        HorizontalOptions="Fill"
+                                        Placeholder="Account Holder Name"
+                                        VerticalOptions="Center"
+                                        WidthRequest="300" />
+                                </StackLayout>
+                            </Frame>
+                            <Frame
+                                Padding="20,0,0,0"
+                                BackgroundColor="White"
+                                BorderColor="Transparent"
+                                WidthRequest="300">
+                                <Entry
+                                    x:Name="ABANo"
+                                    Margin="0,0,0,0"
+                                    FontSize="16"
+                                    HorizontalOptions="Fill"
+                                    Keyboard="Numeric"
+                                    Placeholder="Bank ABA #"
+                                    VerticalOptions="Center"
+                                    WidthRequest="300" />
+                            </Frame>
+                            <Frame
+                                Padding="20,0,0,0"
+                                BackgroundColor="White"
+                                BorderColor="Transparent"
+                                WidthRequest="300">
+                                <Entry
+                                    x:Name="AccountNo"
+                                    Margin="0,0,0,0"
+                                    FontSize="16"
+                                    HorizontalOptions="Fill"
+                                    Keyboard="Numeric"
+                                    Placeholder="Bank Account #"
+                                    VerticalOptions="Center"
+                                    WidthRequest="300" />
+                            </Frame>
+                            <Frame
+                                Padding="20,0,0,0"
+                                BackgroundColor="White"
+                                BorderColor="Transparent"
+                                WidthRequest="300">
+                                <Entry
+                                    x:Name="AccountNoVerify"
+                                    Margin="0,0,0,0"
+                                    FontSize="16"
+                                    HorizontalOptions="Fill"
+                                    Keyboard="Numeric"
+                                    Placeholder="Verify Bank Account #"
+                                    VerticalOptions="Center"
+                                    WidthRequest="300" />
+                            </Frame>
+                            <StackLayout
+                                Margin="20,0,0,7"
+                                HorizontalOptions="Fill"
+                                Orientation="Horizontal"
+                                VerticalOptions="Center">
+                                <CheckBox
+                                    x:Name="BankAccountIsDefault"
+                                    VerticalOptions="Center"
+                                    Color="Blue" />
+                                <Label
+                                    Margin="0,2,0,0"
+                                    FontSize="12"
+                                    Text="Set As Default Payment Method"
+                                    TextColor="black"
+                                    VerticalOptions="Center" />
+                                <ImageButton
+                                    x:Name="DeleteBankAccountButton"
+                                    Margin="40,0,0,0"
+                                    BackgroundColor="Transparent"
+                                    Clicked="DeleteButton_Clicked"
+                                    Source="delete.png"
+                                    VerticalOptions="Center"
+                                    WidthRequest="30" />
+                            </StackLayout>
+                            <StackLayout>
+                                <StackLayout
+                                    Margin="0,20,0,0"
+                                    HorizontalOptions="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="0"
+                                    VerticalOptions="Center">
+                                    <Button
+                                        Margin="0,10,0,0"
+                                        Padding="0"
+                                        BackgroundColor="RoyalBlue"
+                                        Clicked="OnSaveBankAccountClicked"
+                                        CornerRadius="10"
+                                        HeightRequest="40"
+                                        HorizontalOptions="Center"
+                                        Text="Save Bank Account"
+                                        TextColor="White"
+                                        WidthRequest="160" />
+                                </StackLayout>
+                            </StackLayout>
+                        </StackLayout>
+                    </StackLayout>
+                </ScrollView>
+            </StackLayout>
+            <controls:CustomToolbar x:Name="CustomToolbar" Grid.Row="2" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

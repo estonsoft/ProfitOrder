@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Views
+﻿namespace ProfitOrder.Views
 {
     public partial class ItemSearchPage : ContentPage
     {
@@ -104,6 +104,13 @@
                 InStockOnly.IsVisible = false;
                 InStockLabel.IsVisible = false;
             }
+
+            if (!App.g_IsShowSubcategories)
+            {
+                SubcategoryLabel.IsVisible = false;
+                SubsubcategoryLabel.IsVisible = false;
+            }
+
             Dispatcher.Dispatch(async () =>
             {
                 RefreshList();
@@ -159,8 +166,32 @@
 
             if (iItems == 0)
             {
-                await Shell.Current.DisplayAlertAsync("Profit Order", "No items found matching search criteria", "Ok");
-            }
+                //await Shell.Current.DisplayAlertAsync("Profit Order", "No items found matching search criteria", "Ok");
+                bool answer = await Shell.Current.DisplayAlertAsync(
+                "Profit Order",
+                "No items found in selected category. Do you want to search in all categories?",
+                "Yes",
+                "No");
+
+                if (answer)
+                {
+                    // User tapped 'Yes' - Call your search method here
+                    App.g_SearchText = Search.Text;
+                    //App.g_SearchFromPage = "HomePage";
+                    App.g_Category.Code = "";
+                    App.g_Category.Description = "ALL CATEGORIES";
+
+                    App.g_Subcategory.Code = "";
+                    App.g_Subcategory.Description = "ALL SUBCATEGORIES";
+
+                    RefreshList();
+                    await App.g_Shell.GoToItemSearch();
+                }
+                else
+                {
+                    // User tapped 'No' - Handle cancellation or do nothing
+                }
+            }            
         }
 
         private void OnTappedClearCategory(object sender, EventArgs e)
@@ -260,6 +291,24 @@
                 item.IsStepperVisible = false;
                 item.IsAddToOrderVisible = true;
             }
+        }
+
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+            ImageOverlay.IsVisible = false;
+            if (ItemsListSearch.SelectedItem!= null)
+            {   
+                ItemsListSearch.SelectedItem = null;
+            }
+        }
+
+        private void ItemsListSearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedItem = e.CurrentSelection?.FirstOrDefault() as Item;
+                if (selectedItem == null)
+                    return;
+            ImageOverlay.IsVisible = true;
+            FullImage.Source = selectedItem.ImageURL;
         }
     }
 }

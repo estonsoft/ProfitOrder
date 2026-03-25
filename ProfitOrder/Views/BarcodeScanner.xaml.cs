@@ -1,7 +1,7 @@
 ﻿using Scandit.DataCapture.Barcode.Capture;
-using TPSMobileApp.Models;
+using ProfitOrder.Models;
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     public partial class BarcodeScanner : ContentPage
     {

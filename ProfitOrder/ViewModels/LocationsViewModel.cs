@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 
-namespace TPSMobileApp.ViewModels
+namespace ProfitOrder.ViewModels
 {
     public class LocationsViewModel : BaseViewModel
     {

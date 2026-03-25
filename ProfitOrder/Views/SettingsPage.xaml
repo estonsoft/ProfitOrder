@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="TPSMobileApp.Views.SettingsPage"
+    x:Class="ProfitOrder.Views.SettingsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:TPSMobileApp.Controls"
+    xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+    xmlns:modal="clr-namespace:ProfitOrder"
     Title="Settings"
     BackgroundColor="White"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">
 
     <ContentPage.Content>
-        <Grid>
+        <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40" />
                 <RowDefinition Height="*" />
@@ -22,7 +23,7 @@
                 <StackLayout
                     Padding="0,50,0,0"
                     BackgroundColor="White"
-                    VerticalOptions="Start">
+                    VerticalOptions="Fill">
                     <Label
                         Padding="0,0,0,0"
                         BackgroundColor="White"
@@ -31,8 +32,121 @@
                         HorizontalOptions="Center"
                         Text="Settings"
                         TextColor="black" />
+                    <Label
+                        x:Name="ServerURLCurrent"
+                        Margin="0,0,0,0"
+                        FontSize="18"
+                        HeightRequest="35"
+                        HorizontalOptions="Center"
+                        Text="{Binding ServerURL}"
+                        VerticalOptions="Center" />
+                    <Button
+                        x:Name="SetServerURL"
+                        Margin="0,0,0,20"
+                        Padding="0,0,0,0"
+                        BackgroundColor="blue"
+                        Clicked="ServerURL_Clicked"
+                        CornerRadius="10"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        HeightRequest="35"
+                        HorizontalOptions="Center"
+                        Text="   Set Server URL   "
+                        TextColor="White"
+                        TextTransform="None" />
+                    <Entry
+                        x:Name="ServerURL"
+                        Margin="0,0,0,0"
+                        FontSize="18"
+                        HeightRequest="40"
+                        HorizontalOptions="Center"
+                        IsVisible="false"
+                        Placeholder="Server URL"
+                        PlaceholderColor="Gray"
+                        Text="{Binding ServerURL}"
+                        VerticalOptions="Center"
+                        WidthRequest="300" />
                     <StackLayout
-                        Margin="0,40,0,0"
+                        x:Name="AddStack"
+                        Margin="0,0,0,0"
+                        HorizontalOptions="Center"
+                        IsVisible="false"
+                        Orientation="Horizontal"
+                        VerticalOptions="Center">
+                        <Button
+                            x:Name="AddURLButton"
+                            Margin="0,0,0,5"
+                            Padding="0,0,0,0"
+                            BackgroundColor="blue"
+                            Clicked="Add_Clicked"
+                            CornerRadius="10"
+                            FontAttributes="Bold"
+                            FontSize="14"
+                            HeightRequest="35"
+                            HorizontalOptions="Center"
+                            Text="   Add Server URL    "
+                            TextColor="White"
+                            TextTransform="None" />
+                        <Label
+                            Margin="25,5,0,0"
+                            FontSize="14"
+                            HeightRequest="35"
+                            HorizontalOptions="Center"
+                            Text="Tap URL to select"
+                            TextColor="Gray"
+                            VerticalOptions="Center" />
+                    </StackLayout>
+                    <BoxView
+                        x:Name="BoxTop"
+                        BackgroundColor="gray"
+                        HeightRequest="3"
+                        HorizontalOptions="Fill"
+                        IsVisible="false"
+                        VerticalOptions="Fill"
+                        Color="lightgray" />
+                    <CollectionView
+                        x:Name="ServerURLList"
+                        HeightRequest="160"
+                        IsVisible="false"
+                        SelectionChanged="ServerURLList_SelectionChanged"
+                        SelectionMode="Single">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="modal:Server">
+                                <StackLayout
+                                    Margin="0,0,0,0"
+                                    Orientation="Vertical"
+                                    Spacing="0"
+                                    VerticalOptions="Fill">
+                                    <Label
+                                        Margin="20,15,0,15"
+                                        BackgroundColor="White"
+                                        FontAttributes="Bold"
+                                        FontSize="16"
+                                        HorizontalOptions="Fill"
+                                        LineBreakMode="WordWrap"
+                                        Text="{Binding ServerURL}"
+                                        TextColor="black"
+                                        VerticalOptions="Fill" />
+                                    <BoxView
+                                        BackgroundColor="gray"
+                                        HeightRequest="3"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill"
+                                        Color="lightgray" />
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <BoxView
+                        x:Name="BoxBottom"
+                        BackgroundColor="gray"
+                        HeightRequest="3"
+                        HorizontalOptions="Fill"
+                        IsVisible="false"
+                        VerticalOptions="Fill"
+                        Color="lightgray" />
+                    <StackLayout
+                        Margin="0,10,0,0"
                         HorizontalOptions="Center"
                         Orientation="Horizontal">
                         <CheckBox
@@ -48,7 +162,7 @@
                     </StackLayout>
                     <Button
                         x:Name="SaveButton"
-                        Margin="0,20,0,0"
+                        Margin="0,10,0,0"
                         Padding="0,0,0,0"
                         BackgroundColor="blue"
                         Clicked="Save_Clicked"

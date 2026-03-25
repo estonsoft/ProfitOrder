@@ -20,7 +20,7 @@
     <!-- Display name -->
     <ApplicationTitle>ProfitOrder</ApplicationTitle>
     <!-- App Identifier -->
-    <ApplicationId>com.sales.ramdistributors</ApplicationId>
+    <ApplicationId>com.tps.profitorder</ApplicationId>
     <!-- Versions -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
@@ -29,12 +29,53 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
   </PropertyGroup>
+  <PropertyGroup> 
+     <UseInterpreter>true</UseInterpreter> 
+     <AssemblyTitle>Ram Distributors</AssemblyTitle> 
+     <AndroidSigningKeyStore>tps.keystore</AndroidSigningKeyStore> 
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
+    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
+    <ApplicationVersion>3912</ApplicationVersion>
+    <AndroidUseAapt2>True</AndroidUseAapt2>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningStorePass>tps_999</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>tps</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>tps_999</AndroidSigningKeyPass>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
+    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
+    <ApplicationVersion>3912</ApplicationVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
+    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
+    <ApplicationVersion>3912</ApplicationVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+	<RunAOTCompilation>false</RunAOTCompilation>
+    <AndroidUseAapt2>True</AndroidUseAapt2>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningStorePass>tps_999</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>tps</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>tps_999</AndroidSigningKeyPass>
+    <DebugSymbols>False</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-ios|AnyCPU'">
+    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
+    <ApplicationVersion>3912</ApplicationVersion>
+  </PropertyGroup>
   
   <ItemGroup>
 	<!-- App Icon -->
 	  <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appicon.svg" Color="#ffffff" />
 	<!-- Splash Screen -->
-	<MauiSplashScreen Include="Resources\Images\logo.png" Color="#ffffff" BaseSize="200,200" />
+	<MauiSplashScreen Include="Resources\Images\logo.png" Color="#ffffff" BaseSize="250,170" />
 	<!-- Images -->
     <MauiImage Include="Resources\Images\*" />
     <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
@@ -121,6 +162,9 @@
     <MauiXaml Update="Views\MyAccount.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\PaymentMethodEditPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\PaymentMethodPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
@@ -154,6 +198,9 @@
     <MauiXaml Update="Views\ShoppingCartPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\SubcategoryPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
@@ -174,5 +221,66 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Platforms\iOS\Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <MauiFont Update="C:\Users\ATM\.nuget\packages\syncfusion.maui.core\32.1.24\buildTransitive\..\buildTransitive\Resources\Fonts\MauiMaterialAssets.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="C:\Users\ATM\.nuget\packages\syncfusion.maui.pdfviewer\32.1.24\buildTransitive\..\buildTransitive\Resources\Fonts\Boogaloo.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="C:\Users\ATM\.nuget\packages\syncfusion.maui.pdfviewer\32.1.24\buildTransitive\..\buildTransitive\Resources\Fonts\Handlee.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="C:\Users\ATM\.nuget\packages\syncfusion.maui.pdfviewer\32.1.24\buildTransitive\..\buildTransitive\Resources\Fonts\KaushanScript.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="C:\Users\ATM\.nuget\packages\syncfusion.maui.pdfviewer\32.1.24\buildTransitive\..\buildTransitive\Resources\Fonts\PinyonScript.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\Font Awesome 5 Brands-Regular-400.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\Font Awesome 5 Free-Regular-400.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\Font Awesome 5 Free-Solid-900.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\Font Awesome 6 Pro-Light-300.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\Font Awesome 6 Pro-Regular-400.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\Font Awesome 6 Pro-Solid-900.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\Font Awesome 6 Pro-Thin-100.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\OpenSans-Regular.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\OpenSans-Semibold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+    <MauiFont Update="Resources\Fonts\SEGMDL2.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </MauiFont>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Controls\CustomListCreditItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Controls\CustomListItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Controls\CustomListLabelItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Views\PaymentMethodEditPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
 </Project>

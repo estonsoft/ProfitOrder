@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace TPSMobileApp
+namespace ProfitOrder
 {
     public class CartItem
     {

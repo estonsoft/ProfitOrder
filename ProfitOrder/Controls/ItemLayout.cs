@@ -1,4 +1,4 @@
-﻿namespace TPSMobileApp.Controls
+﻿namespace ProfitOrder.Controls
 {
     public class ItemLayout : StackLayout
     {
@@ -35,7 +35,7 @@
             Orientation = StackOrientation.Vertical;
             Margin = new Thickness(0, 0, 0, 0);
             Spacing = 0;
-            VerticalOptions = LayoutOptions.Start;
+            VerticalOptions = LayoutOptions.StartAndExpand;
 
             Label DescLabel = new Label();
             DescLabel.Text = 

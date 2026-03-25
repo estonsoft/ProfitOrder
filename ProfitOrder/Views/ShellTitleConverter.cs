@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 
 
-namespace TPSMobileApp.Views
+namespace ProfitOrder.Views
 {
     class ShellTitleConverter : IValueConverter
     {

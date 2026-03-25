@@ -18,10 +18,10 @@ using Scandit.DataCapture.Barcode.Data;
 using Scandit.DataCapture.Core.Capture;
 using Scandit.DataCapture.Core.Data;
 using Scandit.DataCapture.Core.Source;
-using TPSMobileApp.Models;
-using TPSMobileApp.Views;
+using ProfitOrder.Models;
+using ProfitOrder.Views;
 
-namespace TPSMobileApp.ViewModels
+namespace ProfitOrder.ViewModels
 {
     public class ScanditViewModelBase : BaseViewModel, IBarcodeCaptureListener
     {
