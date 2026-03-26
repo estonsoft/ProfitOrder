@@ -170,13 +170,19 @@
                     <Label
                         FontSize="11"
                         Text="Last Purchased"
-                        TextColor="Black" />
+                        TextColor="Black"
+                        VerticalOptions="Center" />
                     <Label FontSize="11" Text="{Binding LastPurchDateDisplay}" />
                     <Label
+                        Margin="5,0,0,0"
                         FontSize="11"
                         Text="Qty"
-                        TextColor="Black" />
-                    <Label FontSize="11" Text="{Binding QtyLastOrder}" />
+                        TextColor="Black"
+                        VerticalOptions="Center" />
+                    <Label
+                        FontSize="11"
+                        Text="{Binding QtyLastOrder}"
+                        VerticalOptions="Center" />
                 </HorizontalStackLayout>
                 <HorizontalStackLayout
                     x:Name="BuildToStack"
@@ -188,16 +194,18 @@
                         FontSize="11"
                         Text="Build To"
                         TextColor="Black"
-                        WidthRequest="60" />
+                        VerticalOptions="Center" />
                     <Label
+                        Margin="5,0,0,0"
                         BackgroundColor="White"
                         FontSize="11"
                         IsVisible="{Binding IsBuildToViewOnly}"
                         Text="{Binding BuildTo}"
                         TextColor="Black"
-                        WidthRequest="60" />
+                        VerticalOptions="Center" />
                     <controls:BuildToEntry
                         x:Name="BuildToEntry"
+                        Margin="10,0,0,0"
                         BuildTo="{Binding BuildTo}"
                         Completed="OnBuildToEntry_Completed"
                         Focused="BuildToEntry_Focused"

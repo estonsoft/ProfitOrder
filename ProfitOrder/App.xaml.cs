@@ -88,16 +88,7 @@ namespace ProfitOrder
             InitializeComponent();
             CommManager = _commManager;
 
-            // 19.2 version Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NTAzNTg1QDMxMzkyZTMyMmUzMGMySndvR0x2aHJwSHJWcFpwSG93MVMxMFRub1pFRkhTbnRHakhEVTd3WlE9");
-            // 20.1.0.57 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NjQ1MDgwQDMyMzAyZTMxMmUzMEZVVGd2ZDhxb2liR2MzV0pybTM5ZE5SemU4Mml6SWthYnFFa3ZGZ0F6VlU9");
-            // 20.2.0.43
-            // Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Njk0OTc0QDMyMzAyZTMyMmUzMFdNblBzcjZVWWc5Q0VMdHZRdXQxeFYyRGhGdlF5ZGIzUjQ2VGdLU2ZBbGM9");
-
-            // 19.4.0.56
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjQ0OTcyOEAzMTM5MmUzNDJlMzBoTVFSazNhbDdpOTVGMVE3VXExSzNPZENwUFJ5WmhnT2ZxaDQrK2dBQ0hJPQ==");
-
-            // 22.1.36
-            //Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjUyNzUzNEAzMjMyMmUzMDJlMzBocnhTTUc0RG5NYnJnNUgzaDFMdHBFaTdiU2NaaGljNEtiSHcycTlKNGtnPQ==;MjUyNzUzNUAzMjMyMmUzMDJlMzBocnhTTUc0RG5NYnJnNUgzaDFMdHBFaTdiU2NaaGljNEtiSHcycTlKNGtnPQ==");
 
             try
             {
@@ -112,7 +103,19 @@ namespace ProfitOrder
             }
 
             g_App = this;
+            Task.Run(async () =>
+            {
+                LoadSettings();
+            });
+        }
 
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            return new Window(new AppShell());
+        }
+
+        private async void LoadSettings()
+        {
             g_FlyerFilename = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "MonthlyFlyer.pdf");
 
             try
@@ -305,8 +308,7 @@ namespace ProfitOrder
                 g_Customer = new Customer();
                 g_ShoppingCartItems = App.g_db.GetCartPieces();
 
-                Task.Run(async () =>
-                {
+                
                     try
                     {
                         g_Customer = new Customer();
@@ -320,7 +322,7 @@ namespace ProfitOrder
                     {
                         g_Customer = new Customer();
                     }
-                });
+                
 
                 //g_CategoryList = App.g_db.GetCategories();
                 g_HomePageCategoryList = App.g_db.GetHomePageCategories();
@@ -329,30 +331,28 @@ namespace ProfitOrder
 
                 try
                 {
-                    App.CommManager.GetSettings();
+                    await App.CommManager.GetSettings();
                 }
                 catch { }
 
                 InsertOnAccountPaymentMethod();
                 GetDefaultPaymentMethod();
 
-                RefreshAll();
+                await RefreshAll();
                 InitializeAllTimer();
 
-                RefreshOrderHistory();
+                await RefreshOrderHistory();
                 InitializeOrderHistoryTimer();
 
                 if (g_IsSalesUser || g_IsChainManager)
                 {
-                    App.CommManager.GetSalespersonCustomers(g_UserName);
+                    await App.CommManager.GetSalespersonCustomers(g_UserName);
                 }
 
+                await RefreshQOH();
                 InitializeQOHTimer();
             }
-
-            MainPage = new AppShell();
         }
-
         public static void UpdateServerLinks()
         {
             Constants.BaseURL = App.g_ServerURL;
@@ -365,7 +365,7 @@ namespace ProfitOrder
 
         private void InitializeAllTimer()
         {
-            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
+            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
             {
                 Task.Run(async () =>
                 {
@@ -382,7 +382,7 @@ namespace ProfitOrder
             if (App.g_ServerURL != "")
             {
                 // start with banners  services will call next when one is done
-                App.CommManager.GetBanners();
+                await App.CommManager.GetBanners();
             }
 
             return "";
@@ -390,7 +390,7 @@ namespace ProfitOrder
 
         private void InitializeQOHTimer()
         {
-            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
+            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
             {
                 Task.Run(async () =>
                 {
@@ -408,7 +408,7 @@ namespace ProfitOrder
             {
                 if ((App.g_Customer.CustNo != null) && (App.g_Customer.CustNo != "") && (App.g_Customer.CustNo != "0"))
                 {
-                    App.CommManager.GetItemQOH2(App.g_UserName, App.g_Customer.CustNo);
+                    await App.CommManager.GetItemQOH2(App.g_UserName, App.g_Customer.CustNo);
                 }
             }
             catch { }
@@ -418,7 +418,7 @@ namespace ProfitOrder
 
         private void InitializeBannerTimer()
         {
-            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
+            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
             {
                 Task.Run(async () =>
                 {
@@ -437,7 +437,7 @@ namespace ProfitOrder
 
         private void InitializeItemTimer()
         {
-            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
+            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
             {
                 Task.Run(async () =>
                 {
@@ -460,7 +460,7 @@ namespace ProfitOrder
 
         private void InitializeOrderHistoryTimer()
         {
-            Device.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
+            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
             {
                 Task.Run(async () =>
                 {
@@ -478,7 +478,7 @@ namespace ProfitOrder
             {
                 if ((App.g_Customer.CustNo != null) && (App.g_Customer.CustNo != "") && (App.g_Customer.CustNo != "0"))
                 {
-                    App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
+                    await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
                 }
             }
             catch { }
@@ -513,7 +513,7 @@ namespace ProfitOrder
         {
             try
             {
-                App.CommManager.ValidateUserActive(App.g_UserName);
+                await App.CommManager.ValidateUserActive(App.g_UserName);
             }
             catch { }
 

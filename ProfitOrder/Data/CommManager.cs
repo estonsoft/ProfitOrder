@@ -98,7 +98,5 @@
         {
             String response = soapService.SaveBuildToAsync(custNo, v1, v2).Result;
         }
-
-
     }
 }

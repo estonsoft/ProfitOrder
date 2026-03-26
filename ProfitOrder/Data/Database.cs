@@ -36,12 +36,12 @@ namespace ProfitOrder
 
         public void BeginTransaction()
         {
-            _database.BeginTransaction();
+            //_database.BeginTransaction();
         }
 
         public void CommitTransaction()
         {
-            _database.Commit();
+            //_database.Commit();
         }
 
         public void RollbackTransaction()
@@ -722,8 +722,8 @@ namespace ProfitOrder
 
         public int SaveSalesCustomer(List<SalesCustomer> cust)
         {
-            _database.Delete(cust);
-            return _database.Insert(cust);
+            _database.DeleteAll<SalesCustomer>();
+            return _database.InsertAll(cust);
         }
 
         public List<Category> GetHomePageCategories()
@@ -739,7 +739,8 @@ namespace ProfitOrder
 
         public int SaveCategory(List<Category> categorys)
         {
-            return _database.InsertOrReplace(categorys);
+            _database.DeleteAll<Category>();
+            return _database.InsertAll(categorys);
         }
 
         public int DeleteCategories()
@@ -760,7 +761,8 @@ namespace ProfitOrder
 
         public int SaveSubcategory(List<Subcategory> subcategory)
         {
-            return _database.InsertOrReplace(subcategory);
+            _database.DeleteAll<Subcategory>();
+            return _database.InsertAll(subcategory);
         }
 
         public int GetSubcategoryCount(string sCategoryCode)
@@ -798,7 +800,8 @@ namespace ProfitOrder
 
         public int SaveSubsubcategory(List<Subsubcategory> subsubcategory)
         {
-            return _database.InsertOrReplace(subsubcategory);
+            _database.DeleteAll<Subsubcategory>();
+            return _database.InsertAll(subsubcategory);
         }
 
         public int DeleteSubsubcategory(Subsubcategory subsubcategory)

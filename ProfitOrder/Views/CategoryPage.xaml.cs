@@ -10,6 +10,7 @@ namespace ProfitOrder.Views
         {
             InitializeComponent();
             BindingContext = _viewModel = new CategoryViewModel();
+            App.g_IsShowSubcategories = false;
         }
 
         protected override async void OnAppearing()

@@ -285,40 +285,41 @@
                                     <VerticalStackLayout VerticalOptions="Center">
                                         <Label FontAttributes="Bold" Text="{Binding ItemNoDisplay}" />
                                         <Label Text="{Binding CategoryDesc}" />
-                                        <Label Text="{Binding QtyOrder, StringFormat='Qty: {0}'}" />
                                         <HorizontalStackLayout>
                                             <Label
                                                 BackgroundColor="White"
                                                 FontAttributes="Bold"
                                                 FontSize="16"
                                                 IsVisible="{Binding IsLoggedIn}"
-                                                MaxLines="1"
                                                 Text="{Binding PriceDisplay}"
-                                                TextColor="Black" />
+                                                TextColor="Black"
+                                                VerticalOptions="Center" />
                                             <Label
-                                                Margin="-5,4,0,0"
+                                                Margin="10,0,0,0"
                                                 BackgroundColor="White"
-                                                FontSize="12"
+                                                FontSize="16"
                                                 IsVisible="{Binding IsLoggedIn}"
                                                 Text="{Binding SizeUOM}"
-                                                TextColor="Black" />
+                                                TextColor="Black"
+                                                VerticalOptions="Center" />
+                                            <Label
+                                                Margin="15,0,0,0"
+                                                BackgroundColor="White"
+                                                FontSize="16"
+                                                Text="Qty"
+                                                TextColor="Black"
+                                                VerticalOptions="Center"
+                                                WidthRequest="30" />
+                                            <Label
+                                                Margin="5,0,0,0"
+                                                BackgroundColor="White"
+                                                FontAttributes="Bold"
+                                                FontSize="16"
+                                                Text="{Binding QtyOrder}"
+                                                TextColor="Black"
+                                                VerticalOptions="Center" />
                                         </HorizontalStackLayout>
                                     </VerticalStackLayout>
-                                    <Label
-                                        Margin="30,10,0,0"
-                                        BackgroundColor="White"
-                                        FontSize="14"
-                                        Text="Qty"
-                                        TextColor="Black"
-                                        WidthRequest="30" />
-                                    <Label
-                                        Margin="5,5,0,0"
-                                        BackgroundColor="White"
-                                        FontAttributes="Bold"
-                                        FontSize="20"
-                                        Text="{Binding QtyOrder}"
-                                        TextColor="Black"
-                                        WidthRequest="120" />
                                 </HorizontalStackLayout>
 
                                 <BoxView HeightRequest="1" Color="LightGray" />

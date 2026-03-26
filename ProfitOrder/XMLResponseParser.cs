@@ -87,16 +87,10 @@ namespace ProfitOrder
                             subcategories.Add(subcat);
                         }
                     }
-                    App.g_db.BeginTransaction();
-
-                    App.g_db.DeleteCategories();
-                    App.g_db.DeleteSubcategories();
                     App.g_db.SaveCategory(categories);
                     App.g_db.SaveSubcategory(subcategories);
 
                     App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
-
-                    App.g_db.CommitTransaction();
                 }
 
                 try
@@ -139,7 +133,7 @@ namespace ProfitOrder
             }
         }
 
-        public static void commService_GetCategoriesAndSubcategoriesCustCompleted(String response)
+        public static async void commService_GetCategoriesAndSubcategoriesCustCompleted(String response)
         {
             Debug.WriteLine("Get Categories and Subcategories Cust returned");
 
@@ -207,10 +201,6 @@ namespace ProfitOrder
 
                 try
                 {
-                    App.g_db.BeginTransaction();
-                    App.g_db.DeleteCategories();
-                    App.g_db.DeleteSubcategories();
-                    App.g_db.DeleteSubsubcategories();
                     App.g_db.SaveCategory(categories);
                     App.g_db.SaveSubcategory(subcategories);
                     App.g_db.SaveSubsubcategory(subsubcategories);
@@ -237,14 +227,13 @@ namespace ProfitOrder
                     sDate = "0";
                     if (App.g_Customer.CustNo == "0")
                     {
-                        App.CommManager.GetItems("0", sDate);
+                        await App.CommManager.GetItems("0", sDate);
                     }
                     else
                     {
-                        App.CommManager.GetItems(App.g_Customer.CustNo, sDate);
+                        await App.CommManager.GetItems(App.g_Customer.CustNo, sDate);
                     }
                     App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
-                    App.g_db.CommitTransaction();
                 }
                 catch (Exception ex)
                 {
@@ -257,7 +246,7 @@ namespace ProfitOrder
             }
         }
 
-        public static void commService_GetItemsCompletedAsync(String response)
+        public static async void commService_GetItemsCompletedAsync(String response)
         {
             try
             {
@@ -596,9 +585,9 @@ namespace ProfitOrder
 
                     App.g_db.CommitTransaction();
 
-                    App.CommManager.GetItemQOH(App.g_Customer.CustNo);
-                    App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
-                    App.CommManager.GetFlyerItemsPDF();
+                    await App.CommManager.GetItemQOH(App.g_Customer.CustNo);
+                    await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
+                    await App.CommManager.GetFlyerItemsPDF();
                 }
             }
             catch (Exception ex)
@@ -1486,8 +1475,7 @@ namespace ProfitOrder
                 {
                     //Database db = new Database();
 
-                    App.g_db.BeginTransaction();
-
+                    
                     foreach (String s in aOrders)
                     {
                         String[] aOrder = s.Split("|");
@@ -1666,8 +1654,6 @@ namespace ProfitOrder
                     }
 
                     App.g_ReorderItemList = App.g_db.GetReorderItems();
-
-                    App.g_db.CommitTransaction();
 
                 }
 
@@ -1918,10 +1904,7 @@ namespace ProfitOrder
                         Debug.WriteLine("Added Items = " + s);
                         lstCustomers.Add(c);
                     }
-                    App.g_db.BeginTransaction();
-                    App.g_db.DeleteSalesCustomers();
                     App.g_db.SaveSalesCustomer(lstCustomers);
-                    App.g_db.CommitTransaction();
                 }
             }
             catch (Exception ex)
