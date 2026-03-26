@@ -357,7 +357,7 @@ namespace ProfitOrder
         {
             Constants.BaseURL = App.g_ServerURL;
             Constants.SoapUrl = App.g_ServerURL + "/RemotePhoneApp.asmx";
-            Constants.LogoUrl = App.g_ServerURL + "/images/logo/logo.png";
+            Constants.LogoUrl = App.g_ServerURL + "/images/logo/logo.jpg";
             Constants.BannerUrl = App.g_ServerURL + "/images/banner phone/";
             Constants.CategoryImageUrl = App.g_ServerURL + "/images/category/";
             Constants.ItemImageUrl = App.g_ServerURL + "/images/items/";

@@ -11,7 +11,7 @@
         VerticalOptions="Fill">
         <Image
             HorizontalOptions="Center"
-            Source="logo.png"
+            Source="logo.jpg"
             VerticalOptions="Center" />
     </Grid>
 </ContentPage>
