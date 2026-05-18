@@ -115,8 +115,10 @@
                 <ffimageloading:CachedImage
                     Margin="6"
                     Aspect="AspectFill"
+                    ErrorPlaceholder="logo.jpg"
                     HeightRequest="50"
                     HorizontalOptions="Center"
+                    LoadingPlaceholder="logo.jpg"
                     Source="logo.jpg"
                     StyleClass="FlyoutHeaderStyle"
                     VerticalOptions="Center" />

@@ -20,6 +20,7 @@ namespace ProfitOrder.Data
         Task<string> SubmitReturnAsync(string sCustNo, string sOrderInfo, string sUser, string sNotes);
         Task<string> GetOrderHistoryAsync(string sCustNo);
         Task<string> GetSalespersonCustomersAsync(string sUser);
+        Task<string> GetInvoicePDFAsync(string sOrder);
         Task<string> GetFlyerItemsPDFAsync();
         Task<string> ValidateTokenAsync(String sCustNo, String sCCInfo);
         Task<string> SaveBuildToAsync(string sCustNo, string sItemNo, string sBuildTo);

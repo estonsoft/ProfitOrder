@@ -30,11 +30,11 @@
             }
             else
             {
-#if DEBUG
-                App.g_ServerURL = "https://ctbdemo.qwikpoint.net";
-#else
-                App.g_ServerURL = "https://ramdistributors.qwikpoint.net";
-#endif
+//#if DEBUG
+//                App.g_ServerURL = "https://ctbdemo.qwikpoint.net";
+//#else
+//                App.g_ServerURL = "https://ramdistributors.qwikpoint.net";
+//#endif
             }
 
             App.UpdateServerLinks();

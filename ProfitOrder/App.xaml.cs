@@ -67,6 +67,7 @@ namespace ProfitOrder
         public static int g_MonthlyAdX { get; set; }
         public static int g_MonthlyAdY { get; set; }
         public static Boolean g_IsMonthlyFlyer { get; set; }
+        public static Boolean g_IsQWP { get; set; }
         public static Boolean g_IsRefNoLookup { get; set; }
         public static int g_FlyerStartDate { get; set; }
         public static int g_FlyerEndDate { get; set; }
@@ -151,7 +152,12 @@ namespace ProfitOrder
                 }
                 else
                 {
+#if DEBUG
+                    g_ServerURL = "https://ctbdemo.qwikpoint.net";
+#else
                     g_ServerURL = "https://www.turningpointsystems.com";
+#endif
+
                 }
                 UpdateServerLinks();
 

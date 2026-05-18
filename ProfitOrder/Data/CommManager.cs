@@ -98,5 +98,12 @@
         {
             String response = soapService.SaveBuildToAsync(custNo, v1, v2).Result;
         }
+
+        public async Task<string> GetInvoicePDF(string sOrder)
+        {
+            String response = await soapService.GetInvoicePDFAsync(sOrder);
+            return response;
+            //XMLResponseParser.commService_GetInvoicePDFCompletedAsync(response);
+        }
     }
 }

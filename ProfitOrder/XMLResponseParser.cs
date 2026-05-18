@@ -872,6 +872,23 @@ namespace ProfitOrder
                             App.g_FlyerEndDate = iFlyerEndDate;
                             try
                             {
+                                if (aUser[12] == "qwp")
+                                {
+                                    App.g_IsQWP = true;
+                                }
+                                else
+                                {
+                                    App.g_IsQWP = false;
+                                }
+                                App.g_db.SaveSetting("qwp", aUser[12]);
+                            }
+                            catch
+                            {
+                                App.g_IsQWP = false;
+                                App.g_db.SaveSetting("qwp", "");
+                            }
+                            try
+                            {
                                 if (aUser[13] == "1")
                                 {
                                     App.g_IsAutoAdd1 = true;

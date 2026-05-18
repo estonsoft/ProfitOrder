@@ -50,6 +50,7 @@ namespace ProfitOrder
             Routing.RegisterRoute(nameof(CustomerListPage), typeof(CustomerListPage));
             Routing.RegisterRoute(nameof(FlyerPDFPage), typeof(FlyerPDFPage));
             Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+            Routing.RegisterRoute(nameof(InvoiceViewer), typeof(InvoiceViewer));
 
             custMenu = MenuCustomers;
             returnMenu = MenuCreditCart;
@@ -129,6 +130,13 @@ namespace ProfitOrder
 
             App.g_HeaderTitle = "Print Labels";
             await Current.GoToAsync("//HomePage/LabelCartPage");
+            return 0;
+        }
+
+        public async Task<int> GoToInvoiceViewer()
+        {
+            App.g_HeaderTitle = "Invoice Detail";
+            await Current.GoToAsync("//HomePage/PurchaseHistoryPage/InvoiceViewer");
             return 0;
         }
         public async Task<int> GoToSettings()

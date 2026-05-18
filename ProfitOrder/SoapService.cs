@@ -119,6 +119,9 @@ namespace ProfitOrder.Data
             => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetSalespersonCustomers",
                 SoapEnvelope("GetSalespersonCustomers", $"<sUser>{sUser}</sUser>"));
 
+        public Task<string> GetInvoicePDFAsync(string sOrder)
+           => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetInvoicePDF",
+               SoapEnvelope("GetInvoicePDF", $"<sOrder>{sOrder}</sOrder>"));
         public Task<string> GetFlyerItemsPDFAsync()
             => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetFlyerItemsPDF",
                 SoapEnvelope("GetFlyerItemsPDF"));       

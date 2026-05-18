@@ -43,7 +43,7 @@
         {
             if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
-                height = 80;
+                height = 79;
             }
             gridContainer = new Grid
             {
