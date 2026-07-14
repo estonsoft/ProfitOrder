@@ -1,32 +1,22 @@
-﻿using System.Diagnostics;
+﻿using BarcodeScanning;
 using FluentFTP.Helpers;
-using Scandit.DataCapture.Barcode.Data;
-using ProfitOrder.ViewModels;
 
 namespace ProfitOrder.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class QuickEntryPage : ContentPage
     {
-        public ScanditViewModelBase viewModel = null;
         List<Item> lstItems;
 
         public QuickEntryPage()
         {
-            InitializeComponent();
-            if (App.g_ScanditViewModel == null)
-            {
-                App.g_ScanditViewModel = new ScanditViewModelBase(this);
-            }
-
-            this.viewModel = App.g_ScanditViewModel;
-            BindingContext = viewModel;
+            InitializeComponent();            
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-
+           
             App.g_CurrentPage = "QuickEntryPage";
 
             lstItems = new List<Item>();
@@ -36,14 +26,33 @@ namespace ProfitOrder.Views
 
             ScanItem.Text = "";
 
-            await viewModel.OnResumeAsync();
+            RequestCameraPermission();
+        }
+
+        async void RequestCameraPermission()
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+
+            if (status != PermissionStatus.Granted)
+            {
+                status = await Permissions.RequestAsync<Permissions.Camera>();
+            }
+
+            if (status == PermissionStatus.Granted)
+            {
+                // Explicitly switch the hardware feed on after permission is secure
+                ScannerControl.CameraEnabled = true; //
+            }
+            else
+            {
+                await DisplayAlertAsync("Permission Denied", "Camera access is required to scan.", "OK");
+            }
         }
 
         protected override void OnDisappearing()
         {
             try
             {
-                _ = this.viewModel.OnSleep();
                 base.OnDisappearing();
                 Content = null;
             }
@@ -95,7 +104,6 @@ namespace ProfitOrder.Views
         {
             ClearItemInfo();
             ScanItem.Text = barcode;
-            viewModel.OnSleep();
 
             TapToScan.IsVisible = true;
 
@@ -177,11 +185,31 @@ namespace ProfitOrder.Views
             return item;
         }
 
+        private void OnBarcodeDetected(object sender, OnDetectionFinishedEventArg e)
+        {
+            // Check if anything was read in the current frame
+            if (e.BarcodeResults.Count == 0) return;
+
+            // The engine processes frames on a background threat thread; route to UI thread
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                // Pause camera processing to handle the logic flow
+                ScannerControl.CameraEnabled = false;
+
+                var primaryItem = e.BarcodeResults.First();
+                ScanComplete(primaryItem.DisplayValue.Trim());
+                //await DisplayAlertAsync("Native Scan Match",
+                //    $"Value: {primaryItem.DisplayValue}\nType: {primaryItem.BarcodeFormat}",
+                //    "OK");
+            });
+        }
+
         async void OnScannerEnable(object sender, EventArgs e)
         {
             ClearItemInfo();
+            // Resume scanning pipeline
+            ScannerControl.CameraEnabled = true;
             TapToScan.IsVisible = false;
-            _ = this.viewModel.OnResumeAsync();
             ScanItem.Text = "";
             Message.Text = "";
         }

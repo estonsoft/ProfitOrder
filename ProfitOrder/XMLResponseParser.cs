@@ -803,23 +803,6 @@ namespace ProfitOrder
 
                             try
                             {
-                                if (aUser[7] == "1")
-                                {
-                                    App.g_IsScandit = true;
-                                }
-                                else
-                                {
-                                    App.g_IsScandit = false;
-                                }
-                                App.g_db.SaveSetting("IsScandit", aUser[7]);
-                            }
-                            catch
-                            {
-                                App.g_IsScandit = false;
-                                App.g_db.SaveSetting("IsScandit", "0");
-                            }
-                            try
-                            {
                                 if (aUser[8] == "1")
                                 {
                                     App.g_IsSalesUser = true;

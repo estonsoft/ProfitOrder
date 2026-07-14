@@ -11,46 +11,17 @@
             App.g_HomePage = this;
 
             BannerImage.Source = ImageSource.FromUri(new Uri(Constants.LogoUrl));
-            RequestCameraPermission();
+            
             InitializeTimer();
         }
 
         async void RequestCameraPermission()
         {
-            // Check current status
             var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
 
-            if (status == PermissionStatus.Granted)
+            if (status != PermissionStatus.Granted)
             {
-                // Permission already granted, proceed with camera action
-                // e.g., StartCamera();
-            }
-            else if (status == PermissionStatus.Denied && OperatingSystem.IsAndroid())
-            {
-                // Android specific: If denied, shouldShowRationale might tell you if you can ask again
-                if (Permissions.ShouldShowRationale<Permissions.Camera>())
-                {
-                    // Show an alert to explain why you need it, then request again
-                    if (await DisplayAlertAsync("Permission Needed", "We need camera access to take photos. Allow access?", "OK", "Cancel"))
-                    {
-                        await Permissions.RequestAsync<Permissions.Camera>();
-                    }
-                }
-            }
-            else if (status != PermissionStatus.Granted) // For iOS/Others if not granted or just denied
-            {
-                // Request permission
                 status = await Permissions.RequestAsync<Permissions.Camera>();
-                if (status == PermissionStatus.Granted)
-                {
-                    // Permission granted after request
-                    // e.g., StartCamera();
-                }
-                else
-                {
-                    // Permission denied permanently (iOS) or still denied (Android)
-                    // Inform the user they need to enable it in settings.
-                }
             }
         }
 
@@ -118,6 +89,7 @@
         protected async override void OnAppearing()
         {
             base.OnAppearing();
+            RequestCameraPermission();
             if (!App.g_IsLoggedIn)
             {
                 await App.g_Shell.GoToLogin();
