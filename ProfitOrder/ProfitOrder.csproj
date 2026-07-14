@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>
+    <ValidateXcodeVersion>false</ValidateXcodeVersion>
     <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
     <!-- <TargetFrameworks>$(TargetFrameworks);net10.0-tizen</TargetFrameworks> -->
     <!-- Note for MacCatalyst:
@@ -97,6 +98,7 @@
 	<PackageReference Include="Syncfusion.Maui.PdfViewer" Version="33.2.6" />
 	<PackageReference Include="System.ServiceModel.Security" Version="6.0.0" />
     <PackageReference Include="Zebra.Printer.SDK" Version="5.0.3563" />
+    <PackageReference Include="ZXing.Net.Maui.Controls" Version="0.5.0" />
   </ItemGroup>
   <ItemGroup>
     <MauiXaml Update="Controls\CustomListCreditItem.xaml">
