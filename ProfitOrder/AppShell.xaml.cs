@@ -42,8 +42,6 @@ namespace ProfitOrder
             Routing.RegisterRoute(nameof(PurchaseHistoryPage), typeof(PurchaseHistoryPage));
             Routing.RegisterRoute(nameof(PurchaseHistoryDetailPage), typeof(PurchaseHistoryDetailPage));
             Routing.RegisterRoute(nameof(ReorderItemsPage), typeof(ReorderItemsPage));
-            Routing.RegisterRoute(nameof(BarcodeScanner), typeof(BarcodeScanner));
-            Routing.RegisterRoute(nameof(BarcodeScannerScandit), typeof(BarcodeScannerScandit));
             Routing.RegisterRoute(nameof(QuickEntryPage), typeof(QuickEntryPage));
             Routing.RegisterRoute(nameof(QuickEntryPageBasic), typeof(QuickEntryPageBasic));
             Routing.RegisterRoute(nameof(QuickEntryPageNoCamera), typeof(QuickEntryPageNoCamera));

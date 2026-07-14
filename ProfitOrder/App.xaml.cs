@@ -59,7 +59,6 @@ namespace ProfitOrder
         public static int g_ShoppingCartItems { get; set; }
         public static String g_SettingsUser { get; set; }
         public static bool g_IsScannerInit { get; set; }
-        public static ScanditViewModelBase g_ScanditViewModel { get; set; }
         public static String g_IsScannerDisabled { get; set; }
         public static String g_FlyerFilename { get; set; }
         public static Boolean g_IsMonthlyAdPDFClick { get; set; }
@@ -292,7 +291,6 @@ namespace ProfitOrder
                 }
 
                 g_IsScannerInit = false;
-                g_ScanditViewModel = null;
 
                 g_Category = new Category();
                 g_Category.Code = "";

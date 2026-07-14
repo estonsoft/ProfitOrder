@@ -1,11 +1,9 @@
 ﻿using FFImageLoading.Maui;
 using Microsoft.Extensions.Logging;
-using Scandit.DataCapture.Barcode;
-using Scandit.DataCapture.Core;
-using Scandit.DataCapture.Core.UI.Maui;
 using SQLitePCL;
 using Syncfusion.Maui.Core.Hosting;
 using ProfitOrder.Data;
+using BarcodeScanning;
 
 namespace ProfitOrder
 {
@@ -18,25 +16,10 @@ namespace ProfitOrder
                 .UseMauiApp<App>()
                 .ConfigureSyncfusionCore()
                 .UseFFImageLoading()
-                .UseScanditCore()
-                .UseScanditBarcode(configure =>
-                {
-                    configure.AddSparkScanView();
-                    configure.AddBarcodePickView();
-                    configure.AddBarcodeFindView();
-                    configure.AddBarcodeCountView();
-                    configure.AddBarcodeArView();
-
-                })
-                .ConfigureMauiHandlers(handlers =>
-                {
-                    // Explicitly register the Scandit DataCaptureView handler
-                    handlers.AddHandler(typeof(DataCaptureView), typeof(DataCaptureViewHandler));
-                })
-
+                .UseBarcodeScanning()   
                 .ConfigureFonts(fonts =>
                 {
-                    
+                        
                     //fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("Font Awesome 5 Brands-Regular-400.otf", "FontAwesomeBrandsReg");
                     fonts.AddFont("Font Awesome 5 Free-Regular-400.otf", "FontAwesomeFreeReg");
