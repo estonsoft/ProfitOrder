@@ -16,7 +16,9 @@ namespace ProfitOrder.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-           
+            
+            await Methods.AskForRequiredPermissionAsync();
+            
             App.g_CurrentPage = "QuickEntryPage";
 
             lstItems = new List<Item>();
@@ -51,6 +53,7 @@ namespace ProfitOrder.Views
 
         protected override void OnDisappearing()
         {
+            ScannerControl.CameraEnabled = false;
             try
             {
                 base.OnDisappearing();

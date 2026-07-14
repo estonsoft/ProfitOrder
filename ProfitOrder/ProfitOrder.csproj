@@ -32,11 +32,11 @@
   </PropertyGroup>
   <PropertyGroup> 
      <UseInterpreter>true</UseInterpreter> 
-     <AssemblyTitle>Ram Distributors</AssemblyTitle> 
+     <AssemblyTitle>Profit Order</AssemblyTitle> 
      <AndroidSigningKeyStore>tps.keystore</AndroidSigningKeyStore> 
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
-    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationTitle>Profit Order</ApplicationTitle>
     <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
     <ApplicationVersion>3912</ApplicationVersion>
     <AndroidUseAapt2>True</AndroidUseAapt2>
@@ -48,12 +48,12 @@
     <AndroidSigningKeyPass>tps_999</AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
-    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationTitle>Profit Order</ApplicationTitle>
     <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
     <ApplicationVersion>3912</ApplicationVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
-    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationTitle>Profit Order</ApplicationTitle>
     <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
     <ApplicationVersion>3912</ApplicationVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
@@ -67,7 +67,7 @@
     <DebugSymbols>False</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-ios|AnyCPU'">
-    <ApplicationTitle>Ram Distributors</ApplicationTitle>
+    <ApplicationTitle>Profit Order</ApplicationTitle>
     <ApplicationDisplayVersion>3.912</ApplicationDisplayVersion>
     <ApplicationVersion>3912</ApplicationVersion>
   </PropertyGroup>

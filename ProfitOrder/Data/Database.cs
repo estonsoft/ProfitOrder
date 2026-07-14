@@ -46,7 +46,7 @@ namespace ProfitOrder
 
         public void RollbackTransaction()
         {
-            _database.Rollback();
+            // _database.Rollback();
         }
 
         public List<Item> SearchItems(String sSearch, Category category, String sBarcode, Subcategory subcategory, Subsubcategory subsubcategory)

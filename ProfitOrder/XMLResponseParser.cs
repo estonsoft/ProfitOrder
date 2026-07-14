@@ -202,7 +202,9 @@ namespace ProfitOrder
                 try
                 {
                     App.g_db.SaveCategory(categories);
+                    await Task.Delay(300);
                     App.g_db.SaveSubcategory(subcategories);
+                    await Task.Delay(300);
                     App.g_db.SaveSubsubcategory(subsubcategories);
 
                     String CustNo = "0";

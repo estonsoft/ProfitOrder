@@ -20,7 +20,7 @@
 	<key>MinimumOSVersion</key>
 	<string>15.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>RAM Distributors</string>
+	<string>Profit Order</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.tps.profitorder</string>
 	<key>NSCameraUsageDescription</key>
@@ -36,7 +36,7 @@
 	<key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
 	<string>This app needs access to the file timestamp to internally check for updates.</string>
 	<key>CFBundleName</key>
-	<string>Ram Distributors</string>
+	<string>Profit Order</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>UIUserInterfaceStyle</key>
