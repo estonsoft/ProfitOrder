@@ -11,87 +11,90 @@
         public async Task GetBanners()
         {
             String banner = await soapService.GetBannersAsync();
-            XMLResponseParser.commService_GetBannersCompleted(banner);
+            await XMLResponseParser.commService_GetBannersCompleted(banner);
         }
 
         public async Task GetCategoriesAndSubcategories()
         {
             String response = await soapService.GetCategoriesAndSubcategoriesAsync();
-            XMLResponseParser.commService_GetCategoriesAndSubcategoriesCompleted(response);
+            await XMLResponseParser.commService_GetCategoriesAndSubcategoriesCompleted(response);
         }
 
         public async Task GetCategoriesAndSubcategoriesCust(string sCust)
         {
             String response = await soapService.GetCategoriesAndSubcategoriesCustAsync(sCust);
-            XMLResponseParser.commService_GetCategoriesAndSubcategoriesCustCompleted(response);
+            await XMLResponseParser.commService_GetCategoriesAndSubcategoriesCustCompleted(response);
         }
 
         public async Task GetItems(String sCustomer, String sDate)
         {
-            String response = await soapService.GetItemsAsync(sCustomer, sDate);
-            XMLResponseParser.commService_GetItemsCompletedAsync(response);
+            new Task(async () =>
+            {
+                String response = await soapService.GetItemsAsync(sCustomer, sDate);
+                await XMLResponseParser.commService_GetItemsCompletedAsync(response);
+            }).Start();
         }
         public async Task GetItemQOH(String sCustomer)
         {
             String response = await soapService.GetItemQOHAsync(sCustomer);
-            XMLResponseParser.commService_GetItemQOHCompletedAsync(response);
+            await XMLResponseParser.commService_GetItemQOHCompletedAsync(response);
         }
 
         public async Task GetItemQOH2(String sUser, String sCustomer)
         {
             String response = await soapService.GetItemQOH2Async(sUser, sCustomer);
-            XMLResponseParser.commService_GetItemQOH2CompletedAsync(response);
+            await XMLResponseParser.commService_GetItemQOH2CompletedAsync(response);
         }
 
         public async Task ValidateLogin(String sUser, String sPassword, String sDeviceId)
         {
             String response = await soapService.ValidateLoginAsync(sUser, sPassword, sDeviceId);
-            XMLResponseParser.commService_ValidateLoginCompletedAsync(response);
+            await XMLResponseParser.commService_ValidateLoginCompletedAsync(response);
         }
 
         public async Task ValidateUserActive(String sUser)
         {
             String response = await soapService.ValidateUserActiveAsync(sUser);
-            XMLResponseParser.commService_ValidateUserActiveCompletedAsync(response);
+            await XMLResponseParser.commService_ValidateUserActiveCompletedAsync(response);
         }
         public async Task GetSettings()
         {
             String response = await soapService.GetSettingsAsync();
-            XMLResponseParser.commService_GetSettingsCompletedAsync(response);
+            await XMLResponseParser.commService_GetSettingsCompletedAsync(response);
         }
         public async Task SubmitOrder(string sCustNo, string sPO, string sPaymentMethod, string sCCInfo, string sOrderInfo, string sDeliveryPickup, string sUser, string sNotes, int iHoldForReview, string sOrderType)
         {
             String response = await soapService.SubmitOrderAsync(sCustNo, sPO, sPaymentMethod, sCCInfo, sOrderInfo, sDeliveryPickup, sUser, sNotes, iHoldForReview, sOrderType);
-            XMLResponseParser.commService_SubmitOrderCompletedAsync(response);
+            await XMLResponseParser.commService_SubmitOrderCompletedAsync(response);
         }
         public async Task SubmitReturn(string sCustNo, string sOrderInfo, string sUser, string sNotes)
         {
             String response = await soapService.SubmitReturnAsync(sCustNo, sOrderInfo, sUser, sNotes);
-            XMLResponseParser.commService_SubmitReturnCompletedAsync(response);
+            await XMLResponseParser.commService_SubmitReturnCompletedAsync(response);
         }
 
         public async Task GetOrderHistory(string sCustNo)
         {
             String response = await soapService.GetOrderHistoryAsync(sCustNo);
-            XMLResponseParser.commService_GetOrderHistoryCompletedAsync(response);
+            await XMLResponseParser.commService_GetOrderHistoryCompletedAsync(response);
         }
 
         public async Task GetSalespersonCustomers(string sUser)
         {
             String response = await soapService.GetSalespersonCustomersAsync(sUser);
-            XMLResponseParser.commService_GetSalespersonCustomersCompletedAsync(response);
+            await XMLResponseParser.commService_GetSalespersonCustomersCompletedAsync(response);
         }
 
         public async Task GetFlyerItemsPDF()
         {
             String response = await soapService.GetFlyerItemsPDFAsync();
-            XMLResponseParser.commService_GetFlyerItemsPDFCompleted(response);
+            await XMLResponseParser.commService_GetFlyerItemsPDFCompleted(response);
         }
 
         public async Task ValidateToken(String sCustNo, String sCCInfo)
         {
             String response = await soapService.ValidateTokenAsync(sCustNo,sCCInfo);
-            XMLResponseParser.commService_ValidateTokenCompletedAsync(response);
+            await XMLResponseParser.commService_ValidateTokenCompletedAsync(response);
         }
 
         public async Task SaveBuildTo(string custNo, string v1, string v2)

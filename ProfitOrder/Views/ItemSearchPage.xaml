@@ -8,7 +8,6 @@
     xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui"
     xmlns:local="clr-namespace:ProfitOrder.ViewModels"
     xmlns:modal="clr-namespace:ProfitOrder"
-    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     Title="Search Products"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False">

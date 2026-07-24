@@ -31,22 +31,35 @@ namespace ProfitOrder
             _database.CreateTable<Server>();
 
             _database.EnableWriteAheadLogging();
-            _database.Execute("PRAGMA synchronous = NORMAL");            
+            _database.Execute("PRAGMA synchronous = NORMAL");     
         }
 
         public void BeginTransaction()
         {
-            //_database.BeginTransaction();
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
+            {
+                while (_database.IsInTransaction)
+                {
+                    SpinWait.SpinUntil(() => !_database.IsInTransaction, 50); // Checks every 50ms
+                }
+                _database.BeginTransaction();
+            }
         }
 
         public void CommitTransaction()
         {
-            //_database.Commit();
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
+            {
+                _database.Commit();
+            }
         }
 
         public void RollbackTransaction()
         {
-            // _database.Rollback();
+             if (DeviceInfo.Platform == DevicePlatform.iOS)
+            {
+                _database.Rollback();
+            }
         }
 
         public List<Item> SearchItems(String sSearch, Category category, String sBarcode, Subcategory subcategory, Subsubcategory subsubcategory)
@@ -446,6 +459,25 @@ namespace ProfitOrder
             return _database.Delete(server);
         }
 
+        public int SaveItems(List<Item> items)
+        {
+            // false = don't self-open a transaction; caller already has one open via BeginTransaction()
+            return _database.InsertAll(items, runInTransaction: false);
+        }
+
+        public void DeleteDiscontinuedItems(List<int> itemNos)
+        {
+            if (itemNos == null || itemNos.Count == 0) return;
+
+            const int chunkSize = 500; // stay under SQLite's default variable/expression limits
+
+            for (int i = 0; i < itemNos.Count; i += chunkSize)
+            {
+                var chunk = itemNos.Skip(i).Take(chunkSize);
+                string idList = string.Join(",", chunk); // ints only — no injection risk
+                _database.Execute($"delete from DiscontinuedItem where ItemNo in ({idList})");
+            }
+        }
         public int SaveItem(Item item)
         {
             return _database.InsertOrReplace(item);
@@ -720,10 +752,14 @@ namespace ProfitOrder
             return _database.Query<Category>(sQuery);
         }
 
-        public int SaveSalesCustomer(List<SalesCustomer> cust)
+        public int DeleteAllSalesCustomer()
         {
-            _database.DeleteAll<SalesCustomer>();
-            return _database.InsertAll(cust);
+            return _database.DeleteAll<SalesCustomer>();
+        }
+
+        public int SaveSalesCustomer(SalesCustomer cust)
+        {
+            return _database.Insert(cust);
         }
 
         public List<Category> GetHomePageCategories()
@@ -737,9 +773,12 @@ namespace ProfitOrder
             return _database.Find<Category>(s => s.Code == sCategoryCode);
         }
 
+        public int DeleteAllCategory()
+        {
+            return _database.DeleteAll<Category>();
+        }
         public int SaveCategory(List<Category> categorys)
         {
-            _database.DeleteAll<Category>();
             return _database.InsertAll(categorys);
         }
 
@@ -759,10 +798,14 @@ namespace ProfitOrder
             return _database.Query<Subcategory>(sQuery);
         }
 
-        public int SaveSubcategory(List<Subcategory> subcategory)
+        public int DeleteAllSubcategory()
         {
-            _database.DeleteAll<Subcategory>();
-            return _database.InsertAll(subcategory);
+            return _database.DeleteAll<Subcategory>();
+        }
+
+        public int SaveSubcategory(List<Subcategory> subcategories)
+        {
+            return _database.InsertAll(subcategories);
         }
 
         public int GetSubcategoryCount(string sCategoryCode)
@@ -798,10 +841,14 @@ namespace ProfitOrder
             return _database.ExecuteScalar<int>(sQuery);
         }
 
-        public int SaveSubsubcategory(List<Subsubcategory> subsubcategory)
+        public int DeleteAllSubsubcategory()
         {
-            _database.DeleteAll<Subsubcategory>();
-            return _database.InsertAll(subsubcategory);
+            return _database.DeleteAll<Subsubcategory>();
+        }
+
+        public int SaveSubsubcategory(List<Subsubcategory> subsubcategories)
+        {
+            return _database.InsertAll(subsubcategories);
         }
 
         public int DeleteSubsubcategory(Subsubcategory subsubcategory)
@@ -819,11 +866,10 @@ namespace ProfitOrder
             return _database.Execute("delete from Banner");
         }
 
-        public int SaveBannerAsync(Banner banner)
+        public int SaveBannerAsync(List<Banner> banners)
         {
-            return _database.Insert(banner);
+            return _database.InsertAll(banners);
         }
-
         public List<Banner> GetBanners()
         {
             return _database.Table<Banner>().OrderBy(t => t.BannerName).ToList();

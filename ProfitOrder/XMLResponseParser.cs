@@ -1,70 +1,70 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 
 namespace ProfitOrder
 {
     internal class XMLResponseParser
     {
-        public static void commService_GetBannersCompleted(String response)
+        public static async Task commService_GetBannersCompleted(String response)
         {
             try
             {
-                Debug.WriteLine("Get Banners returned");
-
+                Console.WriteLine("Get Banners returned");
                 String sBanners = response;
                 String[] aBanners = sBanners.Split('|');
+                ConcurrentBag<Banner> lstBanners = new ConcurrentBag<Banner>();
                 if (aBanners.Length >= 1)
                 {
-                    //Database db = new Database();
-
-                    App.g_db.BeginTransaction();
-                    App.g_db.DeleteBannersAsync();
-
-                    foreach (String s in aBanners)
-                    {
+                    // foreach (String s in aBanners)
+                    // {
+                    Parallel.ForEach(aBanners, s =>{
                         Banner banner = new Banner();
                         banner.BannerName = s;
                         banner.BannerURL = Constants.BannerUrl + banner.BannerName;
-
-                        try
-                        {
-                            App.g_db.SaveBannerAsync(banner);
-                        }
-                        catch (Exception ex)
-                        {
-                            String sMsg = ex.Message;
-                        }
-                    }
-
-                    App.g_db.CommitTransaction();
+                        lstBanners.Add(banner);
+                    });
                 }
-
-                App.CommManager.GetCategoriesAndSubcategoriesCust(App.g_Customer.CustNo);
+                try
+                {
+                    App.g_db.BeginTransaction();
+                    App.g_db.DeleteBannersAsync();
+                    App.g_db.SaveBannerAsync(lstBanners.ToList());
+                    App.g_db.CommitTransaction();
+                    Console.WriteLine("Get Banners returned Completed");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error occurred while saving banners: " + ex.Message);
+                }
+                await App.CommManager.GetCategoriesAndSubcategoriesCust(App.g_Customer.CustNo);
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Get Banners Error");
+                Console.WriteLine(ex.Message);
             }
         }
 
 
-        public static void commService_GetCategoriesAndSubcategoriesCompleted(String response)
+        public static async Task commService_GetCategoriesAndSubcategoriesCompleted(String response)
         {
-            Debug.WriteLine("Get Categories and Subcategories returned");
+            Console.WriteLine("Get Categories and Subcategories returned");
 
             try
             {
                 String sCategories = response;
                 String[] aCategories = sCategories.Split('~');
-                List<Category> categories = new List<Category>();
-                List<Subcategory> subcategories = new List<Subcategory>();
+                ConcurrentBag<Category> lstCategories = new ConcurrentBag<Category>();
+                ConcurrentBag<Subcategory> lstSubcategories = new ConcurrentBag<Subcategory>();
                 if (aCategories.Length > 1)
                 {
-                    foreach (String s in aCategories)
+                    Parallel.ForEach(aCategories, s =>
                     {
                         String[] aCategory = s.Split("|");
 
                         if (aCategory.Count() < 4)
                         {
-                            continue;
+                            return; // Skip this iteration if there are not enough elements
                         }
 
                         if (aCategory[1].Length == 0)
@@ -75,7 +75,7 @@ namespace ProfitOrder
                             cat.ImageURL = Constants.CategoryImageUrl + cat.Code + ".png";
                             cat.Rank = Convert.ToInt32(aCategory[3].Trim());
                             cat.HomePage = Convert.ToInt32(aCategory[4].Trim());
-                            categories.Add(cat);
+                            lstCategories.Add(cat);
                         }
                         else
                         {
@@ -84,13 +84,24 @@ namespace ProfitOrder
                             subcat.Code = aCategory[1];
                             subcat.Description = aCategory[2].Trim();
                             subcat.Rank = Convert.ToInt32(aCategory[3].Trim());
-                            subcategories.Add(subcat);
+                            lstSubcategories.Add(subcat);
                         }
+                    });
+                    try
+                    {
+                        App.g_db.BeginTransaction();
+                        App.g_db.DeleteAllCategory();
+                        App.g_db.DeleteAllSubcategory();
+                        App.g_db.SaveCategory(lstCategories.ToList());
+                        App.g_db.SaveSubcategory(lstSubcategories.ToList());
+                        App.g_db.CommitTransaction();
+                        Console.WriteLine("Get Categories and Subcategories returned Completed");
+                        App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
                     }
-                    App.g_db.SaveCategory(categories);
-                    App.g_db.SaveSubcategory(subcategories);
-
-                    App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error occurred while parsing categories and subcategories: " + ex.Message);
+                    }
                 }
 
                 try
@@ -100,8 +111,9 @@ namespace ProfitOrder
                     {
                         CustNo = App.g_Customer.CustNo;
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while parsing customer number: " + ex.Message);
                         CustNo = "0";
                     }
 
@@ -117,44 +129,45 @@ namespace ProfitOrder
                     sDate = "0";
                     if (App.g_Customer.CustNo == "0")
                     {
-                        App.CommManager.GetItems("0", sDate);
+                        await App.CommManager.GetItems("0", sDate);
                     }
                     else
                     {
-                        App.CommManager.GetItems(App.g_Customer.CustNo, sDate);
+                        await App.CommManager.GetItems(App.g_Customer.CustNo, sDate);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
+                    Console.WriteLine("Fetch Items Categories and SubCategories" + e.Message);
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine("SAVE Categories and SubCategories" + ex.Message);
             }
         }
 
-        public static async void commService_GetCategoriesAndSubcategoriesCustCompleted(String response)
+        public static async Task commService_GetCategoriesAndSubcategoriesCustCompleted(String response)
         {
-            Debug.WriteLine("Get Categories and Subcategories Cust returned");
+            Console.WriteLine("Get Categories Subcategories and Subsubcategories Cust returned");
 
             try
             {
-                List<Category> categories = new List<Category>();
-                List<Subcategory> subcategories = new List<Subcategory>();
-                List<Subsubcategory> subsubcategories = new List<Subsubcategory>();
-
                 String sCategories = response;
                 String[] aCategories = sCategories.Split('~');
+                ConcurrentBag<Category> lstCategories = new ConcurrentBag<Category>();
+                ConcurrentBag<Subcategory> lstSubcategories = new ConcurrentBag<Subcategory>();
+                ConcurrentBag<Subsubcategory> lstSubsubcategories = new ConcurrentBag<Subsubcategory>();
 
                 if (aCategories.Length > 1)
                 {
-                    foreach (String s in aCategories)
+                    Parallel.ForEach(aCategories, s =>
                     {
                         String[] aCategory = s.Split("|");
 
                         if (aCategory.Count() < 4)
                         {
-                            continue;
+                            return; // Skip this iteration if there are not enough elements
                         }
 
                         string sSubsubcategory;
@@ -162,8 +175,9 @@ namespace ProfitOrder
                         {
                             sSubsubcategory = aCategory[5];
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while parsing subsubcategory: " + ex.Message);
                             sSubsubcategory = "";
                         }
 
@@ -175,7 +189,7 @@ namespace ProfitOrder
                             cat.ImageURL = Constants.CategoryImageUrl + cat.Code + ".png";
                             cat.Rank = Convert.ToInt32(aCategory[3].Trim());
                             cat.HomePage = Convert.ToInt32(aCategory[4].Trim());
-                            categories.Add(cat);
+                            lstCategories.Add(cat);
                         }
                         else if (sSubsubcategory.Length == 0)  // no subsubcat, just add subcategory
                         {
@@ -184,7 +198,7 @@ namespace ProfitOrder
                             subcat.Code = aCategory[1];
                             subcat.Description = aCategory[2].Trim();
                             subcat.Rank = Convert.ToInt32(aCategory[3].Trim());
-                            subcategories.Add(subcat);
+                            lstSubcategories.Add(subcat);
                         }
                         else // add subsubcategory
                         {
@@ -194,26 +208,39 @@ namespace ProfitOrder
                             subsubcat.Code = sSubsubcategory;
                             subsubcat.Description = aCategory[2].Trim();
                             subsubcat.Rank = Convert.ToInt32(aCategory[3].Trim());
-                            subsubcategories.Add(subsubcat);
+                            lstSubsubcategories.Add(subsubcat);
                         }
-                    }
+                    });
                 }
+                try
+                    {
+                        App.g_db.BeginTransaction();
+                        App.g_db.DeleteAllCategory();
+                        App.g_db.DeleteAllSubcategory();
+                        App.g_db.DeleteAllSubsubcategory();
+                        App.g_db.SaveCategory(lstCategories.ToList());
+                        App.g_db.SaveSubcategory(lstSubcategories.ToList());
+                        App.g_db.SaveSubsubcategory(lstSubsubcategories.ToList());
+                        App.g_db.CommitTransaction();
+                        Console.WriteLine("Get Categories Subcategories and Subsubcategories returned Completed");
+                        App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error occurred while parsing categories subcategories and subsubcategories: " + ex.Message);
+                    }
 
                 try
                 {
-                    App.g_db.SaveCategory(categories);
-                    await Task.Delay(300);
-                    App.g_db.SaveSubcategory(subcategories);
-                    await Task.Delay(300);
-                    App.g_db.SaveSubsubcategory(subsubcategories);
-
+                    Console.WriteLine("Get Categories Subcategories and Subsubcategories Cust returned Completed");
                     String CustNo = "0";
                     try
                     {
                         CustNo = App.g_Customer.CustNo;
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while parsing customer number: " + ex.Message);
                         CustNo = "0";
                     }
 
@@ -237,41 +264,38 @@ namespace ProfitOrder
                     }
                     App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Debug.WriteLine("Fetch Items Categories and SubCategories" + ex.Message);
+                    Console.WriteLine("Fetch Items Categories and SubCategories" + e.Message);
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("SAVE Categories and SubCategories" + ex.Message);
+                Console.WriteLine("SAVE Categories and SubCategories" + ex.Message);
             }
         }
 
-        public static async void commService_GetItemsCompletedAsync(String response)
+        public static async Task commService_GetItemsCompletedAsync(String response)
         {
             try
             {
-                Debug.WriteLine(DateTime.Now.ToString() + " - Get Items returned");
-
+                Console.WriteLine(DateTime.Now.ToString() + " - Get Items returned");
                 String sItems = response;
                 String[] aItems = sItems.Split('~');
                 if (aItems.Length > 1)
                 {
-                    App.g_db.BeginTransaction();
-
-                    App.g_db.InsertDiscontinuedItems();
+                    var sw = System.Diagnostics.Stopwatch.StartNew();
 
                     List<Item> lstCartItems = App.g_db.GetCartItems();
+                    var cartDict = lstCartItems.ToDictionary(c => c.ItemNo); // O(1) lookup instead of nested loop
 
-                    foreach (String s in aItems)
+                    var itemsToSave = new ConcurrentBag<Item>();
+                    var processedItemNos = new ConcurrentBag<int>();
+                    
+                    Parallel.ForEach(aItems, s =>
                     {
+                        if (string.IsNullOrWhiteSpace(s)) return; // Skip empty rows
                         String[] aItem = s.Split("|");
-
-                        if (aItem.Count() < 20)
-                        {
-                            continue;
-                        }
 
                         Item item = new Item();
                         try
@@ -280,8 +304,7 @@ namespace ProfitOrder
                         }
                         catch (Exception ex)
                         {
-                            String sMsg = ex.Message;
-                            continue;
+                            Console.WriteLine("Error occurred while parsing item number: " + ex.Message);
                         }
                         item.ItemNoDisplay = aItem[0];
                         item.Description = aItem[1].Trim();
@@ -310,8 +333,9 @@ namespace ProfitOrder
                         {
                             item.RetailPrice = Convert.ToDecimal(aItem[14].Trim());
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while parsing retail price: " + ex.Message);
                             item.RetailPrice = 0;
                         }
                         item.RetailPriceDisplay = aItem[14].Trim();
@@ -395,13 +419,17 @@ namespace ProfitOrder
                                 item.AddedDateDisplay += aItem[25].Substring(1, 2);
                             }
                         }
-                        catch { }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error occurred while parsing added date: " + e.Message);
+                        }
                         try
                         {
                             item.AllocationQty = Convert.ToInt32(aItem[26].Trim());
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing allocation quantity: " + e.Message);
                             item.AllocationQty = 0;
                         }
                         try
@@ -415,8 +443,9 @@ namespace ProfitOrder
                                 item.IsPriceVisible = 1;
                             }
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing price visibility: " + e.Message);
                             item.IsPriceVisible = 1;
                         }
 
@@ -426,8 +455,9 @@ namespace ProfitOrder
                             item.Keyword2 = aItem[29];
                             item.Keyword3 = aItem[30];
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing keywords: " + e.Message);
                             item.Keyword1 = "";
                             item.Keyword2 = "";
                             item.Keyword3 = "";
@@ -437,19 +467,24 @@ namespace ProfitOrder
                         {
                             item.LastPurchDateDisplay = aItem[31];
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing last purchase date display: " + e.Message);
                             item.LastPurchDateDisplay = "";
                         }
-                        if (item.LastPurchDateDisplay == "")
+                        if (item.LastPurchDateDisplay.Trim() != "")
                         {
                             try
                             {
-                                item.LastPurchDate = Convert.ToDateTime(item.LastPurchDateDisplay);
+                                item.LastPurchDate = DateTime.ParseExact(
+                                    item.LastPurchDateDisplay.Trim(), 
+                                    "MM/dd/yy", 
+                                    System.Globalization.CultureInfo.InvariantCulture
+                                );
                             }
-                            catch
+                            catch (Exception e)
                             {
-
+                                Console.WriteLine("Error occurred while converting last purchase date: " + e.Message);
                             }
                         }
                         try
@@ -463,32 +498,36 @@ namespace ProfitOrder
                                 item.QtyLastOrder = Convert.ToInt32(aItem[32]);
                             }
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing quantity of last order: " + e.Message);
                             item.QtyLastOrder = 0;
                         }
                         try
                         {
                             item.SubsubcategoryCode = aItem[33];
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing subsubcategory code: " + e.Message);
                             item.SubsubcategoryCode = "";
                         }
                         try
                         {
                             item.SubsubcategoryDesc = aItem[34];
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing subsubcategory description: " + e.Message);
                             item.SubsubcategoryDesc = "";
                         }
                         try
                         {
                             item.ItemRefNo = aItem[35];
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing item reference number: " + e.Message);
                             item.ItemRefNo = "";
                         }
                         try
@@ -503,16 +542,18 @@ namespace ProfitOrder
                         {
                             item.BuildTo = Convert.ToInt32(aItem[37]);
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing build-to value: " + e.Message);
                             item.BuildTo = 0;
                         }
                         try
                         {
                             item.Last4WeekSales = Convert.ToInt32(aItem[38]);
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing last 4 weeks sales: " + e.Message);
                             item.Last4WeekSales = 0;
                         }
                         try
@@ -527,8 +568,9 @@ namespace ProfitOrder
                                 item.AverageWeeklySales = 0;
                             }
                         }
-                        catch
+                        catch(Exception e)
                         {
+                            Console.WriteLine("Error occurred while parsing last 13 weeks sales: " + e.Message);
                             item.Last13WeekSales = 0;
                             item.AverageWeeklySales = 0;
                         }
@@ -553,39 +595,57 @@ namespace ProfitOrder
                         item.QtyLabel = 0;
                         item.LineNo = 0;
 
-                        foreach (Item ci in lstCartItems)
+                        if (cartDict.TryGetValue(item.ItemNo, out var ci))
                         {
-                            if (item.ItemNo == ci.ItemNo)
-                            {
-                                item.QtyOrder = ci.QtyOrder;
-                                item.QtyCredit = ci.QtyCredit;
-                                item.QtyLabel = ci.QtyLabel;
-                                item.LineNo = ci.LineNo;
-
-                                break;
-                            }
+                            item.QtyOrder = ci.QtyOrder;
+                            item.QtyCredit = ci.QtyCredit;
+                            item.QtyLabel = ci.QtyLabel;
+                            item.LineNo = ci.LineNo;
                         }
 
-                        try
-                        {
-                            App.g_db.SaveItem(item);
-                            App.g_db.DeleteDiscontinuedItem(item.ItemNo.ToString());
-                        }
-                        catch (Exception ex)
-                        {
-                            String sMsg = ex.Message;
-                        }
+                        itemsToSave.Add(item);
+                        processedItemNos.Add(item.ItemNo);
+                    });
+
+                    Console.WriteLine($"Parse loop: {sw.ElapsedMilliseconds}ms"); sw.Restart();
+
+                    try
+                    {
+                        App.g_db.BeginTransaction();
+                        App.g_db.InsertDiscontinuedItems();
+                        App.g_db.DeleteItems();
+                        App.g_db.SaveItems(itemsToSave.ToList());
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error occurred while bulk-saving items: " + ex.Message);
                     }
 
-                    App.g_db.UpdateDiscontinuedItems();
+                    Console.WriteLine($"Save items ({itemsToSave.Count}): {sw.ElapsedMilliseconds}ms"); sw.Restart();
 
-                    App.g_db.UpdateOrderDetailLastPurch();
+                    try
+                    {   
+                        App.g_db.DeleteDiscontinuedItems(processedItemNos.ToList());
+                    
+                        Console.WriteLine($"Delete discontinued: {sw.ElapsedMilliseconds}ms"); sw.Restart();
 
-                    App.g_db.SaveSetting("LastUpdateItems", DateTime.Now.ToString("1yyMMdd"));
+                        App.g_db.UpdateDiscontinuedItems();
+                        Console.WriteLine("Update Discontinued Items completed");
+                        App.g_db.UpdateOrderDetailLastPurch();
+                        Console.WriteLine("Update Order Detail Last Purch completed");
+                        App.g_db.SaveSetting("LastUpdateItems", DateTime.Now.ToString("1yyMMdd"));
 
-                    App.g_ItemList = App.g_db.GetItems();
+                        App.g_ItemList = App.g_db.GetItems();
 
-                    App.g_db.CommitTransaction();
+                        App.g_db.CommitTransaction();
+
+                        Console.WriteLine($"Finalize + commit: {sw.ElapsedMilliseconds}ms");
+                
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error occurred while removing discontinued items: " + ex.Message);
+                    }
 
                     await App.CommManager.GetItemQOH(App.g_Customer.CustNo);
                     await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
@@ -594,21 +654,16 @@ namespace ProfitOrder
             }
             catch (Exception ex)
             {
-                String sMsg = ex.Message + ex.StackTrace;
+                Console.WriteLine("Error occurred while updating items: " + ex.Message + ex.StackTrace);
             }
         }
 
 
-        public static void commService_GetItemQOHCompletedAsync(String response)
+        public static async Task commService_GetItemQOHCompletedAsync(String response)
         {
             try
             {
-                //if (response == "X")
-                //{
-                //    App.g_Shell.Logout();
-                //    return;
-                //}
-
+                Console.WriteLine("Get Item QOH returned");
                 String sItems = response;
                 String[] aItems = sItems.Split('~');
                 int iItemNo;
@@ -624,7 +679,7 @@ namespace ProfitOrder
 
                         if (aItem.Count() < 2)
                         {
-                            continue;
+                            return; // Skip this iteration if there are not enough elements
                         }
 
                         try
@@ -634,7 +689,8 @@ namespace ProfitOrder
                         }
                         catch (Exception ex)
                         {
-                            continue;
+                            Console.WriteLine("Error occurred while converting item number or QOH: " + ex.Message);
+                            return; // Skip this iteration if conversion fails
                         }
 
                         try
@@ -644,22 +700,23 @@ namespace ProfitOrder
                         catch (Exception ex)
                         {
                             String sMsg = ex.Message;
+                            Console.WriteLine("Error occurred while updating item QOH: " + sMsg);
                         }
                     }
-
+                    Console.WriteLine("Get Item QOH completed");
                     App.g_db.CommitTransaction();
                 }
             }
             catch (Exception ex)
             {
                 String sMsg = ex.Message + ex.StackTrace;
+                Console.WriteLine("Error occurred while updating item QOH: " + sMsg);
             }
         }
 
-        public static void commService_GetItemQOH2CompletedAsync(String response)
+        public static async Task commService_GetItemQOH2CompletedAsync(String response)
         {
-            Debug.WriteLine("Get Item QOH 2 returned");
-
+            Console.WriteLine("Get Item QOH 2 returned");
             try
             {
                 if (response == "X")
@@ -693,6 +750,7 @@ namespace ProfitOrder
                         }
                         catch (Exception ex)
                         {
+                            Console.WriteLine("Error occurred while converting item number or QOH: " + ex.Message);
                             continue;
                         }
 
@@ -703,27 +761,26 @@ namespace ProfitOrder
                         catch (Exception ex)
                         {
                             String sMsg = ex.Message;
+                            Console.WriteLine("Error occurred while updating item QOH: " + sMsg);
                         }
                     }
-
+                    Console.WriteLine("Get Item QOH 2 completed");
                     App.g_db.CommitTransaction();
                 }
             }
             catch (Exception ex)
             {
                 String sMsg = ex.Message + ex.StackTrace;
+                Console.WriteLine("Error occurred while updating item QOH: " + sMsg);
             }
         }
 
-        public static void commService_ValidateLoginCompletedAsync(String response)
+        public static async Task commService_ValidateLoginCompletedAsync(String response)
         {
             Console.WriteLine("ValidateLogin Complete");
             try
             {
                 String sUser = response;
-
-                //Database db = new Database();
-                //await db.SaveCustomerAsync(App.g_Customer);
 
                 String[] aInfo = sUser.Split("~");
 
@@ -769,19 +826,21 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("ForceSubmit", aUser[4]);
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 App.g_ForceSubmit = false;
                                 App.g_db.SaveSetting("ForceSubmit", "0");
+                                Console.WriteLine("Error occurred while parsing ForceSubmit: " + ex.Message);
                             }
 
                             try
                             {
                                 App.g_QOHDisplay = aUser[5];
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 App.g_QOHDisplay = "X";
+                                Console.WriteLine("Error occurred while parsing QOHDisplay: " + ex.Message);
                             }
                             App.g_db.SaveSetting("QOHDisplay", App.g_QOHDisplay);
 
@@ -797,10 +856,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("BlockItemsNoQOH", aUser[6]);
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 App.g_BlockItemsNoQOH = false;
                                 App.g_db.SaveSetting("BlockItemsNoQOH", "0");
+                                Console.WriteLine("Error occurred while parsing BlockItemsNoQOH: " + ex.Message);
                             }
 
                             try
@@ -815,10 +875,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("IsSalesUser", aUser[8]);
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 App.g_IsSalesUser = false;
                                 App.g_db.SaveSetting("IsSalesUser", "0");
+                                Console.WriteLine("Error occurred while parsing IsSalesUser: " + ex.Message);
                             }
                             try
                             {
@@ -832,10 +893,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("MonthlyFlyer", aUser[9]);
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 App.g_IsMonthlyFlyer = false;
                                 App.g_db.SaveSetting("MonthlyFlyer", "0");
+                                Console.WriteLine("Error occurred while parsing MonthlyFlyer: " + ex.Message);
                             }
                             int iFlyerStartDate = 0;
                             try
@@ -843,7 +905,10 @@ namespace ProfitOrder
                                 string sFlyerStartDate = aUser[10];
                                 int.TryParse(sFlyerStartDate, out iFlyerStartDate);
                             }
-                            catch { }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Error occurred while parsing FlyerStartDate: " + ex.Message);
+                            }
                             App.g_db.SaveSetting("FlyerStartDate", iFlyerStartDate.ToString());
                             App.g_FlyerStartDate = iFlyerStartDate;
                             int iFlyerEndDate = 0;
@@ -852,7 +917,10 @@ namespace ProfitOrder
                                 string sFlyerEndDate = aUser[11];
                                 int.TryParse(sFlyerEndDate, out iFlyerEndDate);
                             }
-                            catch { }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Error occurred while parsing FlyerEndDate: " + ex.Message);
+                            }
                             App.g_db.SaveSetting("FlyerEndDate", iFlyerEndDate.ToString());
                             App.g_FlyerEndDate = iFlyerEndDate;
                             try
@@ -867,10 +935,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("qwp", aUser[12]);
                             }
-                            catch
+                            catch (Exception ex)
                             {
                                 App.g_IsQWP = false;
                                 App.g_db.SaveSetting("qwp", "");
+                                Console.WriteLine("Error occurred while parsing qwp: " + ex.Message);
                             }
                             try
                             {
@@ -884,10 +953,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("AutoAdd1", aUser[13]);
                             }
-                            catch
+                            catch (Exception ex)
                             {
                                 App.g_IsAutoAdd1 = false;
                                 App.g_db.SaveSetting("AutoAdd1", "0");
+                                Console.WriteLine("Error occurred while parsing AutoAdd1: " + ex.Message);
                             }
                             try
                             {
@@ -901,20 +971,22 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("RefNoLookup", aUser[14]);
                             }
-                            catch
+                            catch (Exception ex)
                             {
                                 App.g_IsRefNoLookup = false;
                                 App.g_db.SaveSetting("RefNoLookup", "0");
+                                Console.WriteLine("Error occurred while parsing RefNoLookup: " + ex.Message);
                             }
                             try
                             {
                                 App.g_ShoppingCartSort = aUser[15];
                                 App.g_db.SaveSetting("ShoppingCartSort", aUser[15]);
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 App.g_ShoppingCartSort = "A";
                                 App.g_db.SaveSetting("ShoppingCartSort", "A");
+                                Console.WriteLine("Error occurred while parsing ShoppingCartSort: " + ex.Message);
                             }
                             try
                             {
@@ -928,10 +1000,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("IsChainManager", aUser[16]);
                             }
-                            catch
+                            catch (Exception ex)
                             {
                                 App.g_IsChainManager = false;
                                 App.g_db.SaveSetting("IsChainManager", "0");
+                                Console.WriteLine("Error occurred while parsing IsChainManager: " + ex.Message);
                             }
                             try
                             {
@@ -945,7 +1018,13 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("ShowSubcategories", aUser[18]);
                             }
-                            catch
+                            catch(Exception ex)
+                            {
+                                App.g_IsShowSubcategories = false;
+                                App.g_db.SaveSetting("ShowSubcategories", "0");
+                                Console.WriteLine("Error occurred while parsing ShowSubcategories: " + ex.Message);
+                            }
+                            if (App.g_IsShowSubcategories)
                             {
                                 App.g_IsShowSubcategories = true;
                                 App.g_db.SaveSetting("ShowSubcategories", "1");
@@ -962,10 +1041,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("IsBuildToEnabled", aUser[19]);
                             }
-                            catch
+                            catch (Exception ex)
                             {
                                 App.g_IsBuildToEnabled = false;
                                 App.g_db.SaveSetting("IsBuildToEnabled", "0");
+                                Console.WriteLine("Error occurred while parsing IsBuildToEnabled: " + ex.Message);
                             }
                             try
                             {
@@ -979,10 +1059,11 @@ namespace ProfitOrder
                                 }
                                 App.g_db.SaveSetting("IsBuildToViewOnly", aUser[19]);
                             }
-                            catch
+                            catch (Exception ex)
                             {
                                 App.g_IsBuildToViewOnly = false;
                                 App.g_db.SaveSetting("IsBuildToViewOnly", "0");
+                                Console.WriteLine("Error occurred while parsing IsBuildToViewOnly: " + ex.Message);
                             }
 
                             if (!App.g_IsSalesUser)
@@ -1034,6 +1115,8 @@ namespace ProfitOrder
                         }
                         catch (Exception ex)
                         {
+                            String sMsg = ex.Message;
+                            Console.WriteLine("Error occurred while processing login response: " + sMsg);
                         }
 
                         if ((App.g_IsSalesUser) || (App.g_IsChainManager))
@@ -1041,7 +1124,7 @@ namespace ProfitOrder
                             App.g_PaymentProvider = "";
                             App.g_db.SaveSetting("PaymentProvider", "");
 
-                            App.CommManager.GetSalespersonCustomers(App.g_UserName);
+                            await App.CommManager.GetSalespersonCustomers(App.g_UserName);
                         }
 
                         if (App.g_Customer.CustNo != OldCustNo)
@@ -1057,9 +1140,10 @@ namespace ProfitOrder
                                 App.g_db.DeleteItems();
                             }
                         }
-
-                        App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
-                        App.RefreshAll();
+                        
+                        Console.WriteLine("Login successful for user: " + App.g_UserName);
+                        await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
+                        await App.RefreshAll();
 
                         App.g_db.SaveSetting("LoggedIn", "1");
                         App.g_db.SaveSetting("UserName", App.g_UserName);
@@ -1071,8 +1155,9 @@ namespace ProfitOrder
                                 _ = await App.g_Shell.GoToHome();
                             });
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while navigating to home page: " + ex.Message);
                         }
                     }
                     else if (aUser[0] == "P")
@@ -1085,8 +1170,9 @@ namespace ProfitOrder
                                 App.g_LoginPage.HideAnimation();
                             });
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while displaying login error: " + ex.Message);
                         }
                     }
                     else if (aUser[0] == "I")
@@ -1099,8 +1185,9 @@ namespace ProfitOrder
                                 App.g_LoginPage.HideAnimation();
                             });
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while displaying inactive account message: " + ex.Message);
                         }
                     }
                     else if (aUser[0] == "U")
@@ -1113,8 +1200,9 @@ namespace ProfitOrder
                                 App.g_LoginPage.HideAnimation();
                             });
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while displaying account does not exist message: " + ex.Message);
                         }
                     }
                     else if (aUser[0] == "X")
@@ -1127,8 +1215,9 @@ namespace ProfitOrder
                                 App.g_LoginPage.HideAnimation();
                             });
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while displaying login error: " + ex.Message);
                         }
                     }
                 }
@@ -1142,8 +1231,9 @@ namespace ProfitOrder
                             App.g_LoginPage.HideAnimation();
                         });
                     }
-                    catch
+                    catch(Exception e)
                     {
+                        Console.WriteLine("Error occurred while displaying login error: " + e.Message);
                     }
                 }
             }
@@ -1157,17 +1247,18 @@ namespace ProfitOrder
                         App.g_LoginPage.HideAnimation();
                     });
                 }
-                catch
+                catch(Exception e)
                 {
+                    Console.WriteLine("Error occurred while displaying login error: " + e.Message);
                 }
             }
 
             //await AppShell.Current.Navigation.PopAsync(true);
         }
 
-        public static void commService_GetSettingsCompletedAsync(String response)
+        public static async Task commService_GetSettingsCompletedAsync(String response)
         {
-            Debug.WriteLine("GetSettings Complete");
+            Console.WriteLine("GetSettings Fetched");
 
             try
             {
@@ -1254,7 +1345,10 @@ namespace ProfitOrder
                     string sFlyerStartDate = aSettings[5];
                     int.TryParse(sFlyerStartDate, out iFlyerStartDate);
                 }
-                catch { }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Error occurred while parsing FlyerStartDate: " + ex.Message);
+                }
                 App.g_db.SaveSetting("FlyerStartDate", iFlyerStartDate.ToString());
                 App.g_FlyerStartDate = iFlyerStartDate;
 
@@ -1264,7 +1358,10 @@ namespace ProfitOrder
                     string sFlyerEndDate = aSettings[6];
                     int.TryParse(sFlyerEndDate, out iFlyerEndDate);
                 }
-                catch { }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("Error occurred while parsing FlyerEndDate: " + ex.Message);
+                }
                 App.g_db.SaveSetting("FlyerEndDate", iFlyerEndDate.ToString());
                 App.g_FlyerEndDate = iFlyerEndDate;
 
@@ -1280,10 +1377,11 @@ namespace ProfitOrder
                     }
                     App.g_db.SaveSetting("AutoAdd1", aSettings[8]);
                 }
-                catch
+                catch(Exception ex)
                 {
                     App.g_IsAutoAdd1 = false;
                     App.g_db.SaveSetting("AutoAdd1", "0");
+                    Console.WriteLine("Error occurred while parsing AutoAdd1: " + ex.Message);
                 }
 
                 try
@@ -1298,10 +1396,11 @@ namespace ProfitOrder
                     }
                     App.g_db.SaveSetting("RefNoLookup", aSettings[9]);
                 }
-                catch
+                catch(Exception ex)
                 {
                     App.g_IsRefNoLookup = false;
                     App.g_db.SaveSetting("RefNoLookup", "0");
+                    Console.WriteLine("Error occurred while parsing RefNoLookup: " + ex.Message);
                 }
 
                 try
@@ -1309,21 +1408,24 @@ namespace ProfitOrder
                     App.g_ShoppingCartSort = aSettings[10];
                     App.g_db.SaveSetting("ShoppingCartSort", aSettings[10]);
                 }
-                catch
+                catch(Exception ex)
                 {
                     App.g_ShoppingCartSort = "A";
                     App.g_db.SaveSetting("ShoppingCartSort", "A");
+                    Console.WriteLine("Error occurred while parsing ShoppingCartSort: " + ex.Message);
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error occurred while processing settings: " + ex.Message);
             }
         }
 
-        public static void commService_SubmitOrderCompletedAsync(String response)
+        public static async Task commService_SubmitOrderCompletedAsync(String response)
         {
             try
             {
+                Console.WriteLine("Submit Order returned");
                 if (response == "S")
                 {
                     App.g_db.ClearOrderCartItems();
@@ -1342,8 +1444,9 @@ namespace ProfitOrder
                             await App.g_Shell.GoToHome();
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while navigating to home page: " + ex.Message);
                     }
                 }
                 else if (response == "X")
@@ -1357,8 +1460,9 @@ namespace ProfitOrder
                             App.g_Shell.Logout();
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while handling account disabled: " + ex.Message);
                     }
                 }
                 else if (response == "Z")
@@ -1378,8 +1482,9 @@ namespace ProfitOrder
                             await App.g_Shell.GoToHome();
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while navigating to home page: " + ex.Message);
                     }
                 }
                 else
@@ -1391,21 +1496,23 @@ namespace ProfitOrder
                             await Shell.Current.DisplayAlertAsync("Profit Order", "Error submitting order.  Please try again.", "Ok");
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while displaying order submission error: " + ex.Message);
                     }
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error occurred in commService_SubmitOrderCompletedAsync: " + ex.Message);
             }
         }
 
-        public static void commService_SubmitReturnCompletedAsync(String response)
+        public static async Task commService_SubmitReturnCompletedAsync(String response)
         {
             try
             {
-
+                Console.WriteLine("Submit Return returned");
                 if (response == "S")
                 {
                     App.g_db.ClearReturnCartItems();
@@ -1423,8 +1530,9 @@ namespace ProfitOrder
                             await App.g_Shell.GoToHome();
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while navigating to home page: " + ex.Message);
                     }
                 }
                 else if (response == "X")
@@ -1438,8 +1546,9 @@ namespace ProfitOrder
                             App.g_Shell.Logout();
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while handling account disabled: " + ex.Message);
                     }
                 }
                 else
@@ -1451,21 +1560,23 @@ namespace ProfitOrder
                             await Shell.Current.DisplayAlertAsync("Profit Order", "Error submitting return request.  Please try again.", "Ok");
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while displaying return submission error: " + ex.Message);
                     }
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error occurred in commService_SubmitReturnCompletedAsync: " + ex.Message);
             }
         }
 
-        public static void commService_GetOrderHistoryCompletedAsyncOld(String response)
+        public static async Task commService_GetOrderHistoryCompletedAsyncOld(String response)
         {
             try
             {
-                Debug.WriteLine("Get Order History returned");
+                Console.WriteLine("Get Order History returned");
 
                 String sOrders = response;
                 String[] aOrders = sOrders.Split('~');
@@ -1475,9 +1586,6 @@ namespace ProfitOrder
 
                 if (aOrders.Length > 1)
                 {
-                    //Database db = new Database();
-
-                    
                     foreach (String s in aOrders)
                     {
                         String[] aOrder = s.Split("|");
@@ -1504,7 +1612,11 @@ namespace ProfitOrder
                         OrderHeader oh = new OrderHeader();
                         oh.OrderNo = aOrder[0];
                         oh.CustId = Convert.ToInt32(aOrder[1]);
-                        oh.OrderDate = Convert.ToDateTime(aOrder[2]);
+                        oh.OrderDate = DateTime.ParseExact(
+                            aOrder[2].Trim(),
+                            "MM/dd/yy",
+                            System.Globalization.CultureInfo.InvariantCulture
+                        );
                         oh.OrderDateDisplay = aOrder[2];
                         oh.Total = Convert.ToDecimal(aOrder[3]);
                         oh.TotalDisplay = string.Format("{0:C}", oh.Total);
@@ -1555,8 +1667,9 @@ namespace ProfitOrder
                         {
                             od.QOH = Convert.ToInt32(aOrder[23].Trim());
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while parsing QOH: " + ex.Message);
                             od.QOH = 0;
                         }
                         if (od.QOH == 0)
@@ -1564,7 +1677,11 @@ namespace ProfitOrder
                             od.IsAvailable = false;
                         }
                         od.ImageURL = Constants.ItemImageUrl + od.ItemNo.ToString() + ".jpg";
-                        od.LastPurchDate = Convert.ToDateTime(aOrder[2]);
+                        od.LastPurchDate = DateTime.ParseExact(
+                            aOrder[2].Trim(),
+                            "MM/dd/yy",
+                            System.Globalization.CultureInfo.InvariantCulture
+                        );
                         od.LastPurchDateDisplay = aOrder[2];
                         od.QtyLastOrder = Convert.ToInt32(aOrder[8]);
                         od.QtyOrderDisplay = aOrder[8];
@@ -1573,8 +1690,9 @@ namespace ProfitOrder
                             od.QtyLast90 = Convert.ToInt32(aOrder[24].Trim());
                             od.QtyLast90Display = aOrder[24];
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while parsing QtyLast90: " + ex.Message);
                             od.QtyLast90 = 0;
                             od.QtyLast90Display = "N/A";
                         }
@@ -1582,7 +1700,17 @@ namespace ProfitOrder
                         ReorderItem ri = new ReorderItem();
                         ri.ItemNo = Convert.ToInt32(aOrder[7]);
                         ri.ItemNoDisplay = aOrder[7];
-                        ri.LastPurchDate = Convert.ToDateTime(aOrder[2]);
+                        if(aOrder[2].Trim().Length > 0)
+                        {
+                            string[] allowedFormats = new[] { "MM/dd/yyyy", "MM/dd/yy" };
+
+                            ri.LastPurchDate = DateTime.ParseExact(
+                                aOrder[2].Trim(),
+                                allowedFormats,
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                System.Globalization.DateTimeStyles.None
+                            );
+                        }
                         ri.LastPurchDateDisplay = aOrder[2];
                         ri.QtyLastOrder = Convert.ToInt32(aOrder[8]);
                         ri.QtyOrderDisplay = aOrder[8];
@@ -1616,8 +1744,9 @@ namespace ProfitOrder
                         {
                             ri.QOH = Convert.ToInt32(aOrder[23].Trim());
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while parsing QOH: " + ex.Message);
                             ri.QOH = 0;
                         }
                         try
@@ -1625,8 +1754,9 @@ namespace ProfitOrder
                             ri.QtyLast90 = Convert.ToInt32(aOrder[24].Trim());
                             ri.QtyLast90Display = aOrder[24];
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while parsing QtyLast90: " + ex.Message);
                             ri.QtyLast90 = 0;
                             ri.QtyLast90Display = "N/A";
                         }
@@ -1651,26 +1781,22 @@ namespace ProfitOrder
                         }
                         catch (Exception ex)
                         {
-                            String sMsg = ex.Message;
+                            Console.WriteLine("Error occurred while saving order data: " + ex.Message);
                         }
                     }
-
                     App.g_ReorderItemList = App.g_db.GetReorderItems();
-
                 }
-
-                Debug.WriteLine("Get Order History Updated");
+                Console.WriteLine("Get Order History Completed");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Get Order History Error");
-                Debug.WriteLine(ex.Message);
+                Console.WriteLine("Error occurred while processing order history: " + ex.Message);
             }
         }
 
-        public static void commService_GetOrderHistoryCompletedAsync(String response)
+        public static async Task commService_GetOrderHistoryCompletedAsync(String response)
         {
-            Debug.WriteLine("Get Order History Complete");
+            Console.WriteLine("Get Order History Returned");
 
             try
             {
@@ -1725,7 +1851,18 @@ namespace ProfitOrder
                             OrderHeader oh = new OrderHeader();
                             oh.OrderNo = aOrder[0];
                             oh.CustId = Convert.ToInt32(aOrder[1]);
-                            oh.OrderDate = Convert.ToDateTime(aOrder[2]);
+                            if(aOrder[2].Trim().Length > 0)
+                            {
+                                string[] allowedFormats = new[] { "MM/dd/yyyy", "MM/dd/yy" };
+
+                                oh.OrderDate = DateTime.ParseExact(
+                                    aOrder[2].Trim(), 
+                                    allowedFormats, // Validates against both patterns automatically
+                                    System.Globalization.CultureInfo.InvariantCulture,
+                                    System.Globalization.DateTimeStyles.None
+                                );
+                            }
+                            
                             oh.OrderDateDisplay = aOrder[2];
                             oh.Total = Convert.ToDecimal(aOrder[3]);
                             oh.TotalDisplay = string.Format("{0:C}", oh.Total);
@@ -1779,8 +1916,9 @@ namespace ProfitOrder
                         {
                             od.QOH = Convert.ToInt32(aOrder[23].Trim());
                         }
-                        catch
+                        catch(Exception ex)
                         {
+                            Console.WriteLine("Error occurred while parsing QOH: " + ex.Message);
                             od.QOH = 0;
                         }
                         if (od.QOH == 0)
@@ -1796,9 +1934,10 @@ namespace ProfitOrder
                         }
                         catch (Exception ex)
                         {
-                            String sMsg = ex.Message;
+                            Console.WriteLine("Error occurred while saving order data: " + ex.Message);
                         }
                     }
+                    Console.WriteLine("Get Order History Complete");
 
                     App.g_db.UpdateOrderDetailLastPurch();
 
@@ -1806,27 +1945,26 @@ namespace ProfitOrder
 
                     App.g_db.CommitTransaction();
                 }
+                Console.WriteLine("Get Order History Completed");
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error occurred while processing order history: " + ex.Message);
             }
         }
 
-        public static void commService_GetSalespersonCustomersCompletedAsync(String response)
+        public static async Task commService_GetSalespersonCustomersCompletedAsync(String response)
         {
             try
             {
-                Debug.WriteLine("Get Salesperson Customers returned");
-                Debug.WriteLine(response);
-
+                Console.WriteLine("Get Salesperson Customers returned");
+                App.g_db.BeginTransaction();
+                App.g_db.DeleteAllSalesCustomer();
                 String sCustomers = response;
                 String[] aCustomers = sCustomers.Split('~');
 
                 if (aCustomers.Length > 1)
                 {
-                    List<SalesCustomer> lstCustomers = new List<SalesCustomer>();
-                    // Process items in parallel using all available CPU cores
-
                     foreach (String s in aCustomers)
                     {
                         String[] aCust = s.Split("|");
@@ -1847,14 +1985,24 @@ namespace ProfitOrder
                         {
                             c.ARBalance = Convert.ToDecimal(aCust[6]);
                         }
-                        catch { }
+                        catch(Exception ex) 
+                        { 
+                            Console.WriteLine("Error occurred while parsing ARBalance: " + ex.Message);
+                        }
                         c.ARBalanceDisplay = string.Format("{0:C2}", c.ARBalance);
                         c.CreditLimit = 0;
                         try
                         {
-                            c.CreditLimit = Convert.ToDecimal(aCust[7]);
+                            string creditLimitStr = aCust[7];
+                            if (!string.IsNullOrEmpty(creditLimitStr))
+                            {
+                                c.CreditLimit = Convert.ToDecimal(creditLimitStr);
+                            }
                         }
-                        catch { }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Error occurred while parsing CreditLimit: " + ex.Message);
+                        }
                         if (c.CreditLimit > 0)
                         {
                             c.CreditLimitDisplay = string.Format("{0:C2}", c.CreditLimit);
@@ -1876,12 +2024,23 @@ namespace ProfitOrder
                             }
                             else
                             {
-                                c.LastPaymentDate = aCust[13].Substring(3, 2) + "/";
-                                c.LastPaymentDate += aCust[13].Substring(5, 2) + "/";
-                                c.LastPaymentDate += aCust[13].Substring(1, 2);
+                                string rawDate = aCust[17];
+                                if (!string.IsNullOrEmpty(rawDate) && rawDate.Length >= 7)
+                                {
+                                    c.LastOrderDate = rawDate.Substring(3, 2) + "/";
+                                    c.LastOrderDate += rawDate.Substring(5, 2) + "/";
+                                    c.LastOrderDate += rawDate.Substring(1, 2);
+                                }
+                                else
+                                {
+                                    c.LastOrderDate = "N/A"; // or some default/placeholder
+                                }
                             }
                         }
-                        catch { }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Error occurred while parsing LastPaymentDate: " + ex.Message);
+                        }
                         try
                         {
                             if (aCust[14] == "0")
@@ -1890,34 +2049,48 @@ namespace ProfitOrder
                             }
                             else
                             {
-                                c.LastOrderDate = aCust[17].Substring(3, 2) + "/";
-                                c.LastOrderDate += aCust[17].Substring(5, 2) + "/";
-                                c.LastOrderDate += aCust[17].Substring(1, 2);
+                                string rawDate = aCust[17];
+                                if (!string.IsNullOrEmpty(rawDate) && rawDate.Length >= 7)
+                                {
+                                    c.LastOrderDate = rawDate.Substring(3, 2) + "/";
+                                    c.LastOrderDate += rawDate.Substring(5, 2) + "/";
+                                    c.LastOrderDate += rawDate.Substring(1, 2);
+                                }
+                                else
+                                {
+                                    c.LastOrderDate = "N/A"; // or some default/placeholder
+                                }
                             }
                         }
-                        catch { }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Error occurred while parsing LastOrderDate: " + ex.Message);
+                        }
                         try
                         {
                             c.MinOrderAmount = Decimal.Parse(aCust[15]);
                             c.ShippingFee = Decimal.Parse(aCust[16]);
                             c.MinOrderQty = Decimal.Parse(aCust[17]);
                         }
-                        catch { }
-                        Debug.WriteLine("Added Items = " + s);
-                        lstCustomers.Add(c);
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("Error occurred while parsing min order values: " + ex.Message);
+                        }
+                        App.g_db.SaveSalesCustomer(c);
                     }
-                    App.g_db.SaveSalesCustomer(lstCustomers);
+                    App.g_db.CommitTransaction();
+                    Console.WriteLine("Saving SalesPerson Customers");
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Exeception in parsing SalesPerson" + ex.Message);
+                Console.WriteLine("Exeception in parsing SalesPerson" + ex.Message);
             }
         }
 
-        public static void commService_GetFlyerItemsPDFCompleted(String response)
+        public static async Task commService_GetFlyerItemsPDFCompleted(String response)
         {
-            Debug.WriteLine("GetFlyerItemsPDFCompleted");
+            Console.WriteLine("GetFlyerItemsPDF Returned");
 
             try
             {
@@ -1965,7 +2138,7 @@ namespace ProfitOrder
                         }
                         catch (Exception ex)
                         {
-                            String sMsg = ex.Message;
+                            Console.WriteLine("Error occurred while saving flyer item: " + ex.Message);
                         }
                     }
 
@@ -1980,21 +2153,25 @@ namespace ProfitOrder
                         File.Delete(App.g_FlyerFilename);
                         File.WriteAllBytes(App.g_FlyerFilename, data);
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while saving flyer PDF: " + ex.Message);
                     }
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error occurred in commService_GetFlyerItemsPDFCompleted: " + ex.Message);
             }
             finally
             {
+                Console.WriteLine("GetFlyerItemsPDF Completed");
             }
         }
 
-        public static void commService_ValidateUserActiveCompletedAsync(String response)
+        public static async Task commService_ValidateUserActiveCompletedAsync(String response)
         {
+            Console.WriteLine("ValidateUserActive fetched");
             String sUser = response;
             if (sUser == "0")
             {
@@ -2010,18 +2187,21 @@ namespace ProfitOrder
                             await App.g_Shell.GoToLogin();
                         });
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        Console.WriteLine("Error occurred while navigating to login: " + ex.Message);
                     }
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Error occurred while handling inactive user: " + ex.Message);
                 }
             }
         }
 
-        public static async void commService_ValidateTokenCompletedAsync(string response)
+        public static async Task commService_ValidateTokenCompletedAsync(string response)
         {
+            Console.WriteLine("ValidateToken fetched");
             String sToken = response;
             string[] aToken = sToken.Split('|');
 
@@ -2043,6 +2223,7 @@ namespace ProfitOrder
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine("Error occurred while saving payment method: " + ex.Message);
                 }
             }
             else

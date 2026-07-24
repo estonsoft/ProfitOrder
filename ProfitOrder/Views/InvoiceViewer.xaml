@@ -5,8 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:ios="http://schemas.microsoft.com/dotnet/2021/maui/ios"
-    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.PdfViewer;assembly=Syncfusion.Maui.PdfViewer"
     xmlns:vm="clr-namespace:ProfitOrder.ViewModels"
+    xmlns:pdf="clr-namespace:Maui.PDFView;assembly=Maui.PDFView"
     Title="InvoiceViewer">
     <ContentPage.BindingContext>
         <vm:PdfViewModel />
@@ -22,14 +22,19 @@
             <controls:CustomHeader x:Name="CustomHeader" Grid.Row="0" />
 
             <!--  PDF Viewer  -->
-            <syncfusion:SfPdfViewer
-                x:Name="pdfViewer"
+            <pdf:PdfView
                 Grid.Row="1"
-                DocumentSource="{Binding PdfDocumentStream}" />
+                IsHorizontal="{Binding IsHorizontal}"
+                Uri="{Binding filePath}"
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill"   
+                MaxZoom="4">
+            </pdf:PdfView>
 
             <!--  Loading Indicator  -->
             <ActivityIndicator
                 Grid.Row="1"
+                Grid.RowSpan="1"
                 HorizontalOptions="Center"
                 IsRunning="{Binding IsBusy}"
                 IsVisible="{Binding IsBusy}"

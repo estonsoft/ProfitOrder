@@ -277,22 +277,6 @@
             RefreshList();
         }
 
-        private void ItemsListSearch_ItemAppearing(object sender, Syncfusion.Maui.ListView.ItemAppearingEventArgs e)
-        {
-            Item item = (Item)e.DataItem;
-
-            if (item.QtyOrder > 0)
-            {
-                item.IsStepperVisible = true;
-                item.IsAddToOrderVisible = false;
-            }
-            else
-            {
-                item.IsStepperVisible = false;
-                item.IsAddToOrderVisible = true;
-            }
-        }
-
         private void Button_Clicked(object sender, EventArgs e)
         {
             ImageOverlay.IsVisible = false;

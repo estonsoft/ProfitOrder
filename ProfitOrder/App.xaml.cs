@@ -88,8 +88,6 @@ namespace ProfitOrder
             InitializeComponent();
             CommManager = _commManager;
 
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjQ0OTcyOEAzMTM5MmUzNDJlMzBoTVFSazNhbDdpOTVGMVE3VXExSzNPZENwUFJ5WmhnT2ZxaDQrK2dBQ0hJPQ==");
-
             try
             {
                 if (g_db == null)
@@ -168,6 +166,15 @@ namespace ProfitOrder
                 {
                     g_IsCredits = false;
                 }
+
+                if (g_db.GetSetting("qwp") == "qwp")
+                {
+                                    App.g_IsQWP = true;
+                }
+                                else
+                                {
+                                    App.g_IsQWP = false;
+                                }
                 g_QOHDisplay = g_db.GetSetting("QOHDisplay");
 
                 g_IsScannerDisabled = g_db.GetSetting("ScannerDisabled");

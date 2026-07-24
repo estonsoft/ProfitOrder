@@ -6,7 +6,6 @@
     xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     Title="Quick Entry"
     BackgroundColor="White"
     Shell.NavBarIsVisible="False"
@@ -93,20 +92,16 @@
                             IsVisible="false"
                             TextColor="Red" />
                     </StackLayout>
-                    <syncfusion:SfListView
+                    <CollectionView
                         x:Name="ItemsListSearch"
                         Margin="0,30,0,0"
-                        AutoFitMode="DynamicHeight"
-                        ItemsSourceChangeCachingStrategy="ClearItems"
                         SelectionMode="None">
-                        <syncfusion:SfListView.ItemTemplate>
+                        <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <ViewCell>
-                                    <controls:CustomListItem x:Name="CustomListItem" Grid.Row="0" />
-                                </ViewCell>
+                                <controls:CustomListItem x:Name="CustomListItem" Grid.Row="0" />
                             </DataTemplate>
-                        </syncfusion:SfListView.ItemTemplate>
-                    </syncfusion:SfListView>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </StackLayout>
             </ScrollView>
 

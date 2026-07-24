@@ -168,22 +168,6 @@ namespace ProfitOrder.Views
             return true;
         }
 
-        private void ItemsListCart_ItemAppearing(object sender, Syncfusion.Maui.ListView.ItemAppearingEventArgs e)
-        {
-            Item item = (Item)e.DataItem;
-
-            if (item.QtyOrder > 0)
-            {
-                item.IsStepperVisible = true;
-                item.IsAddToOrderVisible = false;
-            }
-            else
-            {
-                item.IsStepperVisible = false;
-                item.IsAddToOrderVisible = true;
-            }
-        }
-
         private void btnCheckout_Clicked_1(object sender, EventArgs e)
         {
 

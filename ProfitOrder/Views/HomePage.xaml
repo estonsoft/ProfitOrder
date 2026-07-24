@@ -6,7 +6,6 @@
     xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
     xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui"
-    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     xmlns:vm="clr-namespace:ProfitOrder.ViewModels"
     Title="Profit Order"
     BackgroundColor="White"
@@ -295,6 +294,7 @@
                         HorizontalOptions="Fill"
                         SelectionChanged="TopCategoriesCollectionView_SelectionChanged"
                         SelectionMode="Single"
+                        ItemsSource="{Binding categories}"
                         VerticalOptions="Start">
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout

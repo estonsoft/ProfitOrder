@@ -1,14 +1,16 @@
-﻿namespace ProfitOrder.ViewModels
+﻿using Maui.PDFView.DataSources;
+
+namespace ProfitOrder.ViewModels
 {
     public class PdfViewModel : BaseViewModel
     {
-        private Stream _pdfDocumentStream;
         private bool _isBusy;
 
-        public Stream PdfDocumentStream
+        private string _filePath;
+        public string filePath
         {
-            get => _pdfDocumentStream;
-            set { _pdfDocumentStream = value; OnPropertyChanged(); }
+            get => _filePath;
+            set { _filePath = value; OnPropertyChanged(); }
         }
 
         public bool IsBusy
@@ -24,9 +26,7 @@
             try
             {
                 string fileName = "OrderID" + App.g_OrderNo + ".pdf"; // Added .pdf extension for the viewer
-                string filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
-                FileStream contents = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-                PdfDocumentStream = contents;
+                filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
             }
             finally
             {

@@ -8,7 +8,6 @@
     xmlns:fftransformations="clr-namespace:FFImageLoading.Transformations;assembly=FFImageLoading.Maui"
     xmlns:ios="http://schemas.microsoft.com/dotnet/2021/maui/ios"
     xmlns:modal="clr-namespace:ProfitOrder"
-    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     x:Name="CategoriesPage"
     Title="Product Categories">
 

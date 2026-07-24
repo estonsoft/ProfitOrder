@@ -1,12 +1,12 @@
-﻿namespace ProfitOrder.Views
+﻿using ProfitOrder.ViewModels;
+
+namespace ProfitOrder.Views
 {
     public partial class HomePage : ContentPage
     {
         public HomePage()
         {
             InitializeComponent();
-
-            BindingContext = this;
 
             App.g_HomePage = this;
 
@@ -127,36 +127,16 @@
             App.g_ScanBarcode = "";
             SearchText.Text = "";
 
-            RefreshCategoryList();
-
-            LoadCategories();
+            if (BindingContext is HomeViewModel viewModel)
+            {
+                viewModel.LoadCategories();
+            }
         }
 
         public void SetLoginControls()
         {
             lblWelcome.Text = "Welcome - " + App.g_UserName;
             lblUserName.Text = App.g_Customer.CompanyName;
-        }
-
-        public void LoadCategories()
-        {
-            Task.Run(() =>
-            {
-                //Database db = new Database();
-                App.g_HomePageCategoryList = App.g_db.GetHomePageCategories();
-            }).ContinueWith(t =>
-            {
-                if (t.Exception != null)
-                {
-                    // Handle exceptions if needed
-                    return;
-                }
-                // Update UI on the main thread
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    TopCategoriesCollectionView.ItemsSource = App.g_HomePageCategoryList;
-                });
-            });
         }
 
         async void CategoryTapped(String Code, String Description)
@@ -241,12 +221,6 @@
             }
         }
 
-        public async void RefreshCategoryList()
-        {
-            //CategoryList.ItemsSource = null;
-            //CategoryList.ItemsSource = App.g_HomePageCategoryList;
-        }
-
         async void OnPastPurchases(object sender, EventArgs e)
         {
             //Database db = new Database();
@@ -289,6 +263,7 @@
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error checking registration status: " + ex.Message);
             }
 
             await App.g_Shell.GoToRegister();
@@ -298,10 +273,6 @@
         {
             // ignore button
             return true;
-
-            // if want to allow back button
-            //base.OnBackButtonPressed();
-            //return false;
         }
         void OnMenuTapped(object sender, EventArgs e)
         {

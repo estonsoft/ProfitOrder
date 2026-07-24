@@ -104,22 +104,6 @@
         {
             return true;
         }
-
-        private void OrderItemsList_ItemAppearing(object sender, Syncfusion.Maui.ListView.ItemAppearingEventArgs e)
-        {
-            OrderDetail item = (OrderDetail)e.DataItem;
-
-            if (item.QtyOrder > 0)
-            {
-                item.IsStepperVisible = true;
-                item.IsAddToOrderVisible = false;
-            }
-            else
-            {
-                item.IsStepperVisible = false;
-                item.IsAddToOrderVisible = true;
-            }
-        }
     }
 }
 

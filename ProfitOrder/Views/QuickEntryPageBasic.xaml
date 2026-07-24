@@ -6,7 +6,6 @@
     xmlns:controls="clr-namespace:ProfitOrder.Controls"
     xmlns:d="http://xamarin.com/schemas/2014/forms/design"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:syncfusion="clr-namespace:Syncfusion.Maui.ListView;assembly=Syncfusion.Maui.ListView"
     Title="Quick Entry"
     BackgroundColor="White"
     Shell.NavBarIsVisible="False"

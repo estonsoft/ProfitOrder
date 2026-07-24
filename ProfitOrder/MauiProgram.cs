@@ -1,10 +1,9 @@
 ﻿using FFImageLoading.Maui;
 using Microsoft.Extensions.Logging;
 using SQLitePCL;
-using Syncfusion.Maui.Core.Hosting;
 using ProfitOrder.Data;
 using BarcodeScanning;
-
+using Maui.PDFView;
 namespace ProfitOrder
 {
     public static class MauiProgram
@@ -14,7 +13,7 @@ namespace ProfitOrder
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .ConfigureSyncfusionCore()
+                .UseMauiPdfView()
                 .UseFFImageLoading()
                 .UseBarcodeScanning()   
                 .ConfigureFonts(fonts =>
