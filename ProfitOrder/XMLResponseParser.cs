@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace ProfitOrder
 {
@@ -73,8 +74,8 @@ namespace ProfitOrder
                             cat.Code = aCategory[0];
                             cat.Description = aCategory[2].Trim();
                             cat.ImageURL = Constants.CategoryImageUrl + cat.Code + ".png";
-                            cat.Rank = Convert.ToInt32(aCategory[3].Trim());
-                            cat.HomePage = Convert.ToInt32(aCategory[4].Trim());
+                            cat.Rank = GetIntegerValue("Category rank", aCategory[3], 0);
+                            cat.HomePage = GetIntegerValue("Category home page", aCategory[4], 0);
                             lstCategories.Add(cat);
                         }
                         else
@@ -83,7 +84,7 @@ namespace ProfitOrder
                             subcat.Category = aCategory[0];
                             subcat.Code = aCategory[1];
                             subcat.Description = aCategory[2].Trim();
-                            subcat.Rank = Convert.ToInt32(aCategory[3].Trim());
+                            subcat.Rank = GetIntegerValue("Subcategory rank", aCategory[3], 0);
                             lstSubcategories.Add(subcat);
                         }
                     });
@@ -187,8 +188,8 @@ namespace ProfitOrder
                             cat.Code = aCategory[0];
                             cat.Description = aCategory[2].Trim();
                             cat.ImageURL = Constants.CategoryImageUrl + cat.Code + ".png";
-                            cat.Rank = Convert.ToInt32(aCategory[3].Trim());
-                            cat.HomePage = Convert.ToInt32(aCategory[4].Trim());
+                            cat.Rank = GetIntegerValue("Category rank", aCategory[3], 0);
+                            cat.HomePage = GetIntegerValue("Category home page", aCategory[4], 0);
                             lstCategories.Add(cat);
                         }
                         else if (sSubsubcategory.Length == 0)  // no subsubcat, just add subcategory
@@ -197,7 +198,7 @@ namespace ProfitOrder
                             subcat.Category = aCategory[0];
                             subcat.Code = aCategory[1];
                             subcat.Description = aCategory[2].Trim();
-                            subcat.Rank = Convert.ToInt32(aCategory[3].Trim());
+                            subcat.Rank = GetIntegerValue("Subcategory rank", aCategory[3], 0);
                             lstSubcategories.Add(subcat);
                         }
                         else // add subsubcategory
@@ -207,7 +208,7 @@ namespace ProfitOrder
                             subsubcat.Subcategory = aCategory[1];
                             subsubcat.Code = sSubsubcategory;
                             subsubcat.Description = aCategory[2].Trim();
-                            subsubcat.Rank = Convert.ToInt32(aCategory[3].Trim());
+                            subsubcat.Rank = GetIntegerValue("Subsubcategory rank", aCategory[3], 0);
                             lstSubsubcategories.Add(subsubcat);
                         }
                     });
@@ -298,14 +299,7 @@ namespace ProfitOrder
                         String[] aItem = s.Split("|");
 
                         Item item = new Item();
-                        try
-                        {
-                            item.ItemNo = Convert.ToInt32(aItem[0]);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Error occurred while parsing item number: " + ex.Message);
-                        }
+                        item.ItemNo = GetIntegerValue("ItemNo", aItem[0], 0);
                         item.ItemNoDisplay = aItem[0];
                         item.Description = aItem[1].Trim();
                         item.ImageURL = Constants.ItemImageUrl + item.ItemNo.ToString() + ".jpg";
@@ -329,71 +323,21 @@ namespace ProfitOrder
                         item.UPC_4 = aItem[11].Trim();
                         item.RetailUOM = aItem[12].Trim();
                         item.RetailSize = aItem[13].Trim();
-                        try
-                        {
-                            item.RetailPrice = Convert.ToDecimal(aItem[14].Trim());
-                        }
-                        catch(Exception ex)
-                        {
-                            Console.WriteLine("Error occurred while parsing retail price: " + ex.Message);
-                            item.RetailPrice = 0;
-                        }
+                        item.RetailPrice = GetDecimalValue("RetailPrice", aItem[14], 0);
                         item.RetailPriceDisplay = aItem[14].Trim();
                         item.UOM = aItem[15].Trim();
                         item.SizeUOM = "/" + item.UOM;
-                        try
-                        {
-                            item.Size = Convert.ToInt32(aItem[16].Trim());
-                        }
-                        catch
-                        {
-                            item.Size = 1;
-                        }
+                        item.Size = GetIntegerValue("Size", aItem[16], 1);
                         item.SizeDisplay = aItem[16].Trim();
                         item.Form = aItem[17].Trim();
-                        try
-                        {
-                            item.Price = Convert.ToDecimal(aItem[18].Trim());
-                        }
-                        catch
-                        {
-                            item.Price = 0;
-                        }
+                        item.Price = GetDecimalValue("Price", aItem[18], 0);
                         item.PriceDisplay = string.Format("{0:C}", item.Price);
-                        try
-                        {
-                            item.Tax = Convert.ToDecimal(aItem[19].Trim());
-                        }
-                        catch
-                        {
-                            item.Tax = 0;
-                        }
+                        item.Tax = GetDecimalValue("Tax", aItem[19], 0);
                         item.TaxDisplay = string.Format("{0:C}", item.Tax);
-                        try
-                        {
-                            item.CategoryRank = Convert.ToInt32(aItem[20].Trim());
-                        }
-                        catch
-                        {
-                            item.CategoryRank = 0;
-                        }
-                        try
-                        {
-                            item.SellUnitsInPurchaseUnit = Convert.ToInt32(aItem[21].Trim());
-                        }
-                        catch
-                        {
-                            item.SellUnitsInPurchaseUnit = 1;
-                        }
+                        item.CategoryRank = GetIntegerValue("CategoryRank", aItem[20], 0);
+                        item.SellUnitsInPurchaseUnit = GetIntegerValue("SellUnitsInPurchaseUnit", aItem[21], 1);
                         item.Status = aItem[22];
-                        try
-                        {
-                            item.QOH = Convert.ToInt32(aItem[23].Trim());
-                        }
-                        catch
-                        {
-                            item.QOH = 0;
-                        }
+                        item.QOH = GetIntegerValue("QOH", aItem[23], 0);
                         try
                         {
                             item.IsNew = false;
@@ -423,15 +367,7 @@ namespace ProfitOrder
                         {
                             Console.WriteLine("Error occurred while parsing added date: " + e.Message);
                         }
-                        try
-                        {
-                            item.AllocationQty = Convert.ToInt32(aItem[26].Trim());
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine("Error occurred while parsing allocation quantity: " + e.Message);
-                            item.AllocationQty = 0;
-                        }
+                        item.AllocationQty = GetIntegerValue("AllocationQty", aItem[26], 0);
                         try
                         {
                             if (aItem[27] == "1")
@@ -474,35 +410,17 @@ namespace ProfitOrder
                         }
                         if (item.LastPurchDateDisplay.Trim() != "")
                         {
-                            try
-                            {
-                                item.LastPurchDate = DateTime.ParseExact(
-                                    item.LastPurchDateDisplay.Trim(), 
-                                    "MM/dd/yy", 
-                                    System.Globalization.CultureInfo.InvariantCulture
-                                );
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine("Error occurred while converting last purchase date: " + e.Message);
-                            }
+                            item.LastPurchDate = GetDateTime("LastPurchDate", item.LastPurchDateDisplay);
                         }
-                        try
+                        if (aItem[32] == "")
                         {
-                            if (aItem[32] == "")
-                            {
-                                item.QtyLastOrder = 0;
-                            }
-                            else
-                            {
-                                item.QtyLastOrder = Convert.ToInt32(aItem[32]);
-                            }
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine("Error occurred while parsing quantity of last order: " + e.Message);
                             item.QtyLastOrder = 0;
                         }
+                        else
+                        {
+                            item.QtyLastOrder = GetIntegerValue("QtyLastOrder", aItem[32], 0);
+                        }
+                        
                         try
                         {
                             item.SubsubcategoryCode = aItem[33];
@@ -540,25 +458,17 @@ namespace ProfitOrder
                         }
                         try
                         {
-                            item.BuildTo = Convert.ToInt32(aItem[37]);
+                            item.BuildTo = GetIntegerValue("BuildTo", aItem[37], 0);
                         }
                         catch(Exception e)
                         {
                             Console.WriteLine("Error occurred while parsing build-to value: " + e.Message);
                             item.BuildTo = 0;
                         }
+                        item.Last4WeekSales = GetIntegerValue("Last4WeekSales", aItem[38], 0);
                         try
                         {
-                            item.Last4WeekSales = Convert.ToInt32(aItem[38]);
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine("Error occurred while parsing last 4 weeks sales: " + e.Message);
-                            item.Last4WeekSales = 0;
-                        }
-                        try
-                        {
-                            item.Last13WeekSales = Convert.ToInt32(aItem[39]);
+                            item.Last13WeekSales = GetIntegerValue("Last13WeekSales", aItem[39], 0);
                             if (item.Last13WeekSales != 0)
                             {
                                 item.AverageWeeklySales = item.Last13WeekSales / 13;
@@ -682,17 +592,8 @@ namespace ProfitOrder
                             return; // Skip this iteration if there are not enough elements
                         }
 
-                        try
-                        {
-                            iItemNo = Convert.ToInt32(aItem[0]);
-                            iQOH = Convert.ToInt32(aItem[1]);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Error occurred while converting item number or QOH: " + ex.Message);
-                            return; // Skip this iteration if conversion fails
-                        }
-
+                        iItemNo = GetIntegerValue("ItemNo", aItem[0], 0);
+                        iQOH = GetIntegerValue("QOH", aItem[1], 0);
                         try
                         {
                             App.g_db.UpdateItemQOH(iItemNo, iQOH);
@@ -742,17 +643,9 @@ namespace ProfitOrder
                         {
                             continue;
                         }
-
-                        try
-                        {
-                            iItemNo = Convert.ToInt32(aItem[0]);
-                            iQOH = Convert.ToInt32(aItem[1]);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Error occurred while converting item number or QOH: " + ex.Message);
-                            continue;
-                        }
+                        iItemNo = GetIntegerValue("ItemNo", aItem[0], 0);
+                        iQOH = GetIntegerValue("QOH", aItem[1], 0);
+                        
 
                         try
                         {
@@ -903,7 +796,7 @@ namespace ProfitOrder
                             try
                             {
                                 string sFlyerStartDate = aUser[10];
-                                int.TryParse(sFlyerStartDate, out iFlyerStartDate);
+                                iFlyerStartDate = GetIntegerValue("FlyerStartDate", sFlyerStartDate, 0);
                             }
                             catch (Exception ex)
                             {
@@ -915,7 +808,7 @@ namespace ProfitOrder
                             try
                             {
                                 string sFlyerEndDate = aUser[11];
-                                int.TryParse(sFlyerEndDate, out iFlyerEndDate);
+                                iFlyerEndDate = GetIntegerValue("FlyerEndDate", sFlyerEndDate, 0);
                             }
                             catch (Exception ex)
                             {
@@ -1081,7 +974,7 @@ namespace ProfitOrder
 
                                 App.g_Customer.Status = "9";
                                 App.g_Customer.CompanyName = aCust[1];
-                                App.g_Customer.Warehouse = Convert.ToInt32(aCust[3]);
+                                App.g_Customer.Warehouse = GetIntegerValue("Warehouse", aCust[3], 0);
                                 App.g_Customer.Address1 = aCust[4];
                                 App.g_Customer.City = aCust[5];
                                 App.g_Customer.State = aCust[6];
@@ -1089,10 +982,10 @@ namespace ProfitOrder
                                 App.g_Customer.CityStateZip = aCust[5] + ", " + aCust[6] + "  " + aCust[7];
                                 App.g_Customer.Phone = aCust[8];
                                 App.g_Customer.Contact = aCust[9];
-                                App.g_Customer.Delivery = Convert.ToInt32(aCust[10]);
-                                App.g_Customer.Pickup = Convert.ToInt32(aCust[11]);
-                                App.g_Customer.CreditLimit = Convert.ToDecimal(aCust[12]);
-                                App.g_Customer.ARBalance = Convert.ToDecimal(aCust[13]);
+                                App.g_Customer.Delivery = GetIntegerValue("Delivery", aCust[10], 0);
+                                App.g_Customer.Pickup = GetIntegerValue("Pickup", aCust[11], 0);
+                                App.g_Customer.CreditLimit = GetDecimalValue("CreditLimit", aCust[12], 0);
+                                App.g_Customer.ARBalance = GetDecimalValue("ARBalance", aCust[13], 0);
 
                                 Location loc = new Location();
                                 loc.LocationId = 1;
@@ -1221,7 +1114,7 @@ namespace ProfitOrder
                         }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     try
                     {
@@ -1237,7 +1130,7 @@ namespace ProfitOrder
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 try
                 {
@@ -1343,7 +1236,7 @@ namespace ProfitOrder
                 try
                 {
                     string sFlyerStartDate = aSettings[5];
-                    int.TryParse(sFlyerStartDate, out iFlyerStartDate);
+                    iFlyerStartDate = GetIntegerValue("FlyerStartDate", sFlyerStartDate, 0);
                 }
                 catch(Exception ex)
                 {
@@ -1356,7 +1249,7 @@ namespace ProfitOrder
                 try
                 {
                     string sFlyerEndDate = aSettings[6];
-                    int.TryParse(sFlyerEndDate, out iFlyerEndDate);
+                    iFlyerEndDate = GetIntegerValue("FlyerEndDate", sFlyerEndDate, 0);
                 }
                 catch(Exception ex)
                 {
@@ -1611,26 +1504,22 @@ namespace ProfitOrder
 
                         OrderHeader oh = new OrderHeader();
                         oh.OrderNo = aOrder[0];
-                        oh.CustId = Convert.ToInt32(aOrder[1]);
-                        oh.OrderDate = DateTime.ParseExact(
-                            aOrder[2].Trim(),
-                            "MM/dd/yy",
-                            System.Globalization.CultureInfo.InvariantCulture
-                        );
+                        oh.CustId = GetIntegerValue("OrderHeader.CustId", aOrder[1], 0);
+                        oh.OrderDate = GetDateTime("OrderDate", aOrder[2]);
                         oh.OrderDateDisplay = aOrder[2];
-                        oh.Total = Convert.ToDecimal(aOrder[3]);
+                        oh.Total = GetDecimalValue("OrderHeader.Total", aOrder[3], 0);
                         oh.TotalDisplay = string.Format("{0:C}", oh.Total);
-                        oh.Items = Convert.ToInt32(aOrder[4]);
-                        oh.Pieces = Convert.ToInt32(aOrder[5]);
+                        oh.Items = GetIntegerValue("OrderHeader.Items", aOrder[4], 0);
+                        oh.Pieces = GetIntegerValue("OrderHeader.Pieces", aOrder[5], 0);
 
                         OrderDetail od = new OrderDetail();
                         od.OrderNo = aOrder[0];
-                        od.LineNo = Convert.ToInt32(aOrder[6]);
-                        od.ItemNo = Convert.ToInt32(aOrder[7]);
+                        od.LineNo = GetIntegerValue("OrderDetail.LineNo", aOrder[6], 0);
+                        od.ItemNo = GetIntegerValue("OrderDetail.ItemNo", aOrder[7], 0);
                         od.ItemNoDisplay = aOrder[7];
-                        od.QtyOrdered = Convert.ToInt32(aOrder[8]);
-                        od.QtyShipped = Convert.ToInt32(aOrder[8]);
-                        od.Price = Convert.ToDecimal(aOrder[9]);
+                        od.QtyOrdered = GetIntegerValue("OrderDetail.QtyOrdered", aOrder[8], 0);
+                        od.QtyShipped = GetIntegerValue("OrderDetail.QtyShipped", aOrder[8], 0);
+                        od.Price = GetDecimalValue("OrderDetail.Price", aOrder[9], 0);
                         od.PriceDisplay = string.Format("{0:C}", od.Price);
                         od.UPC = aOrder[10];
                         if (od.UPC.Length > 0)
@@ -1665,7 +1554,7 @@ namespace ProfitOrder
                         }
                         try
                         {
-                            od.QOH = Convert.ToInt32(aOrder[23].Trim());
+                            od.QOH = GetIntegerValue("OrderDetail.QOH", aOrder[23], 0);
                         }
                         catch(Exception ex)
                         {
@@ -1677,17 +1566,13 @@ namespace ProfitOrder
                             od.IsAvailable = false;
                         }
                         od.ImageURL = Constants.ItemImageUrl + od.ItemNo.ToString() + ".jpg";
-                        od.LastPurchDate = DateTime.ParseExact(
-                            aOrder[2].Trim(),
-                            "MM/dd/yy",
-                            System.Globalization.CultureInfo.InvariantCulture
-                        );
+                        od.LastPurchDate = GetDateTime("OrderDetail.LastPurchDate", aOrder[2]);
                         od.LastPurchDateDisplay = aOrder[2];
-                        od.QtyLastOrder = Convert.ToInt32(aOrder[8]);
+                        od.QtyLastOrder = GetIntegerValue("OrderDetail.QtyLastOrder", aOrder[8], 0);
                         od.QtyOrderDisplay = aOrder[8];
                         try
                         {
-                            od.QtyLast90 = Convert.ToInt32(aOrder[24].Trim());
+                            od.QtyLast90 = GetIntegerValue("OrderDetail.QtyLast90", aOrder[24], 0);
                             od.QtyLast90Display = aOrder[24];
                         }
                         catch(Exception ex)
@@ -1698,24 +1583,17 @@ namespace ProfitOrder
                         }
 
                         ReorderItem ri = new ReorderItem();
-                        ri.ItemNo = Convert.ToInt32(aOrder[7]);
+                        ri.ItemNo = GetIntegerValue("ReorderItem.ItemNo", aOrder[7], 0);
                         ri.ItemNoDisplay = aOrder[7];
                         if(aOrder[2].Trim().Length > 0)
                         {
-                            string[] allowedFormats = new[] { "MM/dd/yyyy", "MM/dd/yy" };
-
-                            ri.LastPurchDate = DateTime.ParseExact(
-                                aOrder[2].Trim(),
-                                allowedFormats,
-                                System.Globalization.CultureInfo.InvariantCulture,
-                                System.Globalization.DateTimeStyles.None
-                            );
+                            ri.LastPurchDate = GetDateTime("LastPurchDate", aOrder[2]);
                         }
                         ri.LastPurchDateDisplay = aOrder[2];
-                        ri.QtyLastOrder = Convert.ToInt32(aOrder[8]);
+                        ri.QtyLastOrder = GetIntegerValue("ReorderItem.QtyLastOrder", aOrder[8], 0);
                         ri.QtyOrderDisplay = aOrder[8];
                         ri.Description = aOrder[11];
-                        ri.Price = Convert.ToDecimal(aOrder[9]);
+                        ri.Price = GetDecimalValue("ReorderItem.Price", aOrder[9], 0);
                         ri.PriceDisplay = string.Format("{0:C}", ri.Price);
                         ri.ImageURL = Constants.ItemImageUrl + ri.ItemNo.ToString() + ".jpg";
                         ri.UPC = aOrder[10];
@@ -1742,7 +1620,7 @@ namespace ProfitOrder
                         ri.Status = aOrder[22];
                         try
                         {
-                            ri.QOH = Convert.ToInt32(aOrder[23].Trim());
+                            ri.QOH = GetIntegerValue("ReorderItem.QOH", aOrder[23], 0);
                         }
                         catch(Exception ex)
                         {
@@ -1751,7 +1629,7 @@ namespace ProfitOrder
                         }
                         try
                         {
-                            ri.QtyLast90 = Convert.ToInt32(aOrder[24].Trim());
+                            ri.QtyLast90 = GetIntegerValue("ReorderItem.QtyLast90", aOrder[24], 0);
                             ri.QtyLast90Display = aOrder[24];
                         }
                         catch(Exception ex)
@@ -1850,36 +1728,29 @@ namespace ProfitOrder
 
                             OrderHeader oh = new OrderHeader();
                             oh.OrderNo = aOrder[0];
-                            oh.CustId = Convert.ToInt32(aOrder[1]);
+                            oh.CustId = GetIntegerValue("OrderHeader.CustId", aOrder[1], 0);
                             if(aOrder[2].Trim().Length > 0)
                             {
-                                string[] allowedFormats = new[] { "MM/dd/yyyy", "MM/dd/yy" };
-
-                                oh.OrderDate = DateTime.ParseExact(
-                                    aOrder[2].Trim(), 
-                                    allowedFormats, // Validates against both patterns automatically
-                                    System.Globalization.CultureInfo.InvariantCulture,
-                                    System.Globalization.DateTimeStyles.None
-                                );
+                                oh.OrderDate = GetDateTime("OrderDate", aOrder[2]);
                             }
                             
                             oh.OrderDateDisplay = aOrder[2];
-                            oh.Total = Convert.ToDecimal(aOrder[3]);
+                            oh.Total = GetDecimalValue("OrderHeader.Total", aOrder[3], 0);
                             oh.TotalDisplay = string.Format("{0:C}", oh.Total);
-                            oh.Items = Convert.ToInt32(aOrder[4]);
-                            oh.Pieces = Convert.ToInt32(aOrder[5]);
+                            oh.Items = GetIntegerValue("OrderHeader.Items", aOrder[4], 0);
+                            oh.Pieces = GetIntegerValue("OrderHeader.Pieces", aOrder[5], 0);
 
                             App.g_db.SaveOrderHeader(oh);
                         }
 
                         OrderDetail od = new OrderDetail();
                         od.OrderNo = aOrder[0];
-                        od.LineNo = Convert.ToInt32(aOrder[6]);
-                        od.ItemNo = Convert.ToInt32(aOrder[7]);
+                        od.LineNo = GetIntegerValue("OrderDetail.LineNo", aOrder[6], 0);
+                        od.ItemNo = GetIntegerValue("OrderDetail.ItemNo", aOrder[7], 0);
                         od.ItemNoDisplay = aOrder[7];
-                        od.QtyOrdered = Convert.ToInt32(aOrder[8]);
-                        od.QtyShipped = Convert.ToInt32(aOrder[8]);
-                        od.Price = Convert.ToDecimal(aOrder[9]);
+                        od.QtyOrdered = GetIntegerValue("OrderDetail.QtyOrdered", aOrder[8], 0);
+                        od.QtyShipped = GetIntegerValue("OrderDetail.QtyShipped", aOrder[8], 0);
+                        od.Price = GetDecimalValue("OrderDetail.Price", aOrder[9], 0);
                         od.PriceDisplay = string.Format("{0:C}", od.Price);
                         od.UPC = aOrder[10];
                         if (od.UPC.Length > 0)
@@ -1914,7 +1785,7 @@ namespace ProfitOrder
                         }
                         try
                         {
-                            od.QOH = Convert.ToInt32(aOrder[23].Trim());
+                            od.QOH = GetIntegerValue("OrderDetail.QOH", aOrder[23], 0);
                         }
                         catch(Exception ex)
                         {
@@ -1983,7 +1854,7 @@ namespace ProfitOrder
                         c.ARBalance = 0;
                         try
                         {
-                            c.ARBalance = Convert.ToDecimal(aCust[6]);
+                            c.ARBalance = GetDecimalValue("SalesCustomer.ARBalance", aCust[6], 0);
                         }
                         catch(Exception ex) 
                         { 
@@ -1996,7 +1867,7 @@ namespace ProfitOrder
                             string creditLimitStr = aCust[7];
                             if (!string.IsNullOrEmpty(creditLimitStr))
                             {
-                                c.CreditLimit = Convert.ToDecimal(creditLimitStr);
+                                c.CreditLimit = GetDecimalValue("SalesCustomer.CreditLimit", creditLimitStr, 0);
                             }
                         }
                         catch(Exception ex)
@@ -2068,9 +1939,9 @@ namespace ProfitOrder
                         }
                         try
                         {
-                            c.MinOrderAmount = Decimal.Parse(aCust[15]);
-                            c.ShippingFee = Decimal.Parse(aCust[16]);
-                            c.MinOrderQty = Decimal.Parse(aCust[17]);
+                            c.MinOrderAmount = GetDecimalValue("SalesCustomer.MinOrderAmount", aCust[15], 0);
+                            c.ShippingFee = GetDecimalValue("SalesCustomer.ShippingFee", aCust[16], 0);
+                            c.MinOrderQty = GetDecimalValue("SalesCustomer.MinOrderQty", aCust[17], 0);
                         }
                         catch(Exception ex)
                         {
@@ -2116,16 +1987,16 @@ namespace ProfitOrder
 
                         FlyerItem item = new FlyerItem();
 
-                        item.ItemNo = Convert.ToInt32(aItem[0].Trim());
-                        item.Page = Convert.ToInt32(aItem[1].Trim());
-                        item.Box = Convert.ToInt32(aItem[2].Trim());
+                        item.ItemNo = GetIntegerValue("FlyerItem.ItemNo", aItem[0], 0);
+                        item.Page = GetIntegerValue("FlyerItem.Page", aItem[1], 0);
+                        item.Box = GetIntegerValue("FlyerItem.Box", aItem[2], 0);
                         item.Section = aItem[3].Trim();
-                        item.StartDate = Convert.ToInt32(aItem[4].Trim());
-                        item.EndDate = Convert.ToInt32(aItem[5].Trim());
-                        item.TopLeftX = (int)Convert.ToDecimal(aItem[6].Trim());
-                        item.TopLeftY = (int)Convert.ToDecimal(aItem[7].Trim());
-                        item.BottomRightX = (int)Convert.ToDecimal(aItem[8].Trim());
-                        item.BottomRightY = (int)Convert.ToDecimal(aItem[9].Trim());
+                        item.StartDate = GetIntegerValue("FlyerItem.StartDate", aItem[4], 0);
+                        item.EndDate = GetIntegerValue("FlyerItem.EndDate", aItem[5], 0);
+                        item.TopLeftX = (int)GetDecimalValue("FlyerItem.TopLeftX", aItem[6], 0);
+                        item.TopLeftY = (int)GetDecimalValue("FlyerItem.TopLeftY", aItem[7], 0);
+                        item.BottomRightX = (int)GetDecimalValue("FlyerItem.BottomRightX", aItem[8], 0);
+                        item.BottomRightY = (int)GetDecimalValue("FlyerItem.BottomRightY", aItem[9], 0);
 
                         if (item.Section == "COVER")
                         {
@@ -2230,6 +2101,92 @@ namespace ProfitOrder
             {
                 await Shell.Current.DisplayAlertAsync("Profit Order", aToken[1], "Ok");
                 await App.g_Shell.GoToPaymentMethodEdit();
+            }
+        }
+
+        public static DateTime GetDateTime(string key, string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return DateTime.MinValue;
+
+            value = value.Trim();
+
+            // First try exact formats
+            string[] formats =
+            {
+                "M/d/yyyy",
+                "MM/dd/yyyy",
+                "yyyy-MM-dd",
+                "yyyyMMdd",
+                "M/d/yy",
+                "MM/dd/yy"
+            };
+
+            if (DateTime.TryParseExact(
+                    value,
+                    formats,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var date))
+            {
+                return date;
+            }
+
+            // Fallback to normal parsing
+            if (DateTime.TryParse(
+                    value,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out date))
+            {
+                return date;
+            }
+
+            Console.WriteLine($"{key} Invalid Date: '{value}'");
+
+            return DateTime.MinValue;
+        }
+        public static int GetIntegerValue(String key,String value,int defaultValue)
+        {
+            try
+            {
+                string sizeValue = value.Trim();
+                if(sizeValue.Length>0)
+                {
+                    string digits = new string(sizeValue
+                    .TakeWhile(char.IsDigit)
+                    .ToArray());
+
+                    return int.TryParse(digits, out var size)
+                        ? size
+                        : defaultValue;
+                }
+                else
+                {
+                    return defaultValue;
+                }
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(key+"Converting string to int"+e.Message);
+                return defaultValue;
+            }
+        }
+
+        public static Decimal GetDecimalValue(String key,String value,Decimal defaultValue)
+        {
+            try
+            {
+                string sizeValue = value.Trim();
+                if(sizeValue.Length != 0)
+                    return Convert.ToDecimal(sizeValue);
+                else
+                    return defaultValue;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(key+"Converting string to Decimal "+e.Message);
+                return defaultValue;
             }
         }
     }

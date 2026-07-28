@@ -610,17 +610,7 @@ namespace ProfitOrder
 
         public int UpdateItemLabelQtySet(int iItem, int iQty)
         {
-            _database.Execute("update Item set QtyLabel = " + iQty.ToString() + " where ItemNo = " + iItem.ToString());
-
-            try
-            {
-                //Vibration.Vibrate(200);
-            }
-            catch (Exception e)
-            {
-            }
-
-            return 1;
+            return _database.Execute("update Item set QtyLabel = " + iQty.ToString() + " where ItemNo = " + iItem.ToString());
         }
 
         public int UpdateItemQtySet(int iItem, int iQtyOrder, int iQtyCredit, int iQtyLabel, int iLineNo)
