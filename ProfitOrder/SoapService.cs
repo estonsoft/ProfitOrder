@@ -6,12 +6,13 @@ namespace ProfitOrder.Data
     public class SoapService : ISoapService
     {
         private readonly HttpClient _httpClient;
-#if DEBUG
-        private string SoapUrl = "https://ctbdemo.qwikpoint.net";
-#else
-        private string SoapUrl = "https://ramdistributors.qwikpoint.net/RemotePhoneApp.asmx";
+        private string SoapUrl;
+// #if DEBUG
+//         private string SoapUrl = "https://ctbdemo.qwikpoint.net";
+// #else
+//         private string SoapUrl = "https://ramdistributors.qwikpoint.net/RemotePhoneApp.asmx";
 
-#endif
+// #endif
 
         public SoapService(HttpClient httpClient)
         {

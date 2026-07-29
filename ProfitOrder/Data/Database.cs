@@ -31,7 +31,7 @@ namespace ProfitOrder
             _database.CreateTable<Server>();
 
             _database.EnableWriteAheadLogging();
-            _database.Execute("PRAGMA synchronous = NORMAL");     
+            _database.Execute("PRAGMA synchronous = NORMAL");
         }
 
         public void BeginTransaction()
@@ -56,7 +56,7 @@ namespace ProfitOrder
 
         public void RollbackTransaction()
         {
-             if (DeviceInfo.Platform == DevicePlatform.iOS)
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
                 _database.Rollback();
             }
@@ -486,23 +486,6 @@ namespace ProfitOrder
         public int SaveItemReplace(Item item)
         {
             return _database.InsertOrReplace(item);
-            /*
-            Item _item = FindItem(item.ItemNo);
-
-            if (_item == null)
-            {
-                return _database.Insert(item);
-            }
-            else
-            {
-                item.QtyOrder = _item.QtyOrder;
-                _database.Update(item);
-
-                UpdateItemPriceOrder(item.ItemNo);
-
-                return 1;
-            }
-            */
         }
 
         public int UpdateItem(Item item)
@@ -525,15 +508,6 @@ namespace ProfitOrder
         {
             _database.Execute("update Item set QtyOrder = QtyOrder + " + iQty.ToString() + " where ItemNo = " + iItem.ToString());
             _database.Execute("update Item set LineNo = ifnull((select max(LineNo) from Item), 0) + 1 where LineNo = 0 and ItemNo = " + iItem.ToString());
-
-            try
-            {
-                //Vibration.Vibrate(200);
-            }
-            catch (Exception e)
-            {
-            }
-
             return 1;
         }
 
@@ -581,30 +555,12 @@ namespace ProfitOrder
         {
             _database.Execute("update Item set QtyOrder = " + iQty.ToString() + " where ItemNo = " + iItem.ToString());
             _database.Execute("update Item set LineNo = ifnull((select max(LineNo) from Item), 0) + 1 where LineNo = 0 and ItemNo = " + iItem.ToString());
-
-            try
-            {
-                //Vibration.Vibrate(200);
-            }
-            catch (Exception e)
-            {
-            }
-
             return 1;
         }
 
         public int UpdateItemCreditQtySet(int iItem, int iQty)
         {
             _database.Execute("update Item set QtyCredit = " + iQty.ToString() + " where ItemNo = " + iItem.ToString());
-
-            try
-            {
-                //Vibration.Vibrate(200);
-            }
-            catch (Exception e)
-            {
-            }
-
             return 1;
         }
 
@@ -625,6 +581,10 @@ namespace ProfitOrder
 
         public int UpdateItemQOH(int iItem, int iQOH)
         {
+            while (_database.IsInTransaction)
+            {
+                SpinWait.SpinUntil(() => !_database.IsInTransaction, 50); // Checks every 50ms
+            }
             _database.Execute("update Item set QOH = " + iQOH.ToString() + " where ItemNo = " + iItem.ToString());
             _database.Execute("update ReorderItem set QOH = " + iQOH.ToString() + " where ItemNo = " + iItem.ToString());
             _database.Execute("update OrderDetail set QOH = " + iQOH.ToString() + " where ItemNo = " + iItem.ToString());

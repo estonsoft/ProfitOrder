@@ -149,11 +149,11 @@ namespace ProfitOrder
                 }
                 else
                 {
-#if DEBUG
-                    g_ServerURL = "https://ctbdemo.qwikpoint.net";
-#else
-                    g_ServerURL = "https://www.turningpointsystems.com";
-#endif
+// #if DEBUG
+//                     g_ServerURL = "https://ctbdemo.qwikpoint.net";
+// #else
+                    // g_ServerURL = "https://www.turningpointsystems.com";
+// #endif
 
                 }
                 UpdateServerLinks();
