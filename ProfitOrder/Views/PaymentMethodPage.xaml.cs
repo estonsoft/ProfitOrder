@@ -36,18 +36,18 @@ namespace ProfitOrder.Views
             return true;
         }
 
-        private void OnAddNewPaymentMethodClicked(object sender, EventArgs e)
+        private async void OnAddNewPaymentMethodClicked(object sender, EventArgs e)
         {
             App.g_PaymentMethodEdit = new PaymentMethod();
             App.g_PaymentMethodEdit.PaymentMethodId = -1;
-            App.g_Shell.GoToPaymentMethodEdit();
+            await App.g_Shell.GoToPaymentMethodEdit();
         }
 
-        public void RefreshList()
+        public async Task RefreshList()
         {
             PaymentMethodList.ItemsSource = null;
 
-            lstItems = App.g_db.GetPaymentMethods();
+            lstItems = await App.g_db.GetPaymentMethods();
 
             foreach (PaymentMethod pm in lstItems)
             {

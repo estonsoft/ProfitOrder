@@ -10,21 +10,19 @@ namespace ProfitOrder.Views
 
         public QuickEntryPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            
+
             await Methods.AskForRequiredPermissionAsync();
-            
+
             App.g_CurrentPage = "QuickEntryPage";
 
             lstItems = new List<Item>();
             ClearItemInfo();
-
-            await Task.Delay(100);
 
             ScanItem.Text = "";
 
@@ -53,15 +51,8 @@ namespace ProfitOrder.Views
 
         protected override void OnDisappearing()
         {
+            base.OnDisappearing();
             ScannerControl.CameraEnabled = false;
-            try
-            {
-                base.OnDisappearing();
-                Content = null;
-            }
-            catch
-            {
-            }
         }
 
         protected override bool OnBackButtonPressed()
@@ -72,7 +63,7 @@ namespace ProfitOrder.Views
         private void ShowItemInfo(Item item)
         {
             Item.SetListItem(item, "O");
-            
+
             item.IsBoxViewVisible = false;
 
             lstItems.Clear();
@@ -103,14 +94,14 @@ namespace ProfitOrder.Views
             Message.IsVisible = true;
         }
 
-        public void ScanComplete(String barcode)
+        public async Task ScanComplete(String barcode)
         {
             ClearItemInfo();
             ScanItem.Text = barcode;
 
             TapToScan.IsVisible = true;
 
-            Item item = FindItem();
+            Item item = await FindItem();
 
             if (item == null)
             {
@@ -120,18 +111,19 @@ namespace ProfitOrder.Views
                 return;
             }
 
-            if (App.g_db.GetItemQty(item.ItemNo) > 0)
+            if (await App.g_db.GetItemQty(item.ItemNo) > 0)
             {
                 SetMessage("Item Already In Shopping Cart");
             }
 
             ShowItemInfo(item);
             ScanItem.Unfocus();
+            ScannerControl.CameraEnabled = true;
         }
 
-        private void ScanItem_Completed(object sender, EventArgs e)
+        private async void ScanItem_Completed(object sender, EventArgs e)
         {
-            ScanComplete(ScanItem.Text.Trim());
+            await ScanComplete(ScanItem.Text.Trim());
         }
 
         public void SetScanItem(string barcode)
@@ -139,15 +131,15 @@ namespace ProfitOrder.Views
             ScanItem.Text = barcode;
         }
 
-        private void EnterButton_Clicked(object sender, EventArgs e)
+        private async void EnterButton_Clicked(object sender, EventArgs e)
         {
             Message.Text = "";
-            ScanComplete(ScanItem.Text.Trim());
+            await ScanComplete(ScanItem.Text.Trim());
         }
 
-        private Item FindItem()
+        private async Task<Item> FindItem()
         {
-            //Database db = new Database();
+
 
             Item item = null;
             List<Item> items = new List<Item>();
@@ -162,12 +154,12 @@ namespace ProfitOrder.Views
 
                 if (ItemNo > 0)
                 {
-                    item = App.g_db.FindItem(ItemNo, ItemNo.ToString());
+                    item = await App.g_db.FindItem(ItemNo, ItemNo.ToString());
                 }
 
                 if (item == null)
                 {
-                    items = App.g_db.SearchItemsQuickEntry(ScanText);
+                    items = await App.g_db.SearchItemsQuickEntry(ScanText);
 
                     if (items.Count >= 1)
                     {
@@ -180,11 +172,10 @@ namespace ProfitOrder.Views
                     if (App.g_IsAutoAdd1)
                     {
                         item.QtyOrder += 1;
-                        App.g_db.UpdateItemQtySet(item.ItemNo, item.QtyOrder);
+                        await App.g_db.UpdateItemQtySet(item.ItemNo, item.QtyOrder);
                     }
                 }
             }
-
             return item;
         }
 
@@ -200,7 +191,7 @@ namespace ProfitOrder.Views
                 ScannerControl.CameraEnabled = false;
 
                 var primaryItem = e.BarcodeResults.First();
-                ScanComplete(primaryItem.DisplayValue.Trim());
+                await ScanComplete(primaryItem.DisplayValue.Trim());
                 //await DisplayAlertAsync("Native Scan Match",
                 //    $"Value: {primaryItem.DisplayValue}\nType: {primaryItem.BarcodeFormat}",
                 //    "OK");

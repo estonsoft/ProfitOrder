@@ -7,13 +7,7 @@
 
         public QuickEntryPageNoCamera()
         {
-            try
-            {
-                this.InitializeComponent();
-            }
-            catch
-            {
-            }
+            this.InitializeComponent();
             BindingContext = this;
         }
 
@@ -32,14 +26,7 @@
 
         protected override void OnDisappearing()
         {
-            try
-            {
-                base.OnDisappearing();
-                Content = null;
-            }
-            catch
-            {
-            }
+            base.OnDisappearing();
         }
 
         protected override bool OnBackButtonPressed()
@@ -90,11 +77,11 @@
             Message.IsVisible = true;
         }
 
-        public void ScanComplete()
+        public async Task ScanComplete()
         {
             OnScannerDisable();
 
-            Item item = FindItem();
+            Item item = await FindItem();
 
             if (item == null)
             {
@@ -105,7 +92,7 @@
                 return;
             }
 
-            if (App.g_db.GetItemQty(item.ItemNo) > 0)
+            if (await App.g_db.GetItemQty(item.ItemNo) > 0)
             {
                 SetMessage("Item Already In Shopping Cart");
             }
@@ -129,9 +116,9 @@
             ScanRow.IsVisible = false;
         }
 
-        private void ScanItem_Completed(object sender, EventArgs e)
+        private async void ScanItem_Completed(object sender, EventArgs e)
         {
-            ScanComplete();
+            await ScanComplete();
         }
 
         public void SetScanItem(string barcode)
@@ -139,13 +126,13 @@
             ScanItem.Text = barcode;
         }
 
-        private void EnterButton_Clicked(object sender, EventArgs e)
+        private async void EnterButton_Clicked(object sender, EventArgs e)
         {
             Message.Text = "";
-            ScanComplete();
+            await ScanComplete();
         }
 
-        private Item FindItem()
+        private async Task<Item> FindItem()
         {
             Item item = null;
             List<Item> items = new List<Item>();
@@ -156,12 +143,12 @@
 
             if (ItemNo > 0)
             {
-                item = App.g_db.FindItem(ItemNo, ItemNo.ToString());
+                item = await App.g_db.FindItem(ItemNo, ItemNo.ToString());
             }
 
             if (item == null)
             {
-                items = App.g_db.SearchItemsQuickEntry(ScanText);
+                items = await App.g_db.SearchItemsQuickEntry(ScanText);
 
                 if (items.Count >= 1)
                 {

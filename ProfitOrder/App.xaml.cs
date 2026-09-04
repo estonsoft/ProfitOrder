@@ -87,7 +87,6 @@ namespace ProfitOrder
         {
             InitializeComponent();
             CommManager = _commManager;
-
             try
             {
                 if (g_db == null)
@@ -101,10 +100,7 @@ namespace ProfitOrder
             }
 
             g_App = this;
-            Task.Run(async () =>
-            {
-                LoadSettings();
-            });
+            LoadSettings();
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
@@ -112,7 +108,7 @@ namespace ProfitOrder
             return new Window(new AppShell());
         }
 
-        private async void LoadSettings()
+        public async void LoadSettings()
         {
             g_FlyerFilename = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "MonthlyFlyer.pdf");
 
@@ -130,35 +126,33 @@ namespace ProfitOrder
 
             if (!g_IsLoggedIn)
             {
-                //Database db = new Database();
-
                 g_UserName = "";
 
-                if (g_db.GetSetting("LoggedIn") == "1")
+                if (await g_db.GetSetting("LoggedIn") == "1")
                 {
                     g_IsLoggedIn = true;
-                    g_UserName = g_db.GetSetting("UserName");
+                    g_UserName = await g_db.GetSetting("UserName");
                 }
 
-                g_ServerURL = g_db.GetSetting("ServerURL");
+                g_ServerURL = await g_db.GetSetting("ServerURL");
                 if (g_ServerURL != "")
                 {
                     Server server = new Server();
                     server.ServerURL = g_ServerURL;
-                    g_db.SaveServer(server);
+                    await g_db.SaveServer(server);
                 }
                 else
                 {
-// #if DEBUG
-//                     g_ServerURL = "https://ctbdemo.qwikpoint.net";
-// #else
+                    // #if DEBUG
+                    //                     g_ServerURL = "https://ctbdemo.qwikpoint.net";
+                    // #else
                     // g_ServerURL = "https://www.turningpointsystems.com";
-// #endif
+                    // #endif
 
                 }
                 UpdateServerLinks();
 
-                if (g_db.GetSetting("Credits") == "1")
+                if (await g_db.GetSetting("Credits") == "1")
                 {
                     g_IsCredits = true;
                 }
@@ -167,21 +161,21 @@ namespace ProfitOrder
                     g_IsCredits = false;
                 }
 
-                if (g_db.GetSetting("qwp") == "qwp")
+                if (await g_db.GetSetting("qwp") == "qwp")
                 {
-                                    App.g_IsQWP = true;
+                    App.g_IsQWP = true;
                 }
-                                else
-                                {
-                                    App.g_IsQWP = false;
-                                }
-                g_QOHDisplay = g_db.GetSetting("QOHDisplay");
+                else
+                {
+                    App.g_IsQWP = false;
+                }
+                g_QOHDisplay = await g_db.GetSetting("QOHDisplay");
 
-                g_IsScannerDisabled = g_db.GetSetting("ScannerDisabled");
+                g_IsScannerDisabled = await g_db.GetSetting("ScannerDisabled");
 
-                g_PaymentProvider = g_db.GetSetting("PaymentProvider");
+                g_PaymentProvider = await g_db.GetSetting("PaymentProvider");
 
-                if (g_db.GetSetting("MonthlyFlyer") == "1")
+                if (await g_db.GetSetting("MonthlyFlyer") == "1")
                 {
                     g_IsMonthlyFlyer = true;
                 }
@@ -189,7 +183,7 @@ namespace ProfitOrder
                 {
                     g_IsMonthlyFlyer = false;
                 }
-                string sFlyerStartDate = g_db.GetSetting("FlyerStartDate");
+                string sFlyerStartDate = await g_db.GetSetting("FlyerStartDate");
                 if (sFlyerStartDate == "")
                 {
                     g_FlyerStartDate = 0;
@@ -200,7 +194,7 @@ namespace ProfitOrder
                     int.TryParse(sFlyerStartDate, out FlyerStartDate);
                     g_FlyerStartDate = FlyerStartDate;
                 }
-                string sFlyerEndDate = g_db.GetSetting("FlyerEndDate");
+                string sFlyerEndDate = await g_db.GetSetting("FlyerEndDate");
                 if (sFlyerEndDate == "")
                 {
                     g_FlyerEndDate = 0;
@@ -211,7 +205,7 @@ namespace ProfitOrder
                     int.TryParse(sFlyerEndDate, out FlyerEndDate);
                     g_FlyerEndDate = FlyerEndDate;
                 }
-                if (g_db.GetSetting("AutoAdd1") == "1")
+                if (await g_db.GetSetting("AutoAdd1") == "1")
                 {
                     g_IsAutoAdd1 = true;
                 }
@@ -219,7 +213,7 @@ namespace ProfitOrder
                 {
                     g_IsAutoAdd1 = false;
                 }
-                if (g_db.GetSetting("RefNoLookup") == "1")
+                if (await g_db.GetSetting("RefNoLookup") == "1")
                 {
                     g_IsRefNoLookup = true;
                 }
@@ -227,7 +221,7 @@ namespace ProfitOrder
                 {
                     g_IsRefNoLookup = false;
                 }
-                if (g_db.GetSetting("ShowSubcateogries") == "0")
+                if (await g_db.GetSetting("ShowSubcateogries") == "0")
                 {
                     g_IsShowSubcategories = false;
                 }
@@ -246,7 +240,7 @@ namespace ProfitOrder
                 g_OrderNo = "";
                 g_HeaderTitle = "";
 
-                if (g_db.GetSetting("IsSalesUser") == "1")
+                if (await g_db.GetSetting("IsSalesUser") == "1")
                 {
                     g_IsSalesUser = true;
                 }
@@ -254,7 +248,7 @@ namespace ProfitOrder
                 {
                     g_IsSalesUser = false;
                 }
-                if (g_db.GetSetting("IsChainManager") == "1")
+                if (await g_db.GetSetting("IsChainManager") == "1")
                 {
                     g_IsChainManager = true;
                 }
@@ -262,7 +256,7 @@ namespace ProfitOrder
                 {
                     g_IsChainManager = false;
                 }
-                if (g_db.GetSetting("HoldForReview") == "1")
+                if (await g_db.GetSetting("HoldForReview") == "1")
                 {
                     g_HoldForReview = true;
                 }
@@ -270,7 +264,7 @@ namespace ProfitOrder
                 {
                     g_HoldForReview = false;
                 }
-                if (g_db.GetSetting("BlockItemsNoQOH") == "1")
+                if (await g_db.GetSetting("BlockItemsNoQOH") == "1")
                 {
                     g_BlockItemsNoQOH = true;
                 }
@@ -279,8 +273,8 @@ namespace ProfitOrder
                     g_BlockItemsNoQOH = false;
                 }
                 g_IsScandit = true;
-                g_ShoppingCartSort = g_db.GetSetting("ShoppingCartSort");
-                if (g_db.GetSetting("IsBuildToEnabled") == "1")
+                g_ShoppingCartSort = await g_db.GetSetting("ShoppingCartSort");
+                if (await g_db.GetSetting("IsBuildToEnabled") == "1")
                 {
                     g_IsBuildToEnabled = true;
                 }
@@ -288,7 +282,7 @@ namespace ProfitOrder
                 {
                     g_IsBuildToEnabled = false;
                 }
-                if (g_db.GetSetting("IsBuildToViewOnly") == "1")
+                if (await g_db.GetSetting("IsBuildToViewOnly") == "1")
                 {
                     g_IsBuildToViewOnly = true;
                 }
@@ -317,53 +311,51 @@ namespace ProfitOrder
                 location.Refresh();
 
                 g_Customer = new Customer();
-                g_ShoppingCartItems = App.g_db.GetCartPieces();
+                g_ShoppingCartItems = await App.g_db.GetCartPieces();
 
-                
-                    try
-                    {
-                        g_Customer = new Customer();
-                        g_Customer = App.g_db.GetCustomer();
-                        if (g_Customer == null)
-                        {
-                            g_Customer = new Customer();
-                        }
-                    }
-                    catch
-                    {
-                        g_Customer = new Customer();
-                    }
-                
-
-                //g_CategoryList = App.g_db.GetCategories();
-                g_HomePageCategoryList = App.g_db.GetHomePageCategories();
-                g_ItemList = App.g_db.GetItems();
-                g_ReorderItemList = App.g_db.GetReorderItems();
 
                 try
                 {
-                    await App.CommManager.GetSettings();
+                    g_Customer = new Customer();
+                    g_Customer = await App.g_db.GetCustomer();
+                    if (g_Customer == null)
+                    {
+                        g_Customer = new Customer();
+                    }
                 }
-                catch { }
+                catch
+                {
+                    g_Customer = new Customer();
+                }
 
-                InsertOnAccountPaymentMethod();
-                GetDefaultPaymentMethod();
+                g_HomePageCategoryList = await App.g_db.GetHomePageCategories();
+                g_ItemList = await App.g_db.GetItems();
+                g_ReorderItemList = await App.g_db.GetReorderItems();
 
+                await LoadSettingsAsync();
+            }
+        }
+
+        public async Task LoadSettingsAsync()
+        {
+            if (App.g_ServerURL.Length != 0)
+            {
+                await App.CommManager.GetSettings();
+                await InsertOnAccountPaymentMethod();
+                await GetDefaultPaymentMethod();
                 await RefreshAll();
                 InitializeAllTimer();
-
                 await RefreshOrderHistory();
                 InitializeOrderHistoryTimer();
-
                 if (g_IsSalesUser || g_IsChainManager)
                 {
                     await App.CommManager.GetSalespersonCustomers(g_UserName);
                 }
-
                 await RefreshQOH();
                 InitializeQOHTimer();
             }
         }
+
         public static void UpdateServerLinks()
         {
             Constants.BaseURL = App.g_ServerURL;
@@ -462,7 +454,7 @@ namespace ProfitOrder
 
         private async Task<String> RefreshItems()
         {
-            //Database db = new Database();
+
 
             //g_Customer = await db.GetCustomerAsync();
 
@@ -506,16 +498,16 @@ namespace ProfitOrder
             int i = 9;
         }
 
-        protected override void OnResume()
+        protected async override void OnResume()
         {
             if (App.g_IsLoggedIn)
             {
-                ValidateUserActive();
+                await ValidateUserActive();
             }
 
             try
             {
-                App.CommManager.GetSettings();
+                await App.CommManager.GetSettings();
             }
             catch { }
         }
@@ -531,11 +523,11 @@ namespace ProfitOrder
             return "";
         }
 
-        public void InsertOnAccountPaymentMethod()
+        public static async Task InsertOnAccountPaymentMethod()
         {
-            //Database db = new Database();
 
-            PaymentMethod pm = App.g_db.FindPaymentMethod(1);
+
+            PaymentMethod pm = await App.g_db.FindPaymentMethod(1);
 
             if (pm is null)
             {
@@ -546,15 +538,15 @@ namespace ProfitOrder
                 g_PaymentMethod.IsDefaultChecked = false;
                 g_PaymentMethod.Type = "A";
 
-                App.g_db.SavePaymentMethod(g_PaymentMethod);
+                await App.g_db.SavePaymentMethod(g_PaymentMethod);
             }
         }
 
-        public void GetDefaultPaymentMethod()
+        public static async Task GetDefaultPaymentMethod()
         {
-            //Database db = new Database();
 
-            List<PaymentMethod> paymentMethods = App.g_db.GetDefaultPaymentMethod();
+
+            List<PaymentMethod> paymentMethods = await App.g_db.GetDefaultPaymentMethod();
             if (paymentMethods.Count > 0)
             {
                 g_PaymentMethod = paymentMethods[0];
@@ -562,7 +554,7 @@ namespace ProfitOrder
             else
             {
                 // set to On Account
-                g_PaymentMethod = App.g_db.FindPaymentMethod(1);
+                g_PaymentMethod = await App.g_db.FindPaymentMethod(1);
             }
         }
     }

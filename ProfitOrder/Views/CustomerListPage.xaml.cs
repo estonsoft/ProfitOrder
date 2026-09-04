@@ -34,15 +34,15 @@ namespace ProfitOrder.Views
         {
             CustomerList.ItemsSource = null;
 
-            App.g_db.UpdateCustomerCartItems();
+            await App.g_db.UpdateCustomerCartItems();
 
             if (PendingOrdersCheckbox.IsChecked)
             {
-                customers = App.g_db.GetSalesCustomersWithPendingOrders(CustomerSearch.Text);
+                customers = await App.g_db.GetSalesCustomersWithPendingOrders(CustomerSearch.Text);
             }
             else
             {
-                customers = App.g_db.GetSalesCustomers(CustomerSearch.Text);
+                customers = await App.g_db.GetSalesCustomers(CustomerSearch.Text);
             }
 
             foreach (SalesCustomer customer in customers)
@@ -73,7 +73,7 @@ namespace ProfitOrder.Views
             CustomerList.IsVisible = false;
             Task.Run(async () =>
             {
-                SalesCustomer cust = App.g_db.FindSalesCustomer(c.CustNo);
+                SalesCustomer cust = await App.g_db.FindSalesCustomer(c.CustNo);
                 App.g_Customer.CustNo = cust.CustNo;
                 App.g_Customer.CompanyName = cust.CompanyName;
                 App.g_Customer.Address1 = cust.Address1;
@@ -96,13 +96,13 @@ namespace ProfitOrder.Views
                 App.g_Customer.MinOrderQty = cust.MinOrderQty;
                 App.g_Customer.ShippingFee = cust.ShippingFee;
 
-                App.g_db.SaveCustomer(App.g_Customer);
+                await App.g_db.SaveCustomer(App.g_Customer);
 
-                App.g_db.SuspendCartItems(OldCustNo);
-                App.g_db.ClearCartItems();
-                //App.g_db.ClearFavorites();
-                App.g_db.DeleteOrderHistory();
-                App.g_db.RestoreCartItems(App.g_Customer.CustNo);
+                await App.g_db.SuspendCartItems(OldCustNo);
+                await App.g_db.ClearCartItems();
+                //await App.g_db.ClearFavorites();
+                await App.g_db.DeleteOrderHistory();
+                await App.g_db.RestoreCartItems(App.g_Customer.CustNo);
                 try
                 {
                     if (!string.IsNullOrEmpty(App.g_Customer.CustNo) && App.g_Customer.CustNo != "0")

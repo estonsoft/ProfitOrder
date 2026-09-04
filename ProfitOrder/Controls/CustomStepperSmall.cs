@@ -12,7 +12,7 @@
 
         public int ItemNo
         {
-            get => (int) GetValue(ItemNoProperty);
+            get => (int)GetValue(ItemNoProperty);
             set => SetValue(ItemNoProperty, value);
         }
 
@@ -77,7 +77,7 @@
 
             AddToOrderStack = new StackLayout { Orientation = StackOrientation.Vertical, Margin = new Thickness(0, 5, 0, 0) };
 
-            AddToOrderBtn = new Button { Text = "Add To Order", HeightRequest = 28, WidthRequest = 103, CornerRadius = 15, Margin = new Thickness(5, -4, 0, 5), Padding = new Thickness(0, 0, 0, 0), TextTransform = TextTransform.None, FontSize = 14, FontAttributes = FontAttributes.Bold, BackgroundColor = Colors.LightGray, TextColor = Colors.Blue};
+            AddToOrderBtn = new Button { Text = "Add To Order", HeightRequest = 28, WidthRequest = 103, CornerRadius = 15, Margin = new Thickness(5, -4, 0, 5), Padding = new Thickness(0, 0, 0, 0), TextTransform = TextTransform.None, FontSize = 14, FontAttributes = FontAttributes.Bold, BackgroundColor = Colors.LightGray, TextColor = Colors.Blue };
             AddToOrderBtn.Clicked += PlusBtn_Clicked;
             AddToOrderBtn.SetBinding(Button.IsVisibleProperty, new Binding(nameof(IsAddToOrderVisible), BindingMode.TwoWay, source: this));
 
@@ -130,18 +130,18 @@
         {
             if (Text > 0)
             {
-                //Database db = new Database();
-                int iQty = App.g_db.GetItemQty(ItemNo);
+
+                int iQty = await App.g_db.GetItemQty(ItemNo);
 
                 if (iQty > 0)
                 {
-                    App.g_db.UpdateItemQty(ItemNo, -1);
+                    await App.g_db.UpdateItemQty(ItemNo, -1);
                 }
 
                 Text--;
                 QtyOrder--;
 
-                App.g_ShoppingCartItems = App.g_db.GetCartPieces();
+                App.g_ShoppingCartItems = await App.g_db.GetCartPieces();
 
                 try
                 {
@@ -174,20 +174,20 @@
             }
         }
 
-        private void PlusBtn_Clicked(object sender, EventArgs e)
+        private async void PlusBtn_Clicked(object sender, EventArgs e)
         {
             if (Text == 999)
             {
                 return;
             }
 
-            //Database db = new Database();
-            App.g_db.UpdateItemQty(ItemNo, 1);
+
+            await App.g_db.UpdateItemQty(ItemNo, 1);
 
             Text++;
             QtyOrder++;
 
-            App.g_ShoppingCartItems = App.g_db.GetCartPieces();
+            App.g_ShoppingCartItems = await App.g_db.GetCartPieces();
 
             try
             {

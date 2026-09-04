@@ -161,7 +161,7 @@
 
         async void OnShoppingCartTapped(object sender, EventArgs e)
         {
-            List<Item> items = App.g_db.GetOrderCartItems();
+            List<Item> items = await App.g_db.GetOrderCartItems();
 
             if (items.Count == 0)
                 await Shell.Current.DisplayAlertAsync("Profit Order", "Your shopping cart is empty", "Ok");

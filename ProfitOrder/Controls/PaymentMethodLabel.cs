@@ -23,20 +23,20 @@
             GestureRecognizers.Add(TapLabel);
         }
 
-        void OnLabelTapped(object sender, EventArgs e)
+        async void OnLabelTapped(object sender, EventArgs e)
         {
-            //Database db = new Database();
-            
+
+
             if (Text == "Use this payment method")
             {
-                App.g_PaymentMethod = App.g_db.FindPaymentMethod(PaymentMethodId);
+                App.g_PaymentMethod = await App.g_db.FindPaymentMethod(PaymentMethodId);
                 App.g_CheckoutPage.SetPaymentMethod();
-                App.g_Shell.GoToCheckout();
+                await App.g_Shell.GoToCheckout();
             }
             else if (Text == "Edit")
             {
-                App.g_PaymentMethodEdit = App.g_db.FindPaymentMethod(PaymentMethodId);
-                App.g_Shell.GoToPaymentMethodEdit();
+                App.g_PaymentMethodEdit = await App.g_db.FindPaymentMethod(PaymentMethodId);
+                await App.g_Shell.GoToPaymentMethodEdit();
             }
         }
     }

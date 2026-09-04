@@ -13,7 +13,7 @@
             catch { }
         }
 
-        private void MinusButton_Clicked(object sender, EventArgs e)
+        private async void MinusButton_Clicked(object sender, EventArgs e)
         {
             PlusMinusButton button = (PlusMinusButton)sender;
 
@@ -24,7 +24,7 @@
             {
                 iQty--;
 
-                App.g_db.UpdateItemQtySet(button.ItemNo, iQty);
+                await App.g_db.UpdateItemQtySet(button.ItemNo, iQty);
 
                 QtyEntry.Text = iQty.ToString();
 
@@ -36,7 +36,7 @@
             }
         }
 
-        private void PlusButton_Clicked(object sender, EventArgs e)
+        private async void PlusButton_Clicked(object sender, EventArgs e)
         {
             PlusMinusButton button = (PlusMinusButton)sender;
 
@@ -55,7 +55,7 @@
                 return;
             }
 
-            App.g_db.UpdateItemQtySet(button.ItemNo, iQty);
+            await App.g_db.UpdateItemQtySet(button.ItemNo, iQty);
 
             QtyEntry.Text = iQty.ToString();
 
@@ -63,12 +63,12 @@
             AddToOrderButton.IsVisible = false;
         }
 
-        private void AddToOrderButton_Clicked(object sender, EventArgs e)
+        private async void AddToOrderButton_Clicked(object sender, EventArgs e)
         {
 
             AddToOrderButton button = (AddToOrderButton)sender;
 
-            App.g_db.UpdateItemQty(button.ItemNo, 1);
+            await App.g_db.UpdateItemQty(button.ItemNo, 1);
 
             QtyEntry.Text = "1";
 
@@ -76,7 +76,7 @@
             AddToOrderButton.IsVisible = false;
         }
 
-        private void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+        private async void OnEntryTextChanged(object sender, TextChangedEventArgs args)
         {
             QtyEntry qtyEntry = (QtyEntry)sender;
             var current = args.NewTextValue;
@@ -105,7 +105,7 @@
                 {
                     ((Entry)sender).Text = iValue.ToString();
                 }
-                App.g_db.UpdateItemQtySet(qtyEntry.ItemNo, iValue);
+                await App.g_db.UpdateItemQtySet(qtyEntry.ItemNo, iValue);
             }
         }
 
@@ -129,7 +129,7 @@
                 qtyEntry.Text = "999";
             }
 
-            App.g_db.UpdateItemQtySet(qtyEntry.ItemNo, iTextQty);
+            await App.g_db.UpdateItemQtySet(qtyEntry.ItemNo, iTextQty);
 
             if (iTextQty <= 0)
             {
@@ -190,7 +190,7 @@
                 if (buildToEntry.ItemNo > 0)
                 {
                     // 1. Update Local DB
-                    App.g_db.UpdateItemBuildTo(buildToEntry.ItemNo, iTextQty);
+                    await App.g_db.UpdateItemBuildTo(buildToEntry.ItemNo, iTextQty);
 
                     // 2. Sync with Server (using Task.Run to keep UI smooth)
                     await Task.Run(() =>
@@ -211,7 +211,7 @@
 
             if (bResult)
             {
-                App.g_db.UpdateItemCreditQty(button.ItemNo, 1);
+                await App.g_db.UpdateItemCreditQty(button.ItemNo, 1);
             }
         }
 
@@ -223,7 +223,7 @@
 
             if (bResult)
             {
-                App.g_db.UpdateItemLabelQty(button.ItemNo, 1);
+                await App.g_db.UpdateItemLabelQty(button.ItemNo, 1);
             }
         }
 

@@ -9,7 +9,7 @@
 
         public int PaymentMethodId
         {
-            get => (int) GetValue(PaymentMethodIdProperty);
+            get => (int)GetValue(PaymentMethodIdProperty);
             set => SetValue(PaymentMethodIdProperty, value);
         }
 
@@ -24,7 +24,7 @@
             CheckedChanged += PaymentMethodCheckBox_CheckedChanged;
         }
 
-        private void PaymentMethodCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+        private async void PaymentMethodCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
             if (IsUpdated)
             {
@@ -34,13 +34,13 @@
 
             IsUpdated = true;
 
-            //Database db = new Database();
 
-            App.g_db.ClearDefaultPaymentMethod();
+
+            await App.g_db.ClearDefaultPaymentMethod();
 
             if (IsChecked)
             {
-                App.g_db.SetDefaultPaymentMethod(PaymentMethodId);
+                await App.g_db.SetDefaultPaymentMethod(PaymentMethodId);
             }
         }
     }

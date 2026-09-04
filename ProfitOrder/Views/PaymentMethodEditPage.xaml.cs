@@ -133,7 +133,7 @@
 
         async void OnSaveCreditCardClicked(object sender, EventArgs e)
         {
-            if (! VerifyCreditCardInfo())
+            if (!VerifyCreditCardInfo())
             {
                 return;
             }
@@ -165,7 +165,7 @@
         public async void OnCardVerifyResult(string sResult)
         {
             string[] aResult = sResult.Split("~");
-            
+
             if (aResult[0] == "E")
             {
                 await Shell.Current.DisplayAlertAsync("Profit Order", "Error verifying card information\n\n" + aResult[1], "Ok");
@@ -177,7 +177,7 @@
             pm.CreditCardNo = "************" + pm.Last4;
             pm.Token = aResult[1];
 
-            App.g_db.SavePaymentMethod(pm);
+            await App.g_db.SavePaymentMethod(pm);
 
             await App.g_Shell.GoToPaymentMethod();
         }
@@ -200,7 +200,7 @@
             pm.Last4 = pm.CheckingAccountNo.Substring(pm.CheckingAccountNo.Length - 4, 4);
             pm.DisplayText = "Bank Account ending " + pm.Last4;
 
-            App.g_db.SavePaymentMethod(pm);
+            await App.g_db.SavePaymentMethod(pm);
 
             await App.g_Shell.GoToPaymentMethod();
         }
@@ -226,7 +226,7 @@
                 return false;
             }
 
-            if (! int.TryParse(CVV.Text, out _))
+            if (!int.TryParse(CVV.Text, out _))
             {
                 Shell.Current.DisplayAlertAsync("Profit Order", "Invalid CVV", "Ok");
                 return false;
@@ -276,11 +276,11 @@
 
             if (bDelete)
             {
-                App.g_db.DeletePaymentMethod(App.g_PaymentMethodEdit.PaymentMethodId);
+                await App.g_db.DeletePaymentMethod(App.g_PaymentMethodEdit.PaymentMethodId);
 
                 if (App.g_PaymentMethodEdit.PaymentMethodId == App.g_PaymentMethod.PaymentMethodId)
                 {
-                    App.g_App.GetDefaultPaymentMethod();
+                    await App.GetDefaultPaymentMethod();
                 }
 
                 await App.g_Shell.GoToPaymentMethod();

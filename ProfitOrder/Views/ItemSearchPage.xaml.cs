@@ -126,13 +126,13 @@
             Subcategory = App.g_Subcategory.Description;
             Subsubcategory = App.g_Subsubcategory.Description;
 
-            if (App.g_db.GetSubcategoryCount(App.g_Category.Code) == 0)
+            if (await App.g_db.GetSubcategoryCount(App.g_Category.Code) == 0)
             {
                 SubcategoryLabel.IsVisible = false;
                 SubsubcategoryLabel.IsVisible = false;
             }
 
-            if (App.g_db.GetSubsubcategoryCount(App.g_Category.Code, App.g_Subcategory.Code) == 0)
+            if (await App.g_db.GetSubsubcategoryCount(App.g_Category.Code, App.g_Subcategory.Code) == 0)
             {
                 SubsubcategoryLabel.IsVisible = false;
             }
@@ -141,17 +141,17 @@
             {
                 if (App.g_IsMonthlyAdPDFClick)
                 {
-                    lstItems = App.g_db.SearchItemsMonthlyAdClick(App.g_MonthlyAdPage, App.g_MonthlyAdX, App.g_MonthlyAdY);
+                    lstItems = await App.g_db.SearchItemsMonthlyAdClick(App.g_MonthlyAdPage, App.g_MonthlyAdX, App.g_MonthlyAdY);
                     App.g_IsMonthlyAdPDFClick = false;
                 }
                 else
                 {
-                    lstItems = App.g_db.SearchItems(App.g_SearchText, App.g_Category, App.g_ScanBarcode, App.g_Subcategory, App.g_Subsubcategory);
+                    lstItems = await App.g_db.SearchItems(App.g_SearchText, App.g_Category, App.g_ScanBarcode, App.g_Subcategory, App.g_Subsubcategory);
                 }
             }
             else
             {
-                lstItems = App.g_db.SearchItemsQuickEntry(App.g_ScanBarcode);
+                lstItems = await App.g_db.SearchItemsQuickEntry(App.g_ScanBarcode);
             }
 
             int iItems = 0;
@@ -191,7 +191,7 @@
                 {
                     // User tapped 'No' - Handle cancellation or do nothing
                 }
-            }            
+            }
         }
 
         private void OnTappedClearCategory(object sender, EventArgs e)
@@ -280,8 +280,8 @@
         private void Button_Clicked(object sender, EventArgs e)
         {
             ImageOverlay.IsVisible = false;
-            if (ItemsListSearch.SelectedItem!= null)
-            {   
+            if (ItemsListSearch.SelectedItem != null)
+            {
                 ItemsListSearch.SelectedItem = null;
             }
         }
@@ -289,8 +289,8 @@
         private void ItemsListSearch_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var selectedItem = e.CurrentSelection?.FirstOrDefault() as Item;
-                if (selectedItem == null)
-                    return;
+            if (selectedItem == null)
+                return;
             ImageOverlay.IsVisible = true;
             FullImage.Source = selectedItem.ImageURL;
         }

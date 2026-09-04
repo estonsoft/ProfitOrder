@@ -7,13 +7,7 @@
 
         public QuickEntryPageBasic()
         {
-            try
-            {
-                this.InitializeComponent();
-            }
-            catch
-            {
-            }
+            this.InitializeComponent();
             BindingContext = this;
         }
 
@@ -79,9 +73,9 @@
             ItemDesc.IsVisible = false;
         }
 
-        public void ScanComplete()
+        public async void ScanComplete()
         {
-            item = FindItem();
+            item = await FindItem();
 
             if (item == null)
             {
@@ -98,7 +92,7 @@
                 ItemDesc.Text = item.Description;
             }
 
-            int iQty = App.g_db.GetItemQty(item.ItemNo);
+            int iQty = await App.g_db.GetItemQty(item.ItemNo);
 
             if (iQty > 0)
             {
@@ -151,7 +145,7 @@
                 return;
             }
 
-            App.g_db.UpdateItemQtySet(item.ItemNo, iQty);
+            await App.g_db.UpdateItemQtySet(item.ItemNo, iQty);
 
             Qty.Text = "";
             ItemDesc.Text = "";
@@ -161,7 +155,7 @@
             EntryFocus();
         }
 
-        private Item FindItem()
+        private async Task<Item> FindItem()
         {
             Item item = null;
             List<Item> items = new List<Item>();
@@ -172,11 +166,11 @@
 
             if (ItemNo > 0)
             {
-                item = App.g_db.FindItem(ItemNo, ItemNo.ToString());
+                item = await App.g_db.FindItem(ItemNo, ItemNo.ToString());
             }
             else
             {
-                item = App.g_db.FindItem(0, ScanText);
+                item = await App.g_db.FindItem(0, ScanText);
             }
 
             return item;

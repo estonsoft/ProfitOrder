@@ -16,7 +16,7 @@
             base.OnDisappearing();
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             try
             {
@@ -49,33 +49,33 @@
                 DisableScanner.IsChecked = false;
             }
 
-            ServerURLList.ItemsSource = App.g_db.GetServers();
+            ServerURLList.ItemsSource = await App.g_db.GetServers();
         }
 
-        private void Save_Clicked(object sender, EventArgs e)
+        private async void Save_Clicked(object sender, EventArgs e)
         {
             if (DisableScanner.IsChecked)
             {
                 App.g_IsScannerDisabled = "1";
-                App.g_db.SaveSetting("ScannerDisabled", "1");
+                await App.g_db.SaveSetting("ScannerDisabled", "1");
             }
             else
             {
                 App.g_IsScannerDisabled = "0";
-                App.g_db.SaveSetting("ScannerDisabled", "0");
+                await App.g_db.SaveSetting("ScannerDisabled", "0");
             }
 
             //Navigation.PopModalAsync();
-            App.g_Shell.GoToLogin();
+            await App.g_Shell.GoToLogin();
         }
 
-        private void Add_Clicked(object sender, EventArgs e)
+        private async void Add_Clicked(object sender, EventArgs e)
         {
             string sURL = ServerURL.Text.Trim().ToLower();
 
             if ((sURL == "http://muswicksales.ddns.net:8040") && (App.g_SettingsUser.ToUpper() != "MANDANI"))
             {
-                App.Current.MainPage.DisplayAlert("Profit Order", "Muswick Wholesale Grocers customers must download and use the Muswick app", "Ok");
+                await Shell.Current.DisplayAlertAsync("Profit Order", "Muswick Wholesale Grocers customers must download and use the Muswick app", "Ok");
                 return;
             }
 
@@ -83,16 +83,16 @@
             {
                 if (!Uri.IsWellFormedUriString(sURL, UriKind.Absolute))
                 {
-                    App.Current.MainPage.DisplayAlert("Profit Order", "Invalid Server URL", "Ok");
+                    await Shell.Current.DisplayAlertAsync("Profit Order", "Invalid Server URL", "Ok");
                     return;
                 }
 
                 Server server = new Server();
                 server.ServerURL = sURL;
-                App.g_db.SaveServer(server);
+                await App.g_db.SaveServer(server);
 
                 ServerURLList.ItemsSource = null;
-                ServerURLList.ItemsSource = App.g_db.GetServers();
+                ServerURLList.ItemsSource = await App.g_db.GetServers();
 
                 ServerURL.Text = "";
             }
@@ -141,20 +141,20 @@
             {
                 try
                 {
-                    App.g_db.SuspendCartItems(App.g_Customer.CustNo);
+                    await App.g_db.SuspendCartItems(App.g_Customer.CustNo);
                 }
                 catch { }
 
-                App.g_db.DeleteAll();
+                await App.g_db.DeleteAll();
 
                 App.g_ServerURL = SetURL.ServerURL;
                 App.UpdateServerLinks();
-                App.g_db.SaveSetting("ServerURL", App.g_ServerURL);
+                await App.g_db.SaveSetting("ServerURL", App.g_ServerURL);
 
                 await App.RefreshAll();
             }
 
-            List<Setting> lSettings = App.g_db.GetSettings();
+            List<Setting> lSettings = await App.g_db.GetSettings();
         }
     }
 }

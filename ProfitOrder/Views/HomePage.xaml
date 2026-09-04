@@ -145,62 +145,101 @@
                             HorizontalOptions="Fill" />
                     </Grid>
                 </Border>
-                <Border
-                    Margin="0,5,0,5"
-                    Padding="0"
-                    BackgroundColor="LightGray"
-                    HeightRequest="48"
-                    HorizontalOptions="Center"
-                    Stroke="White"
-                    VerticalOptions="Start">
-                    <Border.StrokeShape>
-                        <!--  Replaces CornerRadius="10"  -->
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <HorizontalStackLayout
-                        Margin="0,10,0,10"
-                        Padding="0,0,0,0"
-                        HeightRequest="60"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center">
-                        <HorizontalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnPastPurchases" />
-                        </HorizontalStackLayout.GestureRecognizers>
-                        <Label
-                            Padding="15,10,0,0"
-                            FontAttributes="Bold"
-                            FontFamily="FontAwesomeFreeSolid"
-                            FontSize="18"
-                            HeightRequest="45"
-                            HorizontalOptions="Center"
-                            Text="&#xF571;"
-                            TextColor="blue"
-                            VerticalOptions="Center"
-                            WidthRequest="45" />
-                        <VerticalStackLayout>
-                            <Label
-                                Margin="0,10,0,0"
-                                Padding="0,0,15,0"
-                                FontSize="16"
-                                HorizontalOptions="Start"
-                                Text="Past Purchases"
-                                TextColor="Blue" />
-                            <HorizontalStackLayout HeightRequest="40">
-                                <Label
-                                    FontSize="12"
-                                    Text="Reorder"
-                                    TextColor="blue" />
-                                <Label
-                                    Margin="10,2,0,0"
-                                    FontAttributes="Bold"
-                                    FontFamily="FontAwesomeFreeSolid"
-                                    FontSize="11"
-                                    Text="&#xF061;"
-                                    TextColor="blue" />
-                            </HorizontalStackLayout>
-                        </VerticalStackLayout>
-                    </HorizontalStackLayout>
-                </Border>
+                <Grid ColumnDefinitions="*, *"
+                      HorizontalOptions="Fill"
+                      ColumnSpacing="10"
+                      Margin="10,5,10,5">
+
+                    <!-- LEFT BUTTON: Past Purchases -->
+                    <Border Grid.Column="0"
+                            Padding="0"
+                            BackgroundColor="LightGray"
+                            HeightRequest="52"
+                            HorizontalOptions="Fill"
+                            Stroke="White"
+                            VerticalOptions="Start">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <!-- Replaced inner Stack with Grid for precise icon alignment -->
+                        <Grid ColumnDefinitions="45, *"
+                              Padding="5,0,5,0"
+                              VerticalOptions="Center">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPastPurchases"/>
+                            </Grid.GestureRecognizers>
+
+                            <Label Grid.Column="0"
+                                   FontAttributes="Bold"
+                                   FontFamily="FontAwesomeFreeSolid"
+                                   FontSize="18"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center"
+                                   Text="&#xF571;"
+                                   TextColor="blue"/>
+
+                            <VerticalStackLayout Grid.Column="1"
+                                                 VerticalOptions="Center"
+                                                 Margin="5,0,0,0">
+                                <Label FontSize="14"
+                                       FontAttributes="Bold"
+                                       Text="Past Purchases"
+                                       TextColor="Blue"/>
+                                <HorizontalStackLayout VerticalOptions="Center">
+                                    <Label FontSize="11"
+                                           Text="Reorder"
+                                           TextColor="blue"
+                                           VerticalOptions="Center"/>
+                                    <Label Margin="5,0,0,0"
+                                           FontAttributes="Bold"
+                                           FontFamily="FontAwesomeFreeSolid"
+                                           FontSize="10"
+                                           Text="&#xF061;"
+                                           TextColor="blue"
+                                           VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <!-- RIGHT BUTTON: Refresh Data -->
+                    <Border Grid.Column="1"
+                            Padding="0"
+                            BackgroundColor="LightGray"
+                            HeightRequest="52"
+                            HorizontalOptions="Fill"
+                            Stroke="White"
+                            VerticalOptions="Start">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="45, *"
+                              Padding="5,0,5,0"
+                              VerticalOptions="Center">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnRefresh"/>
+                            </Grid.GestureRecognizers>
+
+                            <Label Grid.Column="0"
+                                   FontFamily="FontAwesomeFreeSolid"
+                                   FontSize="32"
+                                   Rotation="45"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center"
+                                   Text="↻"
+                                   TextColor="blue"/>
+
+                            <Label Grid.Column="1"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start"
+                                   Text="Refresh Data"
+                                   TextColor="Blue"
+                                   Margin="5,0,0,0"/>
+                        </Grid>
+                    </Border>
+                </Grid>
                 <Grid
                     Padding="27,15,0,0"
                     HorizontalOptions="Fill"
@@ -312,5 +351,39 @@
             </VerticalStackLayout>
         </ScrollView>
         <controls:CustomToolbar Grid.Row="2" VerticalOptions="End" />
+        <Grid x:Name="LoadingIndicator"
+              BackgroundColor="#80000000"
+              IsVisible="False"
+              Grid.Row="0"
+              Grid.RowSpan="2"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
+
+            <!-- White Dialog Box without buttons -->
+            <Border BackgroundColor="White"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Padding="24"
+                    WidthRequest="220"
+                    HeightRequest="140">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12"/>
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="15"
+                        VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True"
+                                       Color="Blue"
+                                       HeightRequest="40"
+                                       WidthRequest="40"/>
+
+                    <Label Text="Loading... Please wait"
+                           TextColor="Black"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

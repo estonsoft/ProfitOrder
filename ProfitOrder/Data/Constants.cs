@@ -17,7 +17,7 @@
         public static string UserName = "";
         public static string LastUserName = "";
         public static string CustomerNo = "";
-        
+
         public static string LastCategoryUpdate = "";
         public static string LastItemUpdate = "";
 
@@ -32,13 +32,13 @@
         {
             try
             {
-                //Database db = new Database();
 
-                UserName = App.g_db.GetSetting("UserName");
-                LastUserName = App.g_db.GetSetting("LastUserName");
-                CustomerNo = App.g_db.GetSetting("CustomerNo");
-                LastCategoryUpdate = App.g_db.GetSetting("LastCategoryUpdate");
-                LastItemUpdate = App.g_db.GetSetting("LastItemUpdate");
+
+                UserName = await App.g_db.GetSetting("UserName");
+                LastUserName = await App.g_db.GetSetting("LastUserName");
+                CustomerNo = await App.g_db.GetSetting("CustomerNo");
+                LastCategoryUpdate = await App.g_db.GetSetting("LastCategoryUpdate");
+                LastItemUpdate = await App.g_db.GetSetting("LastItemUpdate");
             }
             catch { }
         }

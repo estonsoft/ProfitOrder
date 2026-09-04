@@ -13,19 +13,13 @@ namespace ProfitOrder.Views
         public LabelPrintPage()
         {
             InitializeComponent();
-
-            //BindingContext = _viewModel = new ShoppingCartViewModel();
             BindingContext = this;
-
-            //App.g_LabelCartPage = this;
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
-
-            //Database db = new Database();
-            List<Item> items = App.g_db.GetReturnCartItems();
+            List<Item> items = await App.g_db.GetReturnCartItems();
 
             if (items.Count > 0)
             {
@@ -39,7 +33,7 @@ namespace ProfitOrder.Views
         {
             ItemsListCart.ItemsSource = null;
 
-            ItemsListCart.ItemsSource = App.g_db.GetLabelCartItems();
+            ItemsListCart.ItemsSource = await App.g_db.GetLabelCartItems();
 
             foreach (Item i in (List<Item>)ItemsListCart.ItemsSource)
             {
@@ -58,7 +52,7 @@ namespace ProfitOrder.Views
 
             if (bClear)
             {
-                App.g_db.ClearLabelCartItems();
+                await App.g_db.ClearLabelCartItems();
                 await App.g_Shell.GoToHome();
             }
         }

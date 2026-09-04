@@ -43,19 +43,16 @@
         public ReturnCartPage()
         {
             InitializeComponent();
-
-            //BindingContext = _viewModel = new ShoppingCartViewModel();
             BindingContext = this;
-
             App.g_ReturnCartPage = this;
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
             base.OnAppearing();
 
-            //Database db = new Database();
-            List<Item> items = App.g_db.GetReturnCartItems();
+
+            List<Item> items = await App.g_db.GetReturnCartItems();
 
             if (items.Count > 0)
             {
@@ -96,7 +93,7 @@
         {
             ItemsListCart.ItemsSource = null;
 
-            ItemsListCart.ItemsSource = App.g_db.GetReturnCartItems();
+            ItemsListCart.ItemsSource = await App.g_db.GetReturnCartItems();
 
             foreach (Item i in (List<Item>)ItemsListCart.ItemsSource)
             {
@@ -118,7 +115,7 @@
 
             if (bClear)
             {
-                App.g_db.ClearReturnCartItems();
+                await App.g_db.ClearReturnCartItems();
                 await App.g_Shell.GoToHome();
             }
         }

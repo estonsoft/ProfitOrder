@@ -38,7 +38,7 @@ namespace ProfitOrder.Views
 
             App.g_SearchText = "";
 
-            CategoriesListSearch.ItemsSource = App.g_db.GetCategories();
+            CategoriesListSearch.ItemsSource = await App.g_db.GetCategories();
         }
 
         private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
@@ -50,7 +50,7 @@ namespace ProfitOrder.Views
         }
 
         private async void CategoriesListSearch_ItemTapped(object sender, SelectionChangedEventArgs e)
-        {   
+        {
             var selectedCategory = e.CurrentSelection?.FirstOrDefault() as Category;
             if (selectedCategory == null)
                 return;
@@ -58,7 +58,7 @@ namespace ProfitOrder.Views
             App.g_Category = selectedCategory;
             App.g_ScanBarcode = "";
 
-            int iSubcategories = App.g_db.GetSubcategoryCount(App.g_Category.Code);
+            int iSubcategories = await App.g_db.GetSubcategoryCount(App.g_Category.Code);
 
             if ((iSubcategories > 0) && App.g_IsShowSubcategories)
             {

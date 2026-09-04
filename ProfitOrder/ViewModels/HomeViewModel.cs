@@ -36,7 +36,7 @@ namespace ProfitOrder.ViewModels
             try
             {
                 // 1. Fetch data on a background thread pool worker
-                var topcategories =  App.g_db.GetHomePageCategories();
+                var topcategories = await App.g_db.GetHomePageCategories();
                 categories = topcategories;
             }
             catch (Exception ex)

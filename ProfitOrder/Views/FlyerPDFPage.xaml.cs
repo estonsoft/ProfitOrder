@@ -41,7 +41,7 @@
         // {
         //     try
         //     {
-        //         if (App.g_db.GetFlyerItemCount() <= 1)
+        //         if (await App.g_db.GetFlyerItemCount() <= 1)
         //         {
         //             return;
         //         }
@@ -60,7 +60,7 @@
         //             App.g_MonthlyAdY = (int)(e.Position.Y);
         //         }
 
-        //         List<Item> lstItems = App.g_db.SearchItemsMonthlyAdClick(App.g_MonthlyAdPage, App.g_MonthlyAdX, App.g_MonthlyAdY);
+        //         List<Item> lstItems = await App.g_db.SearchItemsMonthlyAdClick(App.g_MonthlyAdPage, App.g_MonthlyAdX, App.g_MonthlyAdY);
 
         //         if (lstItems.Count > 0)
         //         {

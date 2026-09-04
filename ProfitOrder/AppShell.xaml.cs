@@ -74,11 +74,11 @@ namespace ProfitOrder
             }
         }
 
-        public void Logout()
+        public async void Logout()
         {
-            App.g_db.SaveSetting("LoggedIn", "0");
+            await App.g_db.SaveSetting("LoggedIn", "0");
             App.g_IsLoggedIn = false;
-            App.g_Shell.GoToLogin();
+            await App.g_Shell.GoToLogin();
         }
 
         public async Task<int> GoToHome()
@@ -96,9 +96,9 @@ namespace ProfitOrder
         }
         public async Task<int> GoToShoppingCart()
         {
-            if (App.g_db.GetOrderCartItems().Count == 0)
+            if (App.g_db.GetOrderCartItems().Result.Count == 0)
             {
-                await App.Current.MainPage.DisplayAlert("Profit Order", "Your shopping cart is empty", "Ok");
+                await DisplayAlertAsync("Profit Order", "Your shopping cart is empty", "Ok");
                 return 0;
             }
 
@@ -108,9 +108,9 @@ namespace ProfitOrder
         }
         public async Task<int> GoToReturnCart()
         {
-            if (App.g_db.GetReturnCartItems().Count == 0)
+            if (App.g_db.GetReturnCartItems().Result.Count == 0)
             {
-                await App.Current.MainPage.DisplayAlert("Profit Order", "Your return cart is empty", "Ok");
+                await DisplayAlertAsync("Profit Order", "Your return cart is empty", "Ok");
                 return 0;
             }
 
@@ -120,9 +120,9 @@ namespace ProfitOrder
         }
         public async Task<int> GoToLabelCart()
         {
-            if (App.g_db.GetLabelCartItems().Count == 0)
+            if (App.g_db.GetLabelCartItems().Result.Count == 0)
             {
-                await App.Current.MainPage.DisplayAlert("Profit Order", "Your label print cart is empty", "Ok");
+                await DisplayAlertAsync("Profit Order", "Your label print cart is empty", "Ok");
                 return 0;
             }
 
@@ -242,20 +242,20 @@ namespace ProfitOrder
         {
             if (!App.g_IsMonthlyFlyer)
             {
-                await App.Current.MainPage.DisplayAlert("Profit Order", "No active monthly ads at this time", "Ok");
+                await DisplayAlertAsync("Profit Order", "No active monthly ads at this time", "Ok");
                 return 0;
             }
 
             int iNow = Convert.ToInt32(DateTime.Now.ToString("1yyMMdd"));
             if ((iNow < App.g_FlyerStartDate) || (iNow > App.g_FlyerEndDate))
             {
-                await App.Current.MainPage.DisplayAlert("Profit Order", "No active monthly ads at this time", "Ok");
+                await DisplayAlertAsync("Profit Order", "No active monthly ads at this time", "Ok");
                 return 0;
             }
 
             if (!File.Exists(App.g_FlyerFilename))
             {
-                await App.Current.MainPage.DisplayAlert("Profit Order", "No monthly ad PDF at this time", "Ok");
+                await DisplayAlertAsync("Profit Order", "No monthly ad PDF at this time", "Ok");
                 return 0;
             }
 
@@ -333,71 +333,71 @@ namespace ProfitOrder
             base.OnNavigating(args);
         }
 
-        private void MenuShoppingCart_Clicked(object sender, EventArgs e)
+        private async void MenuShoppingCart_Clicked(object sender, EventArgs e)
         {
-            GoToShoppingCart();
+            await GoToShoppingCart();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuCreditCart_Clicked(object sender, EventArgs e)
+        private async void MenuCreditCart_Clicked(object sender, EventArgs e)
         {
-            GoToReturnCart();
+            await GoToReturnCart();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuLabels_Clicked(object sender, EventArgs e)
+        private async void MenuLabels_Clicked(object sender, EventArgs e)
         {
-            GoToLabelCart();
+            await GoToLabelCart();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuScanBarcode_Clicked(object sender, EventArgs e)
+        private async void MenuScanBarcode_Clicked(object sender, EventArgs e)
         {
-            GoToScanBarcode();
+            await GoToScanBarcode();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuCustomers_Clicked(object sender, EventArgs e)
+        private async void MenuCustomers_Clicked(object sender, EventArgs e)
         {
-            GoToCustomerList();
+            await GoToCustomerList();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuQuickEntry_Clicked(object sender, EventArgs e)
+        private async void MenuQuickEntry_Clicked(object sender, EventArgs e)
         {
-            GoToQuickEntry();
+            await GoToQuickEntry();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuMyPurchases_Clicked(object sender, EventArgs e)
+        private async void MenuMyPurchases_Clicked(object sender, EventArgs e)
         {
-            GoToMyPurchases();
+            await GoToMyPurchases();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuCategories_Clicked(object sender, EventArgs e)
+        private async void MenuCategories_Clicked(object sender, EventArgs e)
         {
-            GoToCategories();
+            await GoToCategories();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuLocations_Clicked(object sender, EventArgs e)
+        private async void MenuLocations_Clicked(object sender, EventArgs e)
         {
-            GoToLocations();
+            await GoToLocations();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuLogout_Clicked(object sender, EventArgs e)
+        private async void MenuLogout_Clicked(object sender, EventArgs e)
         {
             Shell.Current.FlyoutIsPresented = false;
             if (!App.g_IsLoggedIn)
             {
-                GoToLogin();
+                await GoToLogin();
             }
             else
             {
                 App.g_HomePage.ConfirmLogout();
             }
         }
-        private void MenuMyAccount_Clicked(object sender, EventArgs e)
+        private async void MenuMyAccount_Clicked(object sender, EventArgs e)
         {
-            GoToMyAccount();
+            await GoToMyAccount();
             Shell.Current.FlyoutIsPresented = false;
         }
-        private void MenuFlyerPDF_Clicked(object sender, EventArgs e)
+        private async void MenuFlyerPDF_Clicked(object sender, EventArgs e)
         {
-            GoToFlyerPDF();
+            await GoToFlyerPDF();
             Shell.Current.FlyoutIsPresented = false;
         }
         public void SetMenu()

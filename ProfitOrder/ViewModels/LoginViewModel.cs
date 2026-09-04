@@ -30,11 +30,11 @@
             }
             else
             {
-//#if DEBUG
-//                App.g_ServerURL = "https://ctbdemo.qwikpoint.net";
-//#else
-//                App.g_ServerURL = "https://ramdistributors.qwikpoint.net";
-//#endif
+#if DEBUG
+                App.g_ServerURL = "https://ctbdemo.qwikpoint.net";
+#else
+               App.g_ServerURL = "https://ramdistributors.qwikpoint.net";
+#endif
             }
 
             App.UpdateServerLinks();
@@ -45,8 +45,8 @@
             App.g_Customer.User = User;
             App.g_Customer.RememberMe = RememberMe;
 
-            //Database db = new Database();
-            App.g_db.SaveCustomer(App.g_Customer);
+
+            await App.g_db.SaveCustomer(App.g_Customer);
 
 
             await App.CommManager.ValidateLogin(User, Password, App.g_Customer.UniqueId);
