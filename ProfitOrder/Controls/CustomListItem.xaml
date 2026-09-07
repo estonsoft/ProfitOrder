@@ -20,7 +20,7 @@
                 FontAttributes="Bold"
                 FontSize="16"
                 Text="{Binding Description}"
-                TextColor="RoyalBlue" />
+                TextColor="RoyalBlue"/>
 
             <!--  IMAGE  -->
             <ff:CachedImage
@@ -32,7 +32,7 @@
                 HeightRequest="90"
                 LoadingPlaceholder="missing_item.jpg"
                 Source="{Binding ImageURL}"
-                WidthRequest="90" />
+                WidthRequest="90"/>
 
             <!--  DETAILS  -->
             <VerticalStackLayout
@@ -44,36 +44,39 @@
                     FontAttributes="Bold"
                     FontSize="14"
                     Text="{Binding ItemNoDisplay}"
-                    TextColor="Black" />
-                <Label FontSize="12" Text="{Binding ItemNoDisplayUPC}" />
-                <Label FontSize="14" Text="{Binding CategoryDesc}" />
+                    TextColor="Black"/>
+                <Label FontSize="12"
+                       Text="{Binding ItemNoDisplayUPC}"/>
+                <Label FontSize="14"
+                       Text="{Binding CategoryDesc}"/>
 
                 <!--  STOCK  -->
-                <HorizontalStackLayout IsVisible="{Binding IsStockRowVisible}" Spacing="4">
+                <HorizontalStackLayout IsVisible="{Binding IsStockRowVisible}"
+                                       Spacing="4">
                     <Label
                         FontSize="14"
                         IsVisible="{Binding IsQOHVisible}"
-                        Text="QOH:" />
+                        Text="QOH:"/>
                     <Label
                         FontAttributes="Bold"
                         FontSize="14"
                         IsVisible="{Binding IsQOHRedVisible}"
                         Text="{Binding QOH}"
-                        TextColor="Red" />
+                        TextColor="Red"/>
                     <Label
                         FontAttributes="Bold"
                         FontSize="14"
                         IsVisible="{Binding IsQOHBlackVisible}"
-                        Text="{Binding QOH}" />
+                        Text="{Binding QOH}"/>
                     <Label
                         FontSize="12"
                         IsVisible="{Binding IsInStockVisible}"
-                        Text="In Stock" />
+                        Text="In Stock"/>
                     <Label
                         FontSize="12"
                         IsVisible="{Binding IsOutOfStockVisible}"
                         Text="Out Of Stock"
-                        TextColor="Red" />
+                        TextColor="Red"/>
                 </HorizontalStackLayout>
                 <!--  PRICE  -->
                 <Label
@@ -82,7 +85,7 @@
                     FontAttributes="Bold"
                     FontSize="16"
                     IsVisible="{Binding IsPriceVisible}"
-                    Text="{Binding PriceDisplay}" />
+                    Text="{Binding PriceDisplay}"/>
             </VerticalStackLayout>
 
             <!--  ACTIONS  -->
@@ -105,7 +108,7 @@
                         HorizontalOptions="Center"
                         ItemNo="{Binding ItemNo}"
                         Source="blue_minus.png"
-                        WidthRequest="30" />
+                        WidthRequest="30"/>
 
                     <controls:QtyEntry
                         x:Name="QtyEntry"
@@ -119,7 +122,7 @@
                         Text="{Binding QtyOrder}"
                         TextChanged="OnEntryTextChanged"
                         TextColor="Black"
-                        WidthRequest="50" />
+                        WidthRequest="50"/>
 
                     <controls:PlusMinusButton
                         AllocationQty="{Binding AllocationQty}"
@@ -127,7 +130,7 @@
                         HeightRequest="30"
                         ItemNo="{Binding ItemNo}"
                         Source="blue_plus.png"
-                        WidthRequest="30" />
+                        WidthRequest="30"/>
                 </HorizontalStackLayout>
 
                 <!--  ADD TO ORDER  -->
@@ -142,7 +145,7 @@
                     IsVisible="{Binding IsAddToOrderVisible}"
                     ItemNo="{Binding ItemNo}"
                     Text="Add To Order"
-                    TextColor="RoyalBlue" />
+                    TextColor="RoyalBlue"/>
 
                 <!--  SALESPERSON  -->
 
@@ -152,15 +155,16 @@
                     HeightRequest="18"
                     IsVisible="{Binding IsSalesUser}"
                     ItemNo="{Binding ItemNo}"
-                    Source="credit.png" />
+                    Source="credit.png"/>
 
             </VerticalStackLayout>
 
             <!--  LAST PURCHASE  -->
-            <Grid Grid.Row="3" Grid.ColumnSpan="3">
+            <Grid Grid.Row="3"
+                  Grid.ColumnSpan="3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <HorizontalStackLayout
                     Grid.Column="0"
@@ -171,18 +175,19 @@
                         FontSize="11"
                         Text="Last Purchased"
                         TextColor="Black"
-                        VerticalOptions="Center" />
-                    <Label FontSize="11" Text="{Binding LastPurchDateDisplay}" />
+                        VerticalOptions="Center"/>
+                    <Label FontSize="11"
+                           Text="{Binding LastPurchDateDisplay}"/>
                     <Label
                         Margin="5,0,0,0"
                         FontSize="11"
                         Text="Qty"
                         TextColor="Black"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"/>
                     <Label
                         FontSize="11"
                         Text="{Binding QtyLastOrder}"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"/>
                 </HorizontalStackLayout>
                 <HorizontalStackLayout
                     x:Name="BuildToStack"
@@ -194,7 +199,7 @@
                         FontSize="11"
                         Text="Build To"
                         TextColor="Black"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"/>
                     <Label
                         Margin="5,0,0,0"
                         BackgroundColor="White"
@@ -202,7 +207,7 @@
                         IsVisible="{Binding IsBuildToViewOnly}"
                         Text="{Binding BuildTo}"
                         TextColor="Black"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"/>
                     <controls:BuildToEntry
                         x:Name="BuildToEntry"
                         Margin="10,0,0,0"
@@ -218,12 +223,13 @@
                         Text="{Binding BuildTo}"
                         TextChanged="OnBuildToEntryTextChanged"
                         TextColor="Black"
-                        WidthRequest="30" />
+                        WidthRequest="30"/>
                 </HorizontalStackLayout>
             </Grid>
             <HorizontalStackLayout
                 x:Name="LastPurchStack2"
                 Grid.Row="4"
+                Spacing="5"
                 Grid.ColumnSpan="3"
                 IsVisible="{Binding IsLastPurchStack2}">
                 <Label
@@ -231,29 +237,23 @@
                     FontSize="11"
                     LineBreakMode="NoWrap"
                     Text="Avg Wk Sales Last 90"
-                    TextColor="Black"
-                    WidthRequest="120" />
+                    TextColor="Black"/>
                 <Label
-                    Margin="-10,0,0,0"
                     BackgroundColor="White"
                     FontSize="11"
                     Text="{Binding AverageWeeklySales}"
-                    TextColor="Black"
-                    WidthRequest="60" />
+                    TextColor="Black"/>
                 <Label
-                    Margin="-20,0,0,5"
+                    Margin="60,0,0,0"
                     BackgroundColor="White"
                     FontSize="11"
                     Text="Qty Last 90"
-                    TextColor="Black"
-                    WidthRequest="65" />
+                    TextColor="Black"/>
                 <Label
-                    Margin="-5,0,0,5"
                     BackgroundColor="White"
                     FontSize="11"
                     Text="{Binding QtyLast90}"
-                    TextColor="Black"
-                    WidthRequest="30" />
+                    TextColor="Black"/>
             </HorizontalStackLayout>
         </Grid>
         <!--  DIVIDER  -->
@@ -261,7 +261,7 @@
             BackgroundColor="gray"
             HeightRequest="1"
             IsVisible="{Binding IsBoxViewVisible}"
-            Color="LightGray" />
+            Color="LightGray"/>
     </VerticalStackLayout>
 
 </ContentView>

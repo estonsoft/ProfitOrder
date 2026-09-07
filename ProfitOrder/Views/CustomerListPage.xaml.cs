@@ -9,16 +9,8 @@ namespace ProfitOrder.Views
 
         public CustomerListPage()
         {
-            try
-            {
-                InitializeComponent();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("InitializeComponent Error " + Environment.NewLine + ex.ToString() + Environment.NewLine + ex.StackTrace);
-            }
-
-            BindingContext = this;
+            InitializeComponent();
+            BindingContext = App.g_CustomerPage = this;
         }
 
         protected override async void OnAppearing()
@@ -64,14 +56,36 @@ namespace ProfitOrder.Views
             RefreshList();
         }
 
-        void OnTappedCustomer(object sender, EventArgs args)
+        public void UpdateSyncProgress(
+                    double current,
+                    string status)
+        {
+            int total = 100;
+
+            var progress = (double)current / total;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingAlert.Title = "App Sync in progress";
+                LoadingAlert.ProgressValue = progress;
+                LoadingAlert.ProgressPercentage = (int)(progress * 100);
+                LoadingAlert.SyncStatus = status;
+            });
+        }
+
+        async void OnTappedCustomer(object sender, EventArgs args)
         {
             string OldCustNo = App.g_Customer.CustNo;
 
             var c = sender as CustomerStackLayout;
-            showLoading.IsVisible = true;
-            CustomerList.IsVisible = false;
-            Task.Run(async () =>
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await App.ResetProgressAsync();
+                LoadingAlert.IsVisible = true;
+                LoadingAlert.IsEnabled = true;
+            });
+
+            await Task.Run(async () =>
             {
                 SalesCustomer cust = await App.g_db.FindSalesCustomer(c.CustNo);
                 App.g_Customer.CustNo = cust.CustNo;
@@ -100,26 +114,16 @@ namespace ProfitOrder.Views
 
                 await App.g_db.SuspendCartItems(OldCustNo);
                 await App.g_db.ClearCartItems();
-                //await App.g_db.ClearFavorites();
                 await App.g_db.DeleteOrderHistory();
                 await App.g_db.RestoreCartItems(App.g_Customer.CustNo);
-                try
-                {
-                    if (!string.IsNullOrEmpty(App.g_Customer.CustNo) && App.g_Customer.CustNo != "0")
-                    {
-                        await App.CommManager.GetItems(App.g_Customer.CustNo, "0");
-                    }
-                }
-                catch
-                {
-                }
-            }).ContinueWith((t) =>
-            {
+                await App.LoadSettingsAsync();
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
+                    LoadingAlert.IsVisible = false;
+                    LoadingAlert.IsEnabled = false;
                     await App.g_Shell.GoToHome();
                 });
-            }, TaskScheduler.FromCurrentSynchronizationContext());
+            });
         }
 
         protected override bool OnBackButtonPressed()

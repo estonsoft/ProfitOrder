@@ -11,7 +11,6 @@ namespace ProfitOrder.Views
         {
             InitializeComponent();
             this.BindingContext = new LoginViewModel();
-
             App.g_LoginPage = this;
         }
 
@@ -49,23 +48,43 @@ namespace ProfitOrder.Views
 
         public void ShowAnimation()
         {
-            User.IsEnabled  = false;
-            Password.IsEnabled = false;
-            buttonLogin.IsEnabled = false;
-            RememberMe.IsEnabled = false;
-            buttonLogin.BackgroundColor = Colors.LightGray;
-            waitText.IsVisible = true;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                User.IsEnabled = false;
+                Password.IsEnabled = false;
+                RememberMe.IsEnabled = false;
+
+                LoadingAlert.IsVisible = true;
+                LoadingAlert.IsLoading = true;
+            });
         }
 
         public void HideAnimation()
         {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                User.IsEnabled = true;
+                Password.IsEnabled = true;
+                RememberMe.IsEnabled = true;
+                LoadingAlert.IsVisible = false;
+                LoadingAlert.IsLoading = false;
+            });
+        }
 
-            User.IsEnabled = true;
-            Password.IsEnabled = true;
-            RememberMe.IsEnabled = true;
-            buttonLogin.IsEnabled = true;
-            buttonLogin.BackgroundColor = Colors.Blue;
-            waitText.IsVisible = false;
+        public void UpdateSyncProgress(
+                    double current,
+                    string status)
+        {
+            int total = 100;
+
+            var progress = (double)current / total;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingAlert.ProgressValue = progress;
+                LoadingAlert.ProgressPercentage = (int)(progress * 100);
+                LoadingAlert.SyncStatus = status;
+            });
         }
 
         protected override bool OnBackButtonPressed()

@@ -139,11 +139,7 @@
 
             if (App.g_ServerURL != SetURL.ServerURL)
             {
-                try
-                {
-                    await App.g_db.SuspendCartItems(App.g_Customer.CustNo);
-                }
-                catch { }
+                await App.g_db.SuspendCartItems(App.g_Customer.CustNo);
 
                 await App.g_db.DeleteAll();
 
@@ -151,7 +147,7 @@
                 App.UpdateServerLinks();
                 await App.g_db.SaveSetting("ServerURL", App.g_ServerURL);
 
-                await App.RefreshAll();
+                await App.LoadSettingsAsync();
             }
 
             List<Setting> lSettings = await App.g_db.GetSettings();

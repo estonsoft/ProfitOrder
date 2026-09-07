@@ -1013,35 +1013,21 @@ namespace ProfitOrder
                             Console.WriteLine("Error occurred while processing login response: " + sMsg);
                         }
 
-                        if ((App.g_IsSalesUser) || (App.g_IsChainManager))
-                        {
-                            App.g_PaymentProvider = "";
-                            await App.g_db.SaveSetting("PaymentProvider", "");
-
-                            await App.CommManager.GetSalespersonCustomers(App.g_UserName);
-                        }
-
                         if (App.g_Customer.CustNo != OldCustNo)
                         {
-                            //await App.g_db.ClearCartItems();
-                            //await App.g_db.DeleteOrderHistory();
-                            //await App.g_db.DeleteReorderItems();
-                            //App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
-
                             if (App.g_UserName.ToLower() == "app_test")
                             {
                                 await App.g_db.DeleteCategories();
                                 await App.g_db.DeleteItems();
                             }
                         }
-
-                        Console.WriteLine("Login successful for user: " + App.g_UserName);
-                        await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
-                        await App.RefreshAll();
-
+                        App.g_IsLoggedIn = true;
                         await App.g_db.SaveSetting("LoggedIn", "1");
                         await App.g_db.SaveSetting("UserName", App.g_UserName);
-                        App.g_IsLoggedIn = true;
+
+                        Console.WriteLine("Login successful for user: " + App.g_UserName);
+                        await App.LoadSettingsAsync();
+
                         try
                         {
                             MainThread.BeginInvokeOnMainThread(async () =>

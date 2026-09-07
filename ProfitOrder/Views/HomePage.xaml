@@ -22,12 +22,12 @@
                 FontSize="16"
                 Text="Profit Order"
                 TextColor="White"
-                VerticalTextAlignment="Center" />
+                VerticalTextAlignment="Center"/>
         </StackLayout>
     </NavigationPage.TitleView>
 
     <ContentPage.BindingContext>
-        <vm:HomeViewModel />
+        <vm:HomeViewModel/>
     </ContentPage.BindingContext>
 
     <ContentPage.Resources>
@@ -43,14 +43,15 @@
             x:Name="SearchBox"
             DisplayMemberName="Name"
             Placeholder="Search Products"
-            ShowsResults="false" />
+            ShowsResults="false"/>
     </Shell.SearchHandler>
 
-    <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}" SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
+    <Grid Margin="{OnPlatform iOS='0,50,0,0', Android='0'}"
+            SafeAreaEdges="{OnPlatform iOS='None', Android='All'}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackLayout Grid.Row="0">
@@ -67,7 +68,7 @@
                     Source="menu_blue.png"
                     WidthRequest="30">
                     <ffimageloading:CachedImage.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnMenuTapped" />
+                        <TapGestureRecognizer Tapped="OnMenuTapped"/>
                     </ffimageloading:CachedImage.GestureRecognizers>
                 </ffimageloading:CachedImage>
                 <Entry
@@ -79,7 +80,7 @@
                     HorizontalOptions="Fill"
                     Placeholder="Search Products"
                     PlaceholderColor="Gray"
-                    TextChanged="Search_TextChanged" />
+                    TextChanged="Search_TextChanged"/>
                 <Label
                     Margin="0,5,30,0"
                     BackgroundColor="White"
@@ -90,7 +91,7 @@
                     TextColor="RoyalBlue"
                     VerticalOptions="Center">
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnSearchTapped" />
+                        <TapGestureRecognizer Tapped="OnSearchTapped"/>
                     </Label.GestureRecognizers>
                 </Label>
             </Grid>
@@ -99,7 +100,7 @@
                 HeightRequest="3"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
-                Color="lightgray" />
+                Color="lightgray"/>
         </StackLayout>
         <ScrollView
             Grid.Row="1"
@@ -120,7 +121,7 @@
                         HorizontalTextAlignment="Center"
                         Text="Welcome"
                         TextColor="black"
-                        WidthRequest="500" />
+                        WidthRequest="500"/>
                     <Label
                         x:Name="lblUserName"
                         Margin="0,-5,0,0"
@@ -130,19 +131,20 @@
                         HorizontalTextAlignment="Center"
                         Text="Company Name"
                         TextColor="black"
-                        WidthRequest="500" />
+                        WidthRequest="500"/>
                 </VerticalStackLayout>
                 <Border
                     Padding="0,0,0,0"
                     BackgroundColor="Green"
                     Stroke="transparent">
-                    <Grid BackgroundColor="white" HorizontalOptions="Fill">
+                    <Grid BackgroundColor="white"
+                            HorizontalOptions="Fill">
                         <ffimageloading:CachedImage
                             x:Name="BannerImage"
                             Margin="0,0,0,0"
                             Aspect="Fill"
                             BackgroundColor="white"
-                            HorizontalOptions="Fill" />
+                            HorizontalOptions="Fill"/>
                     </Grid>
                 </Border>
                 <Grid ColumnDefinitions="*, *"
@@ -252,7 +254,7 @@
                         Text="Start Your Cart"
                         TextColor="black"
                         VerticalOptions="Center"
-                        WidthRequest="255" />
+                        WidthRequest="255"/>
                     <HorizontalStackLayout HorizontalOptions="End">
                         <Label
                             FontAttributes="Bold"
@@ -262,7 +264,7 @@
                             TextColor="blue"
                             VerticalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnShopNow" />
+                                <TapGestureRecognizer Tapped="OnShopNow"/>
                             </Label.GestureRecognizers>
                         </Label>
                         <Label
@@ -275,12 +277,12 @@
                             TextColor="blue"
                             VerticalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnShopNow" />
+                                <TapGestureRecognizer Tapped="OnShopNow"/>
                             </Label.GestureRecognizers>
                         </Label>
                     </HorizontalStackLayout>
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnNewItemsAll" />
+                        <TapGestureRecognizer Tapped="OnNewItemsAll"/>
                     </Grid.GestureRecognizers>
                 </Grid>
                 <Grid
@@ -295,7 +297,7 @@
                         Text="Top Categories"
                         TextColor="black"
                         VerticalOptions="Center"
-                        WidthRequest="255" />
+                        WidthRequest="255"/>
                     <HorizontalStackLayout HorizontalOptions="End">
                         <Label
                             FontAttributes="Bold"
@@ -305,7 +307,7 @@
                             TextColor="blue"
                             VerticalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnNewItemsAll" />
+                                <TapGestureRecognizer Tapped="OnNewItemsAll"/>
                             </Label.GestureRecognizers>
                         </Label>
                         <Label
@@ -318,12 +320,12 @@
                             TextColor="blue"
                             VerticalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnNewItemsAll" />
+                                <TapGestureRecognizer Tapped="OnNewItemsAll"/>
                             </Label.GestureRecognizers>
                         </Label>
                     </HorizontalStackLayout>
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnNewItemsAll" />
+                        <TapGestureRecognizer Tapped="OnNewItemsAll"/>
                     </Grid.GestureRecognizers>
                 </Grid>
                 <ScrollView>
@@ -339,51 +341,28 @@
                             <GridItemsLayout
                                 HorizontalItemSpacing="20"
                                 Orientation="Horizontal"
-                                VerticalItemSpacing="20" />
+                                VerticalItemSpacing="20"/>
                         </CollectionView.ItemsLayout>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <controls:HomePageItems />
+                                <controls:HomePageItems/>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </ScrollView>
             </VerticalStackLayout>
         </ScrollView>
-        <controls:CustomToolbar Grid.Row="2" VerticalOptions="End" />
-        <Grid x:Name="LoadingIndicator"
-              BackgroundColor="#80000000"
-              IsVisible="False"
-              Grid.Row="0"
-              Grid.RowSpan="2"
-              HorizontalOptions="Fill"
-              VerticalOptions="Fill">
-
-            <!-- White Dialog Box without buttons -->
-            <Border BackgroundColor="White"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    Padding="24"
-                    WidthRequest="220"
-                    HeightRequest="140">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="12"/>
-                </Border.StrokeShape>
-
-                <VerticalStackLayout Spacing="15"
-                        VerticalOptions="Center">
-                    <ActivityIndicator IsRunning="True"
-                                       Color="Blue"
-                                       HeightRequest="40"
-                                       WidthRequest="40"/>
-
-                    <Label Text="Loading... Please wait"
-                           TextColor="Black"
-                           FontSize="14"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"/>
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
+        <controls:CustomToolbar Grid.Row="2"
+                VerticalOptions="End"/>
+        <controls:CustomAlertDialog
+            x:Name="LoadingAlert"
+            Title="Validating"
+            Grid.Row="0"
+            ProgressPercentage="0"
+            ProgressValue="0"
+            Grid.RowSpan="2"
+            IsLoading="True"
+            IsVisible="False"
+            Message="Please wait while we refreshing the App Data…"/>
     </Grid>
 </ContentPage>

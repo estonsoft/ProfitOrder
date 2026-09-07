@@ -1,5 +1,4 @@
 ﻿using ProfitOrder.Data;
-using ProfitOrder.ViewModels;
 using ProfitOrder.Views;
 
 namespace ProfitOrder
@@ -13,6 +12,7 @@ namespace ProfitOrder
 
         public static ItemSearchPage g_SearchPage;
         public static HomePage g_HomePage;
+        public static CustomerListPage g_CustomerPage;
         public static LoginPage g_LoginPage;
         public static ShoppingCartPage g_ShoppingCartPage;
         public static ReturnCartPage g_ReturnCartPage;
@@ -108,7 +108,7 @@ namespace ProfitOrder
             return new Window(new AppShell());
         }
 
-        public async void LoadSettings()
+        public async Task LoadSettings()
         {
             g_FlyerFilename = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), "MonthlyFlyer.pdf");
 
@@ -312,8 +312,6 @@ namespace ProfitOrder
 
                 g_Customer = new Customer();
                 g_ShoppingCartItems = await App.g_db.GetCartPieces();
-
-
                 try
                 {
                     g_Customer = new Customer();
@@ -336,23 +334,27 @@ namespace ProfitOrder
             }
         }
 
-        public async Task LoadSettingsAsync()
+        public async static Task LoadSettingsAsync()
         {
-            if (App.g_ServerURL.Length != 0)
+            try
             {
-                await App.CommManager.GetSettings();
-                await InsertOnAccountPaymentMethod();
-                await GetDefaultPaymentMethod();
-                await RefreshAll();
-                InitializeAllTimer();
-                await RefreshOrderHistory();
-                InitializeOrderHistoryTimer();
-                if (g_IsSalesUser || g_IsChainManager)
+                if (App.g_ServerURL.Length != 0)
                 {
-                    await App.CommManager.GetSalespersonCustomers(g_UserName);
+                    UpdateServerLinks();
+                    await InsertOnAccountPaymentMethod();
+                    await GetDefaultPaymentMethod();
+                    await App.CommManager.GetBanners();
+                    await RefreshOrderHistory();
+                    await RefreshQOH();
+                    if (g_IsSalesUser || g_IsChainManager)
+                    {
+                        await App.CommManager.GetSalespersonCustomers(g_UserName);
+                    }
                 }
-                await RefreshQOH();
-                InitializeQOHTimer();
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlertAsync("Profit Order", "Invalid Server URL" + ex.Message, "Ok");
             }
         }
 
@@ -364,45 +366,6 @@ namespace ProfitOrder
             Constants.BannerUrl = App.g_ServerURL + "/images/banner phone/";
             Constants.CategoryImageUrl = App.g_ServerURL + "/images/category/";
             Constants.ItemImageUrl = App.g_ServerURL + "/images/items/";
-        }
-
-        private void InitializeAllTimer()
-        {
-            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
-            {
-                Task.Run(async () =>
-                {
-                    _ = await RefreshAll();
-                    return true;
-                });
-
-                return true;
-            });
-        }
-
-        public static async Task<String> RefreshAll()
-        {
-            if (App.g_ServerURL != "")
-            {
-                // start with banners  services will call next when one is done
-                await App.CommManager.GetBanners();
-            }
-
-            return "";
-        }
-
-        private void InitializeQOHTimer()
-        {
-            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
-            {
-                Task.Run(async () =>
-                {
-                    _ = await RefreshQOH();
-                    return true;
-                });
-
-                return true;
-            });
         }
 
         public static async Task<String> RefreshQOH()
@@ -419,74 +382,14 @@ namespace ProfitOrder
             return "";
         }
 
-        private void InitializeBannerTimer()
+
+
+        public static async Task RefreshOrderHistory()
         {
-            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour * 24), () =>
+            if ((App.g_Customer.CustNo != null) && (App.g_Customer.CustNo != "") && (App.g_Customer.CustNo != "0"))
             {
-                Task.Run(async () =>
-                {
-                    _ = await RefreshBanners();
-                    return true;
-                });
-
-                return true;
-            });
-        }
-
-        private async Task<String> RefreshBanners()
-        {
-            return "";
-        }
-
-        private void InitializeItemTimer()
-        {
-            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
-            {
-                Task.Run(async () =>
-                {
-                    _ = await RefreshItems();
-                    return true;
-                });
-
-                return true;
-            });
-        }
-
-        private async Task<String> RefreshItems()
-        {
-
-
-            //g_Customer = await db.GetCustomerAsync();
-
-            return "";
-        }
-
-        private void InitializeOrderHistoryTimer()
-        {
-            Dispatcher.StartTimer(TimeSpan.FromSeconds(Constants.TimerHour), () =>
-            {
-                Task.Run(async () =>
-                {
-                    _ = await RefreshOrderHistory();
-                    return true;
-                });
-
-                return true;
-            });
-        }
-
-        public static async Task<String> RefreshOrderHistory()
-        {
-            try
-            {
-                if ((App.g_Customer.CustNo != null) && (App.g_Customer.CustNo != "") && (App.g_Customer.CustNo != "0"))
-                {
-                    await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
-                }
+                await App.CommManager.GetOrderHistory(App.g_Customer.CustNo);
             }
-            catch { }
-
-            return "";
         }
 
         protected override void OnStart()
@@ -502,7 +405,7 @@ namespace ProfitOrder
         {
             if (App.g_IsLoggedIn)
             {
-                await ValidateUserActive();
+                await App.CommManager.ValidateUserActive(App.g_UserName);
             }
 
             try
@@ -512,21 +415,8 @@ namespace ProfitOrder
             catch { }
         }
 
-        public static async Task<String> ValidateUserActive()
-        {
-            try
-            {
-                await App.CommManager.ValidateUserActive(App.g_UserName);
-            }
-            catch { }
-
-            return "";
-        }
-
         public static async Task InsertOnAccountPaymentMethod()
         {
-
-
             PaymentMethod pm = await App.g_db.FindPaymentMethod(1);
 
             if (pm is null)
@@ -544,8 +434,6 @@ namespace ProfitOrder
 
         public static async Task GetDefaultPaymentMethod()
         {
-
-
             List<PaymentMethod> paymentMethods = await App.g_db.GetDefaultPaymentMethod();
             if (paymentMethods.Count > 0)
             {
@@ -555,6 +443,133 @@ namespace ProfitOrder
             {
                 // set to On Account
                 g_PaymentMethod = await App.g_db.FindPaymentMethod(1);
+            }
+        }
+
+        private static CancellationTokenSource? _progressCts;
+        private static int _actualProgress;
+        private static int _displayProgress;
+
+        public static async Task StartProgress(int progress, string status)
+        {
+            _actualProgress = progress;
+            _displayProgress = progress;
+
+            _progressCts?.Cancel();
+            _progressCts = new CancellationTokenSource();
+
+            await UpdateProgressUI(_displayProgress, status);
+
+            _ = RunProgressAnimationAsync(status, _progressCts.Token);
+        }
+
+
+        private static async Task RunProgressAnimationAsync(
+            string status,
+            CancellationToken token)
+        {
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    await Task.Delay(2000, token);
+
+                    if (token.IsCancellationRequested)
+                        break;
+
+                    // Never go above 99 until actual progress reaches 100
+                    if (_displayProgress < _actualProgress + 40 &&
+                        _displayProgress < 99)
+                    {
+                        _displayProgress++;
+
+                        await UpdateProgressUI(
+                            _displayProgress,
+                            status);
+                    }
+
+                    // Reached 99, wait for the next real progress update
+                    if (_displayProgress >= 99)
+                        break;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Expected when a new progress update arrives
+            }
+        }
+
+        public static async Task ResetProgressAsync(
+    string status = "Starting...")
+        {
+            // Stop previous animation
+            _progressCts?.Cancel();
+            _progressCts?.Dispose();
+            _progressCts = null;
+
+            // Reset progress completely
+            _actualProgress = 0;
+            _displayProgress = 0;
+
+            await UpdateProgressUI(
+                0,
+                status);
+        }
+
+        public static async Task UpdateProgress(
+    int progress,
+    string status)
+        {
+            _actualProgress = Math.Clamp(progress, 0, 100);
+
+            // Cancel previous animation
+            _progressCts?.Cancel();
+            _progressCts?.Dispose();
+            _progressCts = null;
+
+            // Actual progress reached 100
+            if (_actualProgress >= 100)
+            {
+                _displayProgress = 100;
+
+                await UpdateProgressUI(
+                    100,
+                    status);
+
+                // No animation should run at 100
+                return;
+            }
+
+            // Don't move backwards
+            if (_displayProgress < _actualProgress)
+                _displayProgress = _actualProgress;
+
+            await UpdateProgressUI(
+                _displayProgress,
+                status);
+
+            // Start a NEW animation cycle
+            _progressCts = new CancellationTokenSource();
+
+            _ = RunProgressAnimationAsync(
+                status,
+                _progressCts.Token);
+        }
+
+        public static async Task UpdateProgressUI(double current,
+            string status)
+        {
+            switch (g_CurrentPage)
+            {
+                case "LoginPage":
+                    g_LoginPage.UpdateSyncProgress(current, status);
+                    break;
+                case "HomePage":
+                    g_HomePage.UpdateSyncProgress(current, status);
+                    break;
+                case "CustomerListPage":
+                    g_CustomerPage.UpdateSyncProgress(current, status);
+                    break;
             }
         }
     }

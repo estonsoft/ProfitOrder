@@ -46,8 +46,6 @@ namespace ProfitOrder.Views
 
         private async void UpdateBanner()
         {
-
-
             var banners = await App.g_db.GetBanners();
 
             try
@@ -204,14 +202,19 @@ namespace ProfitOrder.Views
 
         async void OnRefresh(object sender, EventArgs e)
         {
-
-            LoadingIndicator.IsVisible = true;
+            MainThread.BeginInvokeOnMainThread(async () =>
+             {
+                 LoadingAlert.IsVisible = true;
+                 LoadingAlert.IsEnabled = true;
+             });
             await Task.Run(async () =>
             {
-                App.g_App.LoadSettings();
+                await App.ResetProgressAsync();
+                await App.LoadSettingsAsync();
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
-                    LoadingIndicator.IsVisible = false;
+                    LoadingAlert.IsVisible = false;
+                    LoadingAlert.IsEnabled = false;
                 });
             });
 
@@ -307,14 +310,29 @@ namespace ProfitOrder.Views
             await App.g_Shell.GoToItemSearch();
         }
 
+        public void UpdateSyncProgress(
+                    double current,
+                    string status)
+        {
+            int total = 100;
+
+            var progress = (double)current / total;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                LoadingAlert.Title = "App Sync in progress";
+                LoadingAlert.ProgressValue = progress;
+                LoadingAlert.ProgressPercentage = (int)(progress * 100);
+                LoadingAlert.SyncStatus = status;
+            });
+        }
+
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (e.NewTextValue.Length >= 3)
             {
                 App.g_SearchText = SearchText.Text;
                 App.g_SearchFromPage = "HomePage";
-
-                //await App.g_Shell.GoToHome();
             }
         }
     }

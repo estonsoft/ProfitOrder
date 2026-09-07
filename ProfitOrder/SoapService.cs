@@ -7,12 +7,12 @@ namespace ProfitOrder.Data
     {
         private readonly HttpClient _httpClient;
         private string SoapUrl;
-// #if DEBUG
-//         private string SoapUrl = "https://ctbdemo.qwikpoint.net";
-// #else
-//         private string SoapUrl = "https://ramdistributors.qwikpoint.net/RemotePhoneApp.asmx";
+        // #if DEBUG
+        //         private string SoapUrl = "https://ctbdemo.qwikpoint.net";
+        // #else
+        //         private string SoapUrl = "https://ramdistributors.qwikpoint.net/RemotePhoneApp.asmx";
 
-// #endif
+        // #endif
 
         public SoapService(HttpClient httpClient)
         {
@@ -27,12 +27,9 @@ namespace ProfitOrder.Data
             content.Headers.Clear();
             content.Headers.Add("Content-Type", "text/xml; charset=utf-8");
             content.Headers.Add("SOAPAction", soapAction);
-
             var response = await _httpClient.PostAsync(SoapUrl, content);
             response.EnsureSuccessStatusCode();
             string responseValue = await response.Content.ReadAsStringAsync();
-            // Console.WriteLine("Request" + SoapUrl);
-            // Console.WriteLine("Response" + responseValue);
             responseValue = ExtractSoapResult(responseValue);
             return responseValue;
         }
@@ -125,7 +122,7 @@ namespace ProfitOrder.Data
                SoapEnvelope("GetInvoicePDF", $"<sOrder>{sOrder}</sOrder>"));
         public Task<string> GetFlyerItemsPDFAsync()
             => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetFlyerItemsPDF",
-                SoapEnvelope("GetFlyerItemsPDF"));       
+                SoapEnvelope("GetFlyerItemsPDF"));
 
         public Task<string> ValidateTokenAsync(string sCustNo, string sCCInfo)
            => SendSoapRequestAsync("http://turningpointremotephoneapp.com/GetSalespersonCustomers",

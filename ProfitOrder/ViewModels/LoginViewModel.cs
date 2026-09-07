@@ -21,35 +21,43 @@
             }
         }
 
-        private async void OnLoginClicked(object obj)
+        private void OnLoginClicked(object obj)
         {
             App.g_LoginPage.ShowAnimation();
-            if (User.ToLower() == "app_test")
+            Task.Run(async () =>
             {
-                App.g_ServerURL = "https://store.qwikpoint.net";
-            }
-            else
-            {
+                await App.ResetProgressAsync();
+
+                if (User.ToLower() == "app_test")
+                {
+                    App.g_ServerURL = "https://store.qwikpoint.net";
+                }
+                else
+                {
 #if DEBUG
-                App.g_ServerURL = "https://ctbdemo.qwikpoint.net";
+                    App.g_ServerURL = "https://ctbdemo.qwikpoint.net";
 #else
                App.g_ServerURL = "https://ramdistributors.qwikpoint.net";
 #endif
-            }
+                }
 
-            App.UpdateServerLinks();
+                App.UpdateServerLinks();
 
-            App.g_IsLoggedIn = true;
-            App.g_UserName = User;
+                App.g_IsLoggedIn = true;
+                App.g_UserName = User;
 
-            App.g_Customer.User = User;
-            App.g_Customer.RememberMe = RememberMe;
-
-
-            await App.g_db.SaveCustomer(App.g_Customer);
+                App.g_Customer.User = User;
+                App.g_Customer.RememberMe = RememberMe;
 
 
-            await App.CommManager.ValidateLogin(User, Password, App.g_Customer.UniqueId);
+                await App.g_db.SaveCustomer(App.g_Customer);
+
+
+                await App.CommManager.ValidateLogin(User, Password, App.g_Customer.UniqueId); MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        App.g_LoginPage.HideAnimation();
+                    });
+            });
         }
     }
 }
