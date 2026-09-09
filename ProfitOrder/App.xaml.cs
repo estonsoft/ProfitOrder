@@ -141,15 +141,6 @@ namespace ProfitOrder
                     server.ServerURL = g_ServerURL;
                     await g_db.SaveServer(server);
                 }
-                else
-                {
-                    // #if DEBUG
-                    //                     g_ServerURL = "https://ctbdemo.qwikpoint.net";
-                    // #else
-                    // g_ServerURL = "https://www.turningpointsystems.com";
-                    // #endif
-
-                }
                 UpdateServerLinks();
 
                 if (await g_db.GetSetting("Credits") == "1")
